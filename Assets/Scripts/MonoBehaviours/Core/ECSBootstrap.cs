@@ -26,6 +26,24 @@ public class ECSBootstrap : MonoBehaviour
             MouseValid = false
         });
 
-        Debug.Log("ECS Bootstrap complete: singletons created");
+        // Create AsteroidSpawnTimer singleton
+        var spawnTimerEntity = em.CreateEntity(typeof(AsteroidSpawnTimer));
+        em.SetComponentData(spawnTimerEntity, new AsteroidSpawnTimer
+        {
+            SpawnInterval = GameConstants.DefaultSpawnInterval,
+            TimeUntilNextSpawn = 0f,
+            MaxActiveAsteroids = GameConstants.DefaultMaxAsteroids
+        });
+
+        // Create MiningConfigData singleton
+        var miningConfigEntity = em.CreateEntity(typeof(MiningConfigData));
+        em.SetComponentData(miningConfigEntity, new MiningConfigData
+        {
+            Radius = GameConstants.DefaultMiningRadius,
+            DamagePerTick = GameConstants.DefaultDamagePerTick,
+            TickInterval = GameConstants.DefaultTickInterval
+        });
+
+        Debug.Log("ECS Bootstrap complete: singletons created (GameState, Input, AsteroidSpawnTimer, MiningConfig)");
     }
 }
