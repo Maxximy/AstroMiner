@@ -44,6 +44,10 @@ public class ECSBootstrap : MonoBehaviour
             TickInterval = GameConstants.DefaultTickInterval
         });
 
-        Debug.Log("ECS Bootstrap complete: singletons created (GameState, Input, AsteroidSpawnTimer, MiningConfig)");
+        // Create CollectionEvent buffer entity (Phase 4 will drain for SFX/VFX)
+        var collectionEventEntity = em.CreateEntity();
+        em.AddBuffer<CollectionEvent>(collectionEventEntity);
+
+        Debug.Log("ECS Bootstrap complete: singletons created (GameState, Input, AsteroidSpawnTimer, MiningConfig, CollectionEventBuffer)");
     }
 }

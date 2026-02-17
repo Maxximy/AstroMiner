@@ -54,4 +54,40 @@ public static class GameConstants
 
     /// <summary>Seconds between damage ticks.</summary>
     public const float DefaultTickInterval = 0.25f;
+
+    // ── Mineral Defaults ────────────────────────────────────────
+
+    /// <summary>Minimum minerals spawned per destroyed asteroid.</summary>
+    public const int MinMineralsPerAsteroid = 3;
+
+    /// <summary>Maximum minerals spawned per destroyed asteroid.</summary>
+    public const int MaxMineralsPerAsteroid = 8;
+
+    /// <summary>Credits awarded per mineral for the default Iron tier.</summary>
+    public const int DefaultCreditValuePerMineral = 10;
+
+    /// <summary>Initial speed of mineral particles toward the ship (units/sec).</summary>
+    public const float MineralInitialSpeed = 1f;
+
+    /// <summary>Acceleration applied to mineral particles each frame (units/sec^2).</summary>
+    public const float MineralAcceleration = 3f;
+
+    /// <summary>Distance from ship center at which minerals are collected.</summary>
+    public const float MineralCollectionRadius = 0.8f;
+
+    /// <summary>Visual scale of mineral GameObjects (uniform XYZ).</summary>
+    public const float MineralScale = 0.3f;
+
+    // ── Session Defaults (consumed by Plan 03-02) ───────────────
+
+    /// <summary>Default duration of a timed run in seconds.</summary>
+    public const float DefaultRunDuration = 60f;
+
+    /// <summary>Grace period after run ends for collecting remaining minerals.</summary>
+    public const float CollectingGracePeriod = 2f;
+
+    // ── Ship Position ───────────────────────────────────────────
+
+    /// <summary>Ship X coordinate (for mineral pull target).</summary>
+    public const float ShipPositionX = 0f;
 }
