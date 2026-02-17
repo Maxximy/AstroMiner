@@ -12,7 +12,7 @@ Astrominer delivers a satisfying mining-collecting-upgrading loop across six pha
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation and WebGL Validation** - ECS world, game state machine, bridge layer, object pooling, and WebGL performance confirmation
+- [x] **Phase 1: Foundation and WebGL Validation** - ECS world, game state machine, bridge layer, object pooling, and WebGL performance confirmation _(completed 2026-02-17)_
 - [ ] **Phase 2: Core Mining Loop** - Asteroids spawn and drift, mining circle follows mouse and damages them, playable mining
 - [ ] **Phase 3: Collection, Economy, and Session** - Minerals fly to ship, credits awarded, timed runs with results, persistent save system
 - [ ] **Phase 4: Visual and Audio Feedback** - Damage numbers, particle effects, screen shake, audio SFX, space aesthetic polish
@@ -34,8 +34,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md -- ECS bootstrap, singleton components, InputBridge, NumberFormatter, skybox, and URP post-processing
-- [ ] 01-02-PLAN.md -- Game state machine with fade transitions, object pooling, placeholder entities with ECS movement, debug overlay, and WebGL 60 FPS validation
+- [x] 01-01-PLAN.md -- ECS bootstrap, singleton components, InputBridge, NumberFormatter, skybox, and URP post-processing
+- [x] 01-02-PLAN.md -- Game state machine with fade transitions, object pooling, placeholder entities with ECS movement, debug overlay, and WebGL 60 FPS validation
 
 ### Phase 2: Core Mining Loop
 **Goal**: Player can hover a mining circle over asteroids that drift down the screen, watch them take damage and break apart -- the fundamental interaction that the entire game depends on
@@ -125,7 +125,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|---------------|--------|-----------|
-| 1. Foundation and WebGL Validation | 0/2 | Not started | - |
+| 1. Foundation and WebGL Validation | 2/2 | Complete | 2026-02-17 |
 | 2. Core Mining Loop | 0/2 | Not started | - |
 | 3. Collection, Economy, and Session | 0/3 | Not started | - |
 | 4. Visual and Audio Feedback | 0/2 | Not started | - |
@@ -134,4 +134,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 
 ---
 *Roadmap created: 2026-02-17*
-*Last updated: 2026-02-17*
+*Last updated: 2026-02-17 (Phase 1 complete)*
