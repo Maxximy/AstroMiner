@@ -34,9 +34,10 @@ public partial struct PlaceholderSpinJob : IJobEntity
 
 /// <summary>
 /// ECS system that drives drift and spin for all placeholder entities.
-/// Only runs during the Playing game state.
-/// Burst-compiled on desktop, managed fallback on WebGL.
+/// DISABLED in Phase 2: Replaced by AsteroidMovementSystem which filters by AsteroidTag.
+/// PlaceholderDriftJob/PlaceholderSpinJob have no tag filter and would double-process asteroid entities.
 /// </summary>
+[DisableAutoCreation]
 [BurstCompile]
 public partial struct PlaceholderMovementSystem : ISystem
 {

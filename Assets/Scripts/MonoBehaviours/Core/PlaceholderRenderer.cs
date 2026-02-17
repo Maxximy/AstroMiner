@@ -55,7 +55,10 @@ public class PlaceholderRenderer : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(InitializeNextFrame());
+        // Replaced by AsteroidRenderer in Phase 2
+        Debug.Log("PlaceholderRenderer disabled -- replaced by AsteroidRenderer");
+        enabled = false;
+        return;
     }
 
     private IEnumerator InitializeNextFrame()

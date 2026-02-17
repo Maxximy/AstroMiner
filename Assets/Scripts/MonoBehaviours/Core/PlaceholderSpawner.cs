@@ -42,8 +42,10 @@ public class PlaceholderSpawner : MonoBehaviour
 
     void Start()
     {
-        // Delay one frame to ensure ECSBootstrap has created singletons
-        StartCoroutine(SpawnEntitiesNextFrame());
+        // Replaced by AsteroidSpawnSystem in Phase 2
+        Debug.Log("PlaceholderSpawner disabled -- replaced by AsteroidSpawnSystem");
+        enabled = false;
+        return;
     }
 
     private IEnumerator SpawnEntitiesNextFrame()
