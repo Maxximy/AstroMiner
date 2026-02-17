@@ -1,15 +1,59 @@
 using UnityEngine;
+using Unity.Entities;
 
 public class PlayingState : IGameState
 {
+    private EntityManager _em;
+    private Entity _gameStateEntity;
+    private bool _resolved;
+
     public void Enter(GameManager manager)
     {
         Debug.Log("Entering Playing state");
+
+        var world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+        {
+            Debug.LogError("PlayingState: ECS world not available");
+            return;
+        }
+
+        _em = world.EntityManager;
+        var query = _em.CreateEntityQuery(typeof(GameStateData));
+        if (query.CalculateEntityCount() == 0)
+        {
+            Debug.LogError("PlayingState: GameStateData singleton not found");
+            return;
+        }
+
+        _gameStateEntity = query.GetSingletonEntity();
+        _resolved = true;
+
+        // Initialize timer for this run
+        var data = _em.GetComponentData<GameStateData>(_gameStateEntity);
+        data.Timer = GameConstants.DefaultRunDuration;
+        _em.SetComponentData(_gameStateEntity, data);
+
+        // Snapshot credits at run start for "credits this run" calculation
+        manager.CreditsAtRunStart = data.Credits;
     }
 
     public void Execute(GameManager manager)
     {
-        // No-op for Phase 1 (gameplay systems not yet built)
+        if (!_resolved) return;
+
+        var data = _em.GetComponentData<GameStateData>(_gameStateEntity);
+        data.Timer -= Time.deltaTime;
+
+        if (data.Timer <= 0f)
+        {
+            data.Timer = 0f;
+            _em.SetComponentData(_gameStateEntity, data);
+            manager.TransitionTo(GamePhase.Collecting);
+            return;
+        }
+
+        _em.SetComponentData(_gameStateEntity, data);
     }
 
     public void Exit(GameManager manager)

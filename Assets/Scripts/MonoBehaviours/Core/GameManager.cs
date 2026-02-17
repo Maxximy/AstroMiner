@@ -18,6 +18,12 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public GamePhase CurrentPhase => _currentPhase;
 
+    /// <summary>
+    /// Credits snapshot at the start of the current run.
+    /// Used by HUDController and ResultsScreen to compute "credits this run".
+    /// </summary>
+    public long CreditsAtRunStart { get; set; }
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -100,6 +106,39 @@ public class GameManager : MonoBehaviour
                 _isTransitioning = false;
             });
         });
+    }
+
+    /// <summary>
+    /// Resets the game state for a new run. Called before transitioning to Playing from Upgrading.
+    /// Destroys all leftover asteroid and mineral entities, resets the timer.
+    /// Credits are persistent across runs (only timer resets).
+    /// </summary>
+    public void ResetRun()
+    {
+        var world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated) return;
+
+        var em = world.EntityManager;
+
+        // Destroy all remaining asteroids
+        var asteroidQuery = em.CreateEntityQuery(typeof(AsteroidTag));
+        em.DestroyEntity(asteroidQuery);
+
+        // Destroy all remaining minerals
+        var mineralQuery = em.CreateEntityQuery(typeof(MineralTag));
+        em.DestroyEntity(mineralQuery);
+
+        // Reset timer (credits stay persistent)
+        var gameStateQuery = em.CreateEntityQuery(typeof(GameStateData));
+        if (gameStateQuery.CalculateEntityCount() > 0)
+        {
+            var entity = gameStateQuery.GetSingletonEntity();
+            var data = em.GetComponentData<GameStateData>(entity);
+            data.Timer = GameConstants.DefaultRunDuration;
+            em.SetComponentData(entity, data);
+        }
+
+        Debug.Log("ResetRun: Cleared entities and reset timer for new run");
     }
 
     private void WritePhaseToECS(GamePhase phase)

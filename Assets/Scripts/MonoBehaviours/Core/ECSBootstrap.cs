@@ -14,7 +14,7 @@ public class ECSBootstrap : MonoBehaviour
         em.SetComponentData(gameStateEntity, new GameStateData
         {
             Phase = GamePhase.Playing,
-            Timer = 0f,
+            Timer = GameConstants.DefaultRunDuration,
             Credits = 0
         });
 
