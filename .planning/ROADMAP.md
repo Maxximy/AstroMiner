@@ -66,8 +66,8 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 03-01-PLAN.md -- Mineral ECS lifecycle: spawn from destroyed asteroids, pull toward ship, collect on contact, award credits, render via pooled GameObjects
-- [ ] 03-02-PLAN.md -- Session flow: timed runs with HUD (credits + timer), phase transitions, results screen, upgrade placeholder, run reset
+- [x] 03-01-PLAN.md -- Mineral ECS lifecycle: spawn from destroyed asteroids, pull toward ship, collect on contact, award credits, render via pooled GameObjects
+- [x] 03-02-PLAN.md -- Session flow: timed runs with HUD (credits + timer), phase transitions, results screen, upgrade placeholder, run reset
 - [ ] 03-03-PLAN.md -- Save system: JSON persistence with auto-save on run end, credit restoration on game start, WebGL IndexedDB compatibility
 
 ### Phase 4: Visual and Audio Feedback
@@ -127,11 +127,11 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 |-------|---------------|--------|-----------|
 | 1. Foundation and WebGL Validation | 2/2 | Complete | 2026-02-17 |
 | 2. Core Mining Loop | 0/2 | Complete    | 2026-02-17 |
-| 3. Collection, Economy, and Session | 0/3 | Not started | - |
+| 3. Collection, Economy, and Session | 2/3 | In progress | - |
 | 4. Visual and Audio Feedback | 0/2 | Not started | - |
 | 5. Ship Skills and Advanced Damage | 0/2 | Not started | - |
 | 6. Tech Tree and Level Progression | 0/2 | Not started | - |
 
 ---
 *Roadmap created: 2026-02-17*
-*Last updated: 2026-02-17 (Phase 1 complete)*
+*Last updated: 2026-02-17 (Phase 3 Plan 2 complete)*

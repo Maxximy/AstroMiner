@@ -43,18 +43,18 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Economy
 
 - [x] **ECON-01**: Credits are the universal currency converted from all collected minerals
-- [ ] **ECON-02**: Running credit total displayed during gameplay
-- [ ] **ECON-03**: Credits persist between runs and are spent in the tech tree
+- [x] **ECON-02**: Running credit total displayed during gameplay
+- [x] **ECON-03**: Credits persist between runs and are spent in the tech tree
 - [x] **ECON-04**: Credit values per resource tier are data-driven (ScriptableObject/config)
 
 ### Session
 
-- [ ] **SESS-01**: Timed mining runs with visible countdown timer
-- [ ] **SESS-02**: When timer expires, transition to Collecting state (no more damage, minerals still pulled)
-- [ ] **SESS-03**: When all minerals collected, transition to GameOver with results screen
-- [ ] **SESS-04**: Results screen shows credits earned this run
-- [ ] **SESS-05**: Player can proceed to Upgrade screen from results
-- [ ] **SESS-06**: Player can start new run from Upgrade screen
+- [x] **SESS-01**: Timed mining runs with visible countdown timer
+- [x] **SESS-02**: When timer expires, transition to Collecting state (no more damage, minerals still pulled)
+- [x] **SESS-03**: When all minerals collected, transition to GameOver with results screen
+- [x] **SESS-04**: Results screen shows credits earned this run
+- [x] **SESS-05**: Player can proceed to Upgrade screen from results
+- [x] **SESS-06**: Player can start new run from Upgrade screen
 
 ### Tech Tree
 
@@ -202,15 +202,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MINR-03 | Phase 3 | Complete |
 | MINR-04 | Phase 3 | Complete |
 | ECON-01 | Phase 3 | Complete |
-| ECON-02 | Phase 3 | Pending |
-| ECON-03 | Phase 3 | Pending |
+| ECON-02 | Phase 3 | Complete |
+| ECON-03 | Phase 3 | Complete |
 | ECON-04 | Phase 3 | Complete |
-| SESS-01 | Phase 3 | Pending |
-| SESS-02 | Phase 3 | Pending |
-| SESS-03 | Phase 3 | Pending |
-| SESS-04 | Phase 3 | Pending |
-| SESS-05 | Phase 3 | Pending |
-| SESS-06 | Phase 3 | Pending |
+| SESS-01 | Phase 3 | Complete |
+| SESS-02 | Phase 3 | Complete |
+| SESS-03 | Phase 3 | Complete |
+| SESS-04 | Phase 3 | Complete |
+| SESS-05 | Phase 3 | Complete |
+| SESS-06 | Phase 3 | Complete |
 | SAVE-01 | Phase 3 | Pending |
 | SAVE-02 | Phase 3 | Pending |
 | SAVE-03 | Phase 3 | Pending |
