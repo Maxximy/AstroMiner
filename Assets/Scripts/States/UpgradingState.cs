@@ -6,7 +6,7 @@ public class UpgradingState : IGameState
     {
         Debug.Log("Entering Upgrading state");
 
-        var upgradeScreen = Object.FindAnyObjectByType<UpgradeScreen>();
+        var upgradeScreen = Object.FindAnyObjectByType<UpgradeScreen>(FindObjectsInactive.Include);
         if (upgradeScreen != null)
         {
             upgradeScreen.Show();
@@ -24,7 +24,7 @@ public class UpgradingState : IGameState
 
     public void Exit(GameManager manager)
     {
-        var upgradeScreen = Object.FindAnyObjectByType<UpgradeScreen>();
+        var upgradeScreen = Object.FindAnyObjectByType<UpgradeScreen>(FindObjectsInactive.Include);
         if (upgradeScreen != null)
         {
             upgradeScreen.Hide();

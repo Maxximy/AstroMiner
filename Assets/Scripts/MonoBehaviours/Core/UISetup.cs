@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 using TMPro;
 
 /// <summary>
@@ -17,11 +19,21 @@ public class UISetup : MonoBehaviour
 
     void Awake()
     {
+        EnsureEventSystem();
         CreateFadeCanvas();
         CreateDebugCanvas();
         CreateHUDCanvas();
         CreateResultsCanvas();
         CreateUpgradeCanvas();
+    }
+
+    private void EnsureEventSystem()
+    {
+        if (FindAnyObjectByType<EventSystem>() != null) return;
+
+        var esGO = new GameObject("EventSystem");
+        esGO.AddComponent<EventSystem>();
+        esGO.AddComponent<InputSystemUIInputModule>();
     }
 
     private void CreateFadeCanvas()

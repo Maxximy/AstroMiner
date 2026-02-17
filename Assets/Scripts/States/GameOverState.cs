@@ -9,7 +9,7 @@ public class GameOverState : IGameState
         // Auto-save credits at end of every run (SAVE-02)
         SaveManager.Instance?.AutoSave();
 
-        var resultsScreen = Object.FindAnyObjectByType<ResultsScreen>();
+        var resultsScreen = Object.FindAnyObjectByType<ResultsScreen>(FindObjectsInactive.Include);
         if (resultsScreen != null)
         {
             resultsScreen.Show();
@@ -27,7 +27,7 @@ public class GameOverState : IGameState
 
     public void Exit(GameManager manager)
     {
-        var resultsScreen = Object.FindAnyObjectByType<ResultsScreen>();
+        var resultsScreen = Object.FindAnyObjectByType<ResultsScreen>(FindObjectsInactive.Include);
         if (resultsScreen != null)
         {
             resultsScreen.Hide();

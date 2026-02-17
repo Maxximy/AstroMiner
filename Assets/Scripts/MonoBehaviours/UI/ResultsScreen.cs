@@ -90,6 +90,7 @@ public class ResultsScreen : MonoBehaviour
 
     private void OnContinueClicked()
     {
+        Debug.Log("continue");
         GameManager.Instance.TransitionTo(GamePhase.Upgrading);
     }
 }
