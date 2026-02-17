@@ -10,7 +10,6 @@ using Unity.Transforms;
 [BurstCompile]
 public partial struct AsteroidBoundsSystem : ISystem
 {
-    [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<GameStateData>();

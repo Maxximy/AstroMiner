@@ -14,7 +14,6 @@ public partial struct AsteroidSpawnSystem : ISystem
     private Unity.Mathematics.Random _rng;
     private EntityQuery _asteroidQuery;
 
-    [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         // Seed the RNG with a non-zero value
