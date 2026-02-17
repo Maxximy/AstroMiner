@@ -10,28 +10,29 @@ See: .planning/PROJECT.md (updated 2026-02-17)
 ## Current Position
 
 Phase: 2 of 6 (Core Mining Loop)
-Plan: 0 of 2 in current phase
-Status: Ready to plan
-Last activity: 2026-02-17 -- Completed 01-02 Game State Machine, Object Pooling, and WebGL Validation
+Plan: 1 of 2 in current phase
+Status: Executing
+Last activity: 2026-02-17 -- Completed 02-01 Asteroid Lifecycle (spawn, drift, destroy, render)
 
-Progress: [####░░░░░░] 17%
+Progress: [#####░░░░░] 25%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
-- Average duration: 6 min
-- Total execution time: 0.2 hours
+- Total plans completed: 3
+- Average duration: 5 min
+- Total execution time: 0.25 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation-webgl-validation | 2 | 12 min | 6 min |
+| 02-core-mining-loop | 1 | 3 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (4 min), 01-02 (8 min)
-- Trend: -
+- Last 5 plans: 01-01 (4 min), 01-02 (8 min), 02-01 (3 min)
+- Trend: improving
 
 *Updated after each plan completion*
 
@@ -52,6 +53,10 @@ Recent decisions affecting current work:
 - UISetup creates all UI hierarchy programmatically -- no manual scene editor work needed (01-02)
 - PlaceholderRenderer syncs ECS transforms to pooled GameObjects in MonoBehaviour LateUpdate (01-02)
 - **NEW INPUT SYSTEM ONLY:** User mandates UnityEngine.InputSystem (new) exclusively -- UnityEngine.Input (legacy) must NOT be used. InputBridge needs migration. (01-02)
+- XZ plane coordinate system for all Phase 2+ entities, aligning with InputBridge mouse projection (02-01)
+- Placeholder systems disabled (not deleted) to preserve DriftData/SpinData component definitions (02-01)
+- AsteroidMovementSystem uses WithAll<AsteroidTag> filter to scope jobs to asteroid entities only (02-01)
+- GameConstants static class with const fields for Burst-accessible tuning values (02-01)
 
 ### Pending Todos
 
@@ -65,5 +70,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Completed 01-02-PLAN.md (Game State Machine, Object Pooling, WebGL Validation) -- Phase 1 COMPLETE
-Resume file: .planning/phases/01-foundation-webgl-validation/01-02-SUMMARY.md
+Stopped at: Completed 02-01-PLAN.md (Asteroid Lifecycle) -- ready for 02-02 (Mining Circle)
+Resume file: .planning/phases/02-core-mining-loop/02-01-SUMMARY.md
