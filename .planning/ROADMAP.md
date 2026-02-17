@@ -63,12 +63,12 @@ Plans:
   3. A visible countdown timer controls the run; when it expires, mining stops but minerals still fly to the ship, then a results screen shows credits earned
   4. Player can proceed from results to an upgrade screen and start a new run from there
   5. Game state (credits, progress) persists across browser refreshes on WebGL and application restarts on desktop
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 03-01: Mineral particle release, pull physics, and collection
-- [ ] 03-02: Economy, HUD, and session flow (timer, results, transitions)
-- [ ] 03-03: Save system with WebGL IndexedDB persistence
+- [ ] 03-01-PLAN.md -- Mineral ECS lifecycle: spawn from destroyed asteroids, pull toward ship, collect on contact, award credits, render via pooled GameObjects
+- [ ] 03-02-PLAN.md -- Session flow: timed runs with HUD (credits + timer), phase transitions, results screen, upgrade placeholder, run reset
+- [ ] 03-03-PLAN.md -- Save system: JSON persistence with auto-save on run end, credit restoration on game start, WebGL IndexedDB compatibility
 
 ### Phase 4: Visual and Audio Feedback
 **Goal**: The game transforms from functional to satisfying -- every mining hit, destruction, collection, and critical moment has visual and audio feedback that makes the player feel powerful
