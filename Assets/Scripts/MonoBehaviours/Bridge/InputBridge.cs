@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Unity.Entities;
 using Unity.Mathematics;
 
@@ -24,7 +25,7 @@ public class InputBridge : MonoBehaviour
 
     void Update()
     {
-        var mousePos = Input.mousePosition;
+        var mousePos = Mouse.current != null ? Mouse.current.position.ReadValue() : Vector2.zero;
         var ray = _mainCamera.ScreenPointToRay(mousePos);
 
         var inputData = new InputData();
