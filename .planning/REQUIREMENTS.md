@@ -35,17 +35,17 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Minerals
 
-- [ ] **MINR-01**: Destroyed asteroids release mineral particles (children detach)
-- [ ] **MINR-02**: Detached minerals accelerate toward the player's ship
-- [ ] **MINR-03**: Minerals collected on contact with ship award credits based on resource tier
-- [ ] **MINR-04**: Mineral particles have tier-based visual appearance (color, emissive glow for rare)
+- [x] **MINR-01**: Destroyed asteroids release mineral particles (children detach)
+- [x] **MINR-02**: Detached minerals accelerate toward the player's ship
+- [x] **MINR-03**: Minerals collected on contact with ship award credits based on resource tier
+- [x] **MINR-04**: Mineral particles have tier-based visual appearance (color, emissive glow for rare)
 
 ### Economy
 
-- [ ] **ECON-01**: Credits are the universal currency converted from all collected minerals
+- [x] **ECON-01**: Credits are the universal currency converted from all collected minerals
 - [ ] **ECON-02**: Running credit total displayed during gameplay
 - [ ] **ECON-03**: Credits persist between runs and are spent in the tech tree
-- [ ] **ECON-04**: Credit values per resource tier are data-driven (ScriptableObject/config)
+- [x] **ECON-04**: Credit values per resource tier are data-driven (ScriptableObject/config)
 
 ### Session
 
@@ -197,14 +197,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ASTR-04 | Phase 2 | Pending |
 | ASTR-05 | Phase 2 | Pending |
 | VISL-05 | Phase 2 | Pending |
-| MINR-01 | Phase 3 | Pending |
-| MINR-02 | Phase 3 | Pending |
-| MINR-03 | Phase 3 | Pending |
-| MINR-04 | Phase 3 | Pending |
-| ECON-01 | Phase 3 | Pending |
+| MINR-01 | Phase 3 | Complete |
+| MINR-02 | Phase 3 | Complete |
+| MINR-03 | Phase 3 | Complete |
+| MINR-04 | Phase 3 | Complete |
+| ECON-01 | Phase 3 | Complete |
 | ECON-02 | Phase 3 | Pending |
 | ECON-03 | Phase 3 | Pending |
-| ECON-04 | Phase 3 | Pending |
+| ECON-04 | Phase 3 | Complete |
 | SESS-01 | Phase 3 | Pending |
 | SESS-02 | Phase 3 | Pending |
 | SESS-03 | Phase 3 | Pending |

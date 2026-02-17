@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value:** The mining-collecting-upgrading loop must feel satisfying -- hovering the circle over asteroids, watching them break apart, collecting minerals, and spending credits on meaningful upgrades that make the next run noticeably better.
-**Current focus:** Phase 2 - Core Mining Loop (COMPLETE)
+**Current focus:** Phase 3 - Collection, Economy & Session (IN PROGRESS)
 
 ## Current Position
 
-Phase: 2 of 6 (Core Mining Loop) -- COMPLETE
-Plan: 2 of 2 in current phase (all plans complete)
-Status: Phase Complete
-Last activity: 2026-02-17 -- Completed 02-02 Mining Circle & Damage (core mining interaction verified)
+Phase: 3 of 6 (Collection, Economy & Session)
+Plan: 1 of 3 in current phase (03-01 complete)
+Status: Executing
+Last activity: 2026-02-17 -- Completed 03-01 Mineral Collection Pipeline
 
-Progress: [######░░░░] 33%
+Progress: [#######░░░] 42%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
-- Average duration: 8 min
-- Total execution time: 0.5 hours
+- Total plans completed: 5
+- Average duration: 7 min
+- Total execution time: 0.6 hours
 
 **By Phase:**
 
@@ -29,10 +29,11 @@ Progress: [######░░░░] 33%
 |-------|-------|-------|----------|
 | 01-foundation-webgl-validation | 2 | 12 min | 6 min |
 | 02-core-mining-loop | 2 | 28 min | 14 min |
+| 03-collection-economy-and-session | 1 | 3 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (4 min), 01-02 (8 min), 02-01 (3 min), 02-02 (25 min)
-- Trend: stable (02-02 longer due to checkpoint verification)
+- Last 5 plans: 01-02 (8 min), 02-01 (3 min), 02-02 (25 min), 03-01 (3 min)
+- Trend: fast execution for component-heavy plans without checkpoints
 
 *Updated after each plan completion*
 
@@ -61,6 +62,10 @@ Recent decisions affecting current work:
 - Unit-circle positions in LineRenderer scaled by transform.localScale from MiningConfigData.Radius (02-02)
 - Debug key shortcuts removed from GameManager; mining interaction is the core gameplay (02-02)
 - [BurstCompile] must NOT be on OnCreate methods in ISystem structs (causes compilation errors) (02-02)
+- Direct GameStateData.Credits increment in MineralCollectionSystem (DynamicBuffer events deferred to Phase 4) (03-01)
+- MineralsSpawnedTag prevents double-spawn from ECB one-frame delay (03-01)
+- Gold/amber mineral color to distinguish from dark asteroid palette (03-01)
+- MineralRenderer pool: 200 pre-warm, 1200 max for 1000+ mineral scalability (03-01)
 
 ### Pending Todos
 
@@ -74,5 +79,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Completed 02-02-PLAN.md (Mining Circle & Damage) -- Phase 2 complete, ready for Phase 3 (Collection, Economy, Session)
-Resume file: .planning/phases/02-core-mining-loop/02-02-SUMMARY.md
+Stopped at: Completed 03-01-PLAN.md (Mineral Collection Pipeline) -- Ready for 03-02 (Session Timer & Economy HUD)
+Resume file: .planning/phases/03-collection-economy-and-session/03-01-SUMMARY.md
