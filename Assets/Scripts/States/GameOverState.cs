@@ -6,6 +6,9 @@ public class GameOverState : IGameState
     {
         Debug.Log("Entering GameOver state");
 
+        // Auto-save credits at end of every run (SAVE-02)
+        SaveManager.Instance?.AutoSave();
+
         var resultsScreen = Object.FindAnyObjectByType<ResultsScreen>();
         if (resultsScreen != null)
         {

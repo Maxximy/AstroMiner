@@ -7,6 +7,12 @@ public class PlayingState : IGameState
     private Entity _gameStateEntity;
     private bool _resolved;
 
+    /// <summary>
+    /// Static flag ensuring saved credits are loaded into ECS only once per session.
+    /// Persists across state re-entries within the same application lifetime.
+    /// </summary>
+    private static bool _saveLoaded = false;
+
     public void Enter(GameManager manager)
     {
         Debug.Log("Entering Playing state");
@@ -28,6 +34,13 @@ public class PlayingState : IGameState
 
         _gameStateEntity = query.GetSingletonEntity();
         _resolved = true;
+
+        // On first run of the session, load saved credits from prior session
+        if (!_saveLoaded)
+        {
+            SaveManager.Instance?.LoadIntoECS();
+            _saveLoaded = true;
+        }
 
         // Initialize timer for this run
         var data = _em.GetComponentData<GameStateData>(_gameStateEntity);
