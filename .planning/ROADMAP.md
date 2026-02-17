@@ -47,11 +47,11 @@ Plans:
   3. Asteroids within the mining circle take tick-based damage, and their HP depletes at the configured rate
   4. Asteroids with 0 HP are destroyed (removed from play) with the destruction visible on screen
   5. Ship is visible at bottom of screen as a stationary reference point
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 02-01: Asteroid spawning, drifting, and lifecycle
-- [ ] 02-02: Mining circle, damage system, and visual feedback
+- [ ] 02-01-PLAN.md -- Asteroid ECS systems (spawn, drift, bounds, destruction), AsteroidRenderer, ship visual, coordinate system transition to XZ plane
+- [ ] 02-02-PLAN.md -- Mining circle visual (LineRenderer + HDR bloom), tick-based AoE damage system, mining interaction verification
 
 ### Phase 3: Collection, Economy, and Session
 **Goal**: The core game loop closes -- destroyed asteroids release minerals that fly to the ship, credits accumulate, timed runs end with a results screen, and all progress persists between sessions
