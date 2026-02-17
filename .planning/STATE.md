@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value:** The mining-collecting-upgrading loop must feel satisfying -- hovering the circle over asteroids, watching them break apart, collecting minerals, and spending credits on meaningful upgrades that make the next run noticeably better.
-**Current focus:** Phase 3 - Collection, Economy & Session (IN PROGRESS)
+**Current focus:** Phase 3 - Collection, Economy & Session (COMPLETE)
 
 ## Current Position
 
 Phase: 3 of 6 (Collection, Economy & Session)
-Plan: 2 of 3 in current phase (03-02 complete)
-Status: Executing
-Last activity: 2026-02-17 -- Completed 03-02 Session Timer & Economy HUD
+Plan: 3 of 3 in current phase (03-03 complete -- PHASE COMPLETE)
+Status: Phase Complete
+Last activity: 2026-02-17 -- Completed 03-03 Save System & Persistence
 
-Progress: [########░░] 50%
+Progress: [#########░] 58%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
+- Total plans completed: 7
 - Average duration: 7 min
-- Total execution time: 0.7 hours
+- Total execution time: 0.8 hours
 
 **By Phase:**
 
@@ -29,10 +29,10 @@ Progress: [########░░] 50%
 |-------|-------|-------|----------|
 | 01-foundation-webgl-validation | 2 | 12 min | 6 min |
 | 02-core-mining-loop | 2 | 28 min | 14 min |
-| 03-collection-economy-and-session | 2 | 7 min | 3.5 min |
+| 03-collection-economy-and-session | 3 | 11 min | 3.7 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (8 min), 02-01 (3 min), 02-02 (25 min), 03-01 (3 min), 03-02 (4 min)
+- Last 5 plans: 02-01 (3 min), 02-02 (25 min), 03-01 (3 min), 03-02 (4 min), 03-03 (4 min)
 - Trend: fast execution for component-heavy plans without checkpoints
 
 *Updated after each plan completion*
@@ -70,6 +70,10 @@ Recent decisions affecting current work:
 - CollectingState 2-second grace period handles ECB entity destruction delay edge case (03-02)
 - UISetup CreateButton helper for consistent programmatic button creation (03-02)
 - HUD visibility toggled by SetActive on root GameObject based on game phase (03-02)
+- SaveManager self-instantiates via [RuntimeInitializeOnLoadMethod] -- no manual scene setup required (03-03)
+- File.IO primary with PlayerPrefs fallback for save robustness across all platforms (03-03)
+- Save schema pre-includes Phase 6 placeholder fields (TechTreeUnlocks, PlayerStatsData) to avoid future migration (03-03)
+- Static _saveLoaded flag in PlayingState ensures credits load exactly once per session (03-03)
 
 ### Pending Todos
 
@@ -83,5 +87,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Completed 03-02-PLAN.md (Session Timer & Economy HUD) -- Ready for 03-03 (Save System & Persistence)
-Resume file: .planning/phases/03-collection-economy-and-session/03-02-SUMMARY.md
+Stopped at: Completed 03-03-PLAN.md (Save System & Persistence) -- Phase 3 COMPLETE. Ready for Phase 4 (Visual & Audio Feedback)
+Resume file: .planning/phases/03-collection-economy-and-session/03-03-SUMMARY.md

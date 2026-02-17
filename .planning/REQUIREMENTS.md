@@ -118,11 +118,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Persistence
 
-- [ ] **SAVE-01**: Game state saves to JSON in Application.persistentDataPath
-- [ ] **SAVE-02**: Auto-save triggers on run end and on every tech tree purchase
-- [ ] **SAVE-03**: Save includes credits, tech tree unlock state, current level, player stats
-- [ ] **SAVE-04**: WebGL builds use .jslib plugin to flush IndexedDB after each save
-- [ ] **SAVE-05**: Save file includes version number for future migration support
+- [x] **SAVE-01**: Game state saves to JSON in Application.persistentDataPath
+- [x] **SAVE-02**: Auto-save triggers on run end and on every tech tree purchase
+- [x] **SAVE-03**: Save includes credits, tech tree unlock state, current level, player stats
+- [x] **SAVE-04**: WebGL builds use .jslib plugin to flush IndexedDB after each save
+- [x] **SAVE-05**: Save file includes version number for future migration support
 
 ### Visuals
 
@@ -211,11 +211,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SESS-04 | Phase 3 | Complete |
 | SESS-05 | Phase 3 | Complete |
 | SESS-06 | Phase 3 | Complete |
-| SAVE-01 | Phase 3 | Pending |
-| SAVE-02 | Phase 3 | Pending |
-| SAVE-03 | Phase 3 | Pending |
-| SAVE-04 | Phase 3 | Pending |
-| SAVE-05 | Phase 3 | Pending |
+| SAVE-01 | Phase 3 | Complete |
+| SAVE-02 | Phase 3 | Complete |
+| SAVE-03 | Phase 3 | Complete |
+| SAVE-04 | Phase 3 | Complete |
+| SAVE-05 | Phase 3 | Complete |
 | FEED-01 | Phase 4 | Pending |
 | FEED-02 | Phase 4 | Pending |
 | FEED-03 | Phase 4 | Pending |
