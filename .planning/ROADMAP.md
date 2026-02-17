@@ -31,11 +31,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Mouse position is projected to world space and readable by ECS systems every frame (InputBridge writes to ECS singleton)
   4. Object pool pre-allocates and recycles GameObjects without runtime instantiation during gameplay
   5. Starfield skybox and URP post-processing (bloom, tonemapping) render correctly on both desktop and WebGL
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 01-01: ECS world bootstrap and hybrid bridge layer
-- [ ] 01-02: Game state machine, object pooling, and WebGL validation
+- [ ] 01-01-PLAN.md -- ECS bootstrap, singleton components, InputBridge, NumberFormatter, skybox, and URP post-processing
+- [ ] 01-02-PLAN.md -- Game state machine with fade transitions, object pooling, placeholder entities with ECS movement, debug overlay, and WebGL 60 FPS validation
 
 ### Phase 2: Core Mining Loop
 **Goal**: Player can hover a mining circle over asteroids that drift down the screen, watch them take damage and break apart -- the fundamental interaction that the entire game depends on
