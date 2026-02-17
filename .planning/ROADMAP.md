@@ -13,7 +13,7 @@ Astrominer delivers a satisfying mining-collecting-upgrading loop across six pha
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation and WebGL Validation** - ECS world, game state machine, bridge layer, object pooling, and WebGL performance confirmation _(completed 2026-02-17)_
-- [ ] **Phase 2: Core Mining Loop** - Asteroids spawn and drift, mining circle follows mouse and damages them, playable mining
+- [x] **Phase 2: Core Mining Loop** - Asteroids spawn and drift, mining circle follows mouse and damages them, playable mining (completed 2026-02-17)
 - [ ] **Phase 3: Collection, Economy, and Session** - Minerals fly to ship, credits awarded, timed runs with results, persistent save system
 - [ ] **Phase 4: Visual and Audio Feedback** - Damage numbers, particle effects, screen shake, audio SFX, space aesthetic polish
 - [ ] **Phase 5: Ship Skills and Advanced Damage** - Four active skills, critical hits, damage-over-time, skill bar UI
@@ -126,7 +126,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | Phase | Plans Complete | Status | Completed |
 |-------|---------------|--------|-----------|
 | 1. Foundation and WebGL Validation | 2/2 | Complete | 2026-02-17 |
-| 2. Core Mining Loop | 0/2 | Not started | - |
+| 2. Core Mining Loop | 0/2 | Complete    | 2026-02-17 |
 | 3. Collection, Economy, and Session | 0/3 | Not started | - |
 | 4. Visual and Audio Feedback | 0/2 | Not started | - |
 | 5. Ship Skills and Advanced Damage | 0/2 | Not started | - |
