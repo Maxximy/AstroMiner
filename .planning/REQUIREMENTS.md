@@ -178,13 +178,95 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| *(populated by roadmapper)* | | |
+| INFRA-01 | Phase 1 | Pending |
+| INFRA-02 | Phase 1 | Pending |
+| INFRA-03 | Phase 1 | Pending |
+| INFRA-04 | Phase 1 | Pending |
+| INFRA-05 | Phase 1 | Pending |
+| INFRA-06 | Phase 1 | Pending |
+| VISL-01 | Phase 1 | Pending |
+| VISL-02 | Phase 1 | Pending |
+| MINE-01 | Phase 2 | Pending |
+| MINE-02 | Phase 2 | Pending |
+| MINE-03 | Phase 2 | Pending |
+| MINE-04 | Phase 2 | Pending |
+| MINE-05 | Phase 2 | Pending |
+| ASTR-01 | Phase 2 | Pending |
+| ASTR-02 | Phase 2 | Pending |
+| ASTR-03 | Phase 2 | Pending |
+| ASTR-04 | Phase 2 | Pending |
+| ASTR-05 | Phase 2 | Pending |
+| VISL-05 | Phase 2 | Pending |
+| MINR-01 | Phase 3 | Pending |
+| MINR-02 | Phase 3 | Pending |
+| MINR-03 | Phase 3 | Pending |
+| MINR-04 | Phase 3 | Pending |
+| ECON-01 | Phase 3 | Pending |
+| ECON-02 | Phase 3 | Pending |
+| ECON-03 | Phase 3 | Pending |
+| ECON-04 | Phase 3 | Pending |
+| SESS-01 | Phase 3 | Pending |
+| SESS-02 | Phase 3 | Pending |
+| SESS-03 | Phase 3 | Pending |
+| SESS-04 | Phase 3 | Pending |
+| SESS-05 | Phase 3 | Pending |
+| SESS-06 | Phase 3 | Pending |
+| SAVE-01 | Phase 3 | Pending |
+| SAVE-02 | Phase 3 | Pending |
+| SAVE-03 | Phase 3 | Pending |
+| SAVE-04 | Phase 3 | Pending |
+| SAVE-05 | Phase 3 | Pending |
+| FEED-01 | Phase 4 | Pending |
+| FEED-02 | Phase 4 | Pending |
+| FEED-03 | Phase 4 | Pending |
+| FEED-04 | Phase 4 | Pending |
+| FEED-05 | Phase 4 | Pending |
+| FEED-06 | Phase 4 | Pending |
+| FEED-07 | Phase 4 | Pending |
+| FEED-08 | Phase 4 | Pending |
+| AUDI-01 | Phase 4 | Pending |
+| AUDI-02 | Phase 4 | Pending |
+| AUDI-03 | Phase 4 | Pending |
+| AUDI-04 | Phase 4 | Pending |
+| AUDI-05 | Phase 4 | Pending |
+| AUDI-06 | Phase 4 | Pending |
+| AUDI-07 | Phase 4 | Pending |
+| AUDI-08 | Phase 4 | Pending |
+| VISL-03 | Phase 4 | Pending |
+| VISL-04 | Phase 4 | Pending |
+| SKIL-01 | Phase 5 | Pending |
+| SKIL-02 | Phase 5 | Pending |
+| SKIL-03 | Phase 5 | Pending |
+| SKIL-04 | Phase 5 | Pending |
+| SKIL-05 | Phase 5 | Pending |
+| SKIL-06 | Phase 5 | Pending |
+| SKIL-07 | Phase 5 | Pending |
+| SKIL-08 | Phase 5 | Pending |
+| DMGS-01 | Phase 5 | Pending |
+| DMGS-02 | Phase 5 | Pending |
+| DMGS-03 | Phase 5 | Pending |
+| TECH-01 | Phase 6 | Pending |
+| TECH-02 | Phase 6 | Pending |
+| TECH-03 | Phase 6 | Pending |
+| TECH-04 | Phase 6 | Pending |
+| TECH-05 | Phase 6 | Pending |
+| TECH-06 | Phase 6 | Pending |
+| TECH-07 | Phase 6 | Pending |
+| TECH-08 | Phase 6 | Pending |
+| TECH-09 | Phase 6 | Pending |
+| TECH-10 | Phase 6 | Pending |
+| LEVL-01 | Phase 6 | Pending |
+| LEVL-02 | Phase 6 | Pending |
+| LEVL-03 | Phase 6 | Pending |
+| LEVL-04 | Phase 6 | Pending |
+| LEVL-05 | Phase 6 | Pending |
+| ASTR-06 | Phase 6 | Pending |
 
 **Coverage:**
-- v1 requirements: 60 total
-- Mapped to phases: 0
-- Unmapped: 60 ⚠️
+- v1 requirements: 83 total
+- Mapped to phases: 83
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-17*
-*Last updated: 2026-02-17 after initial definition*
+*Last updated: 2026-02-17 after roadmap creation*
