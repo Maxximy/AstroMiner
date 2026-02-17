@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using Unity.Entities;
 
 public class GameManager : MonoBehaviour
@@ -58,16 +57,6 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         _currentState?.Execute(this);
-
-        // TODO: Remove in Phase 2 -- temporary testing shortcuts
-        var kb = Keyboard.current;
-        if (kb != null)
-        {
-            if (kb.digit1Key.wasPressedThisFrame) TransitionTo(GamePhase.Playing);
-            if (kb.digit2Key.wasPressedThisFrame) TransitionTo(GamePhase.Collecting);
-            if (kb.digit3Key.wasPressedThisFrame) TransitionTo(GamePhase.GameOver);
-            if (kb.digit4Key.wasPressedThisFrame) TransitionTo(GamePhase.Upgrading);
-        }
     }
 
     /// <summary>
