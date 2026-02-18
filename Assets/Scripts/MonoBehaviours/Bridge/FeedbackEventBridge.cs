@@ -21,6 +21,7 @@ namespace MonoBehaviours.Bridge
         private EntityQuery damageBufferQuery;
         private EntityQuery destructionBufferQuery;
         private EntityQuery collectionBufferQuery;
+        private EntityQuery skillBufferQuery;
         private bool initialized;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -55,12 +56,14 @@ namespace MonoBehaviours.Bridge
                 damageBufferQuery = em.CreateEntityQuery(typeof(DamageEvent));
                 destructionBufferQuery = em.CreateEntityQuery(typeof(DestructionEvent));
                 collectionBufferQuery = em.CreateEntityQuery(typeof(CollectionEvent));
+                skillBufferQuery = em.CreateEntityQuery(typeof(SkillEvent));
                 initialized = true;
             }
 
             DrainDamageEvents();
             DrainDestructionEvents();
             DrainCollectionEvents();
+            DrainSkillEvents();
         }
 
         private void DrainDamageEvents()
@@ -80,10 +83,11 @@ namespace MonoBehaviours.Bridge
                 // Audio: mining hit SFX
                 AudioManager.Instance?.PlayDamageHit(pos);
 
-                // Screen shake on critical hits (Phase 5 will produce these)
+                // Crit sound on critical hits (no screen shake -- user decision)
                 if (evt.Type == DamageType.Critical)
                 {
-                    CameraShake.Instance?.Shake();
+                    AudioManager.Instance?.PlayCritHit(pos);
+                    // NOTE: No CameraShake on crits -- user decision: "no extra screen flash or shake"
                 }
             }
             buffer.Clear();
@@ -121,6 +125,49 @@ namespace MonoBehaviours.Bridge
 
                 // Audio: collection chime (batched)
                 AudioManager.Instance?.QueueCollectionChime(evt.ResourceTier);
+            }
+            buffer.Clear();
+        }
+
+        private void DrainSkillEvents()
+        {
+            if (skillBufferQuery.CalculateEntityCount() == 0) return;
+            var entity = skillBufferQuery.GetSingletonEntity();
+            var buffer = em.GetBuffer<SkillEvent>(entity);
+
+            for (int i = 0; i < buffer.Length; i++)
+            {
+                var evt = buffer[i];
+                switch (evt.SkillType)
+                {
+                    case 0: // Laser Burst
+                        SkillVFXManager.Instance?.PlayLaserBurst(
+                            new Vector3(evt.OriginPos.x, 0.1f, evt.OriginPos.y),
+                            new Vector3(evt.TargetPos.x, 0.1f, evt.TargetPos.y));
+                        AudioManager.Instance?.PlaySkillSfx(0);
+                        break;
+                    case 1: // Chain Lightning
+                        var targets = new Vector3[evt.ChainCount + 1];
+                        targets[0] = new Vector3(evt.TargetPos.x, 0.1f, evt.TargetPos.y);
+                        if (evt.ChainCount >= 1) targets[1] = new Vector3(evt.Chain1.x, 0.1f, evt.Chain1.y);
+                        if (evt.ChainCount >= 2) targets[2] = new Vector3(evt.Chain2.x, 0.1f, evt.Chain2.y);
+                        if (evt.ChainCount >= 3) targets[3] = new Vector3(evt.Chain3.x, 0.1f, evt.Chain3.y);
+                        if (evt.ChainCount >= 4) targets[4] = new Vector3(evt.Chain4.x, 0.1f, evt.Chain4.y);
+                        SkillVFXManager.Instance?.PlayChainLightning(
+                            new Vector3(evt.OriginPos.x, 0.1f, evt.OriginPos.y),
+                            targets, evt.ChainCount + 1);
+                        AudioManager.Instance?.PlaySkillSfx(1);
+                        break;
+                    case 2: // EMP Pulse
+                        SkillVFXManager.Instance?.PlayEmpPulse(
+                            new Vector3(evt.TargetPos.x, 0.1f, evt.TargetPos.y));
+                        AudioManager.Instance?.PlaySkillSfx(2);
+                        break;
+                    case 3: // Overcharge
+                        SkillVFXManager.Instance?.PlayOverchargeActivation();
+                        AudioManager.Instance?.PlaySkillSfx(3);
+                        break;
+                }
             }
             buffer.Clear();
         }

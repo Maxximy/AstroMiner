@@ -20,6 +20,7 @@ namespace MonoBehaviours.Core
         public HUDController HUDController { get; private set; }
         public ResultsScreen ResultsScreen { get; private set; }
         public UpgradeScreen UpgradeScreen { get; private set; }
+        public SkillBarController SkillBarController { get; private set; }
 
         void Awake()
         {
@@ -29,6 +30,7 @@ namespace MonoBehaviours.Core
             CreateHUDCanvas();
             CreateResultsCanvas();
             CreateUpgradeCanvas();
+            CreateSkillBarCanvas();
         }
 
         private void EnsureEventSystem()
@@ -349,6 +351,159 @@ namespace MonoBehaviours.Core
             // UpgradeScreen component
             UpgradeScreen = upgradeCanvasGO.AddComponent<UpgradeScreen>();
             UpgradeScreen.Initialize(titleTMP, creditsTMP, startRunButton.GetComponent<Button>(), upgradeCanvasGO);
+        }
+
+        private void CreateSkillBarCanvas()
+        {
+            // SkillBarCanvas (ScreenSpace-Overlay, Sort Order 15 -- above HUD)
+            var skillBarCanvasGO = new GameObject("SkillBarCanvas");
+            skillBarCanvasGO.transform.SetParent(transform);
+
+            var skillBarCanvas = skillBarCanvasGO.AddComponent<Canvas>();
+            skillBarCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            skillBarCanvas.sortingOrder = 15;
+
+            var scaler = skillBarCanvasGO.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920, 1080);
+
+            skillBarCanvasGO.AddComponent<GraphicRaycaster>();
+
+            // Horizontal panel anchored bottom-center
+            var panelGO = new GameObject("SkillBarPanel");
+            panelGO.transform.SetParent(skillBarCanvasGO.transform, false);
+
+            var panelRect = panelGO.AddComponent<RectTransform>();
+            panelRect.anchorMin = new Vector2(0.5f, 0);
+            panelRect.anchorMax = new Vector2(0.5f, 0);
+            panelRect.pivot = new Vector2(0.5f, 0);
+            panelRect.anchoredPosition = new Vector2(0, 20);
+            panelRect.sizeDelta = new Vector2(320, 70);
+
+            var layoutGroup = panelGO.AddComponent<HorizontalLayoutGroup>();
+            layoutGroup.spacing = 8;
+            layoutGroup.childAlignment = TextAnchor.MiddleCenter;
+            layoutGroup.childControlWidth = false;
+            layoutGroup.childControlHeight = false;
+            layoutGroup.childForceExpandWidth = false;
+            layoutGroup.childForceExpandHeight = false;
+
+            // Skill icon colors and keybinds
+            Color[] iconColors =
+            {
+                new Color(0f, 1f, 1f, 0.8f),     // Slot 0 (Laser): Cyan
+                new Color(0.5f, 0.7f, 1f, 0.8f),  // Slot 1 (Chain): Blue
+                new Color(0.7f, 0.4f, 1f, 0.8f),  // Slot 2 (EMP): Purple
+                new Color(1f, 0.8f, 0f, 0.8f)      // Slot 3 (Overcharge): Gold
+            };
+            string[] keybinds = { "1", "2", "3", "4" };
+
+            var overlays = new Image[4];
+            var cooldownTexts = new TextMeshProUGUI[4];
+            var buttons = new Button[4];
+
+            for (int i = 0; i < 4; i++)
+            {
+                // Slot root with Button
+                var slotGO = new GameObject("SkillSlot_" + i);
+                slotGO.transform.SetParent(panelGO.transform, false);
+
+                var slotRect = slotGO.AddComponent<RectTransform>();
+                slotRect.sizeDelta = new Vector2(70, 70);
+
+                // Background image
+                var bgImage = slotGO.AddComponent<Image>();
+                bgImage.color = new Color(0.15f, 0.15f, 0.15f, 0.9f);
+
+                // Button component
+                var button = slotGO.AddComponent<Button>();
+                button.targetGraphic = bgImage;
+                button.onClick.AddListener(() => AudioManager.Instance?.PlayUIClick());
+                buttons[i] = button;
+
+                // Icon child
+                var iconGO = new GameObject("Icon");
+                iconGO.transform.SetParent(slotGO.transform, false);
+
+                var iconRect = iconGO.AddComponent<RectTransform>();
+                iconRect.anchorMin = new Vector2(0.5f, 0.5f);
+                iconRect.anchorMax = new Vector2(0.5f, 0.5f);
+                iconRect.pivot = new Vector2(0.5f, 0.5f);
+                iconRect.anchoredPosition = Vector2.zero;
+
+                var iconImage = iconGO.AddComponent<Image>();
+                iconImage.color = iconColors[i];
+                iconImage.raycastTarget = false;
+
+                // Skill-specific icon shapes
+                switch (i)
+                {
+                    case 0: // Laser: horizontal beam line
+                        iconRect.sizeDelta = new Vector2(50, 8);
+                        break;
+                    case 1: // Chain: blue filled square
+                        iconRect.sizeDelta = new Vector2(30, 30);
+                        break;
+                    case 2: // EMP: filled circle (using Image.Type.Simple for now)
+                        iconRect.sizeDelta = new Vector2(35, 35);
+                        break;
+                    case 3: // Overcharge: small gold rect
+                        iconRect.sizeDelta = new Vector2(25, 40);
+                        break;
+                }
+
+                // Cooldown overlay child (radial fill)
+                var overlayGO = new GameObject("CooldownOverlay");
+                overlayGO.transform.SetParent(slotGO.transform, false);
+
+                var overlayRect = overlayGO.AddComponent<RectTransform>();
+                overlayRect.anchorMin = Vector2.zero;
+                overlayRect.anchorMax = Vector2.one;
+                overlayRect.offsetMin = Vector2.zero;
+                overlayRect.offsetMax = Vector2.zero;
+
+                var overlayImage = overlayGO.AddComponent<Image>();
+                overlayImage.color = new Color(0f, 0f, 0f, 0.7f);
+                overlayImage.type = Image.Type.Filled;
+                overlayImage.fillMethod = Image.FillMethod.Radial360;
+                overlayImage.fillOrigin = (int)Image.Origin360.Top;
+                overlayImage.fillClockwise = true;
+                overlayImage.fillAmount = 0f;
+                overlayImage.raycastTarget = false;
+                overlays[i] = overlayImage;
+
+                // Cooldown text child (centered)
+                var cdTextGO = CreateTMPText("CooldownText", "", slotGO.transform);
+                var cdTextRect = cdTextGO.GetComponent<RectTransform>();
+                cdTextRect.anchorMin = Vector2.zero;
+                cdTextRect.anchorMax = Vector2.one;
+                cdTextRect.offsetMin = Vector2.zero;
+                cdTextRect.offsetMax = Vector2.zero;
+                var cdTMP = cdTextGO.GetComponent<TextMeshProUGUI>();
+                cdTMP.fontSize = 16;
+                cdTMP.color = Color.white;
+                cdTMP.alignment = TextAlignmentOptions.Center;
+                cdTMP.raycastTarget = false;
+                cooldownTexts[i] = cdTMP;
+
+                // Keybind badge child (bottom-right corner)
+                var badgeGO = CreateTMPText("KeybindBadge", keybinds[i], slotGO.transform);
+                var badgeRect = badgeGO.GetComponent<RectTransform>();
+                badgeRect.anchorMin = new Vector2(1, 0);
+                badgeRect.anchorMax = new Vector2(1, 0);
+                badgeRect.pivot = new Vector2(1, 0);
+                badgeRect.anchoredPosition = new Vector2(-2, 2);
+                badgeRect.sizeDelta = new Vector2(20, 16);
+                var badgeTMP = badgeGO.GetComponent<TextMeshProUGUI>();
+                badgeTMP.fontSize = 10;
+                badgeTMP.color = new Color(0.6f, 0.6f, 0.6f, 0.8f);
+                badgeTMP.alignment = TextAlignmentOptions.BottomRight;
+                badgeTMP.raycastTarget = false;
+            }
+
+            // Add SkillBarController and initialize
+            SkillBarController = skillBarCanvasGO.AddComponent<SkillBarController>();
+            SkillBarController.Initialize(overlays, cooldownTexts, buttons, panelGO);
         }
 
         private GameObject CreateTMPText(string name, string defaultText, Transform parent)

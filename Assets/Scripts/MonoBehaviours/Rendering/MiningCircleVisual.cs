@@ -22,6 +22,8 @@ namespace MonoBehaviours.Rendering
         private EntityManager em;
         private Entity inputEntity;
         private Entity miningConfigEntity;
+        private Entity overchargeBuffEntity;
+        private Color baseColor;
         private bool initialized;
 
         void Start()
@@ -77,6 +79,13 @@ namespace MonoBehaviours.Rendering
             var config = em.GetComponentData<MiningConfigData>(miningConfigEntity);
             transform.localScale = Vector3.one * config.Radius;
 
+            // Overcharge buff entity for visual feedback
+            var overchargeQuery = em.CreateEntityQuery(typeof(OverchargeBuffData));
+            if (overchargeQuery.CalculateEntityCount() > 0)
+                overchargeBuffEntity = overchargeQuery.GetSingletonEntity();
+
+            baseColor = new Color(0f, 1f, 1f) * HDRIntensity; // cyan HDR
+
             initialized = true;
             Debug.Log($"MiningCircleVisual initialized: radius={config.Radius}, segments={Segments}, HDR intensity={HDRIntensity}");
         }
@@ -98,7 +107,31 @@ namespace MonoBehaviours.Rendering
 
                 // Update radius from config (in case it changes at runtime)
                 var config = em.GetComponentData<MiningConfigData>(miningConfigEntity);
-                transform.localScale = Vector3.one * config.Radius;
+
+                // Overcharge visual feedback: gold color and scaled radius when active
+                if (overchargeBuffEntity != Entity.Null &&
+                    em.HasComponent<OverchargeBuffData>(overchargeBuffEntity))
+                {
+                    var overcharge = em.GetComponentData<OverchargeBuffData>(overchargeBuffEntity);
+                    if (overcharge.RemainingDuration > 0)
+                    {
+                        // Overcharge active: gold color, scaled radius
+                        float overchargeRadius = config.Radius * overcharge.RadiusMultiplier;
+                        transform.localScale = Vector3.one * overchargeRadius;
+                        circleMaterial.SetColor("_BaseColor", new Color(1f, 0.8f, 0f) * HDRIntensity * 1.5f);
+                    }
+                    else
+                    {
+                        // Normal: cyan color, base radius
+                        transform.localScale = Vector3.one * config.Radius;
+                        circleMaterial.SetColor("_BaseColor", baseColor);
+                    }
+                }
+                else
+                {
+                    transform.localScale = Vector3.one * config.Radius;
+                    circleMaterial.SetColor("_BaseColor", baseColor);
+                }
 
                 // Ensure visible
                 if (!lineRenderer.enabled)

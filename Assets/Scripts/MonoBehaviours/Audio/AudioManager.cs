@@ -33,6 +33,8 @@ namespace MonoBehaviours.Audio
         private AudioClip fanfareClip;
         private AudioClip uiClickClip;
         private AudioClip musicClip;
+        private AudioClip critHitClip;
+        private AudioClip[] skillClips;
 
         // -- Damage hit throttle -------------------------------------------------
         private float lastDamageHitTime;
@@ -121,6 +123,16 @@ namespace MonoBehaviours.Audio
             fanfareClip = Resources.Load<AudioClip>("Audio/SFX/Fanfare");
             uiClickClip = Resources.Load<AudioClip>("Audio/SFX/UIClick");
             musicClip = Resources.Load<AudioClip>("Audio/Music/AmbientSpace");
+
+            // Phase 5: skill and crit audio clips
+            critHitClip = Resources.Load<AudioClip>("Audio/SFX/CritHit");
+            skillClips = new AudioClip[]
+            {
+                Resources.Load<AudioClip>("Audio/SFX/SkillLaser"),
+                Resources.Load<AudioClip>("Audio/SFX/SkillChain"),
+                Resources.Load<AudioClip>("Audio/SFX/SkillEMP"),
+                Resources.Load<AudioClip>("Audio/SFX/SkillOvercharge")
+            };
 
             Debug.Log("AudioManager: initialized with SFX pool of " + GameConstants.AudioSFXPoolSize + " sources.");
         }
@@ -245,11 +257,23 @@ namespace MonoBehaviours.Audio
         }
 
         /// <summary>
-        /// Stub for skill activation SFX (AUDI-04). Phase 5 will implement real skill sounds.
+        /// Plays skill activation SFX for the given skill type (AUDI-04).
+        /// Skill types: 0=Laser, 1=Chain, 2=EMP, 3=Overcharge.
         /// </summary>
         public void PlaySkillSfx(int skillType)
         {
-            // Phase 5 placeholder -- no-op until skill system exists
+            if (skillType < 0 || skillClips == null || skillType >= skillClips.Length) return;
+            var camPos = Camera.main != null ? Camera.main.transform.position : Vector3.zero;
+            PlaySfx(skillClips[skillType], camPos, 0.7f);
+        }
+
+        /// <summary>
+        /// Plays critical hit SFX at the given position (DMGS-03).
+        /// Slightly higher pitch for crit distinction.
+        /// </summary>
+        public void PlayCritHit(Vector3 position)
+        {
+            PlaySfx(critHitClip, position, 0.6f, 1.2f);
         }
 
         // =========================================================================
