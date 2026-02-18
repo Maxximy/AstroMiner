@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value:** The mining-collecting-upgrading loop must feel satisfying -- hovering the circle over asteroids, watching them break apart, collecting minerals, and spending credits on meaningful upgrades that make the next run noticeably better.
-**Current focus:** Phase 4 - Visual & Audio Feedback (IN PROGRESS)
+**Current focus:** Phase 5 - Ship Skills & Advanced Damage (NEXT)
 
 ## Current Position
 
-Phase: 4 of 6 (Visual & Audio Feedback)
-Plan: 1 of 2 in current phase (04-01 complete)
-Status: In Progress
-Last activity: 2026-02-18 -- Completed 04-01 Visual Feedback Pipeline
+Phase: 4 of 6 (Visual & Audio Feedback -- COMPLETE)
+Plan: 2 of 2 in current phase (04-02 complete)
+Status: Phase Complete
+Last activity: 2026-02-18 -- Completed 04-02 Audio & Feedback Bridge
 
-Progress: [##########░] 67%
+Progress: [############░] 75%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
+- Total plans completed: 9
 - Average duration: 7 min
-- Total execution time: 0.9 hours
+- Total execution time: 1.0 hours
 
 **By Phase:**
 
@@ -30,10 +30,10 @@ Progress: [##########░] 67%
 | 01-foundation-webgl-validation | 2 | 12 min | 6 min |
 | 02-core-mining-loop | 2 | 28 min | 14 min |
 | 03-collection-economy-and-session | 3 | 11 min | 3.7 min |
-| 04-visual-and-audio-feedback | 1 | 5 min | 5 min |
+| 04-visual-and-audio-feedback | 2 | 13 min | 6.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-02 (25 min), 03-01 (3 min), 03-02 (4 min), 03-03 (4 min), 04-01 (5 min)
+- Last 5 plans: 03-01 (3 min), 03-02 (4 min), 03-03 (4 min), 04-01 (5 min), 04-02 (8 min)
 - Trend: consistent fast execution for well-specified plans
 
 *Updated after each plan completion*
@@ -81,6 +81,12 @@ Recent decisions affecting current work:
 - Struct ActivePopup list for popup animation to minimize GC pressure (04-01)
 - TrailRenderer.Clear() on pool release to prevent ghost trail artifacts (04-01)
 - ECS DynamicBuffer event pipeline: ISystem adds to singleton buffer -> MonoBehaviour drains in Update -> buffer.Clear() (04-01)
+- AudioMixer at Resources/Audio/GameAudioMixer with Master > SFX + Music groups, loaded via Resources.Load with graceful degradation (04-02)
+- All AudioSources use spatialBlend=0 (2D) with manual distance-based volume attenuation -- WebGL spatial audio is broken (04-02)
+- FeedbackEventBridge is the single central dispatcher for all ECS event buffers to all visual and audio consumer systems (04-02)
+- Mining hit SFX throttled to max 4/sec, collection chimes batch within 50ms window with pitch variation (04-02)
+- CameraShake attached directly to Main Camera GameObject for correct transform offset (04-02)
+- URP Vignette override state must be set per-property (intensity.overrideState, color.overrideState) -- Add<T>(overrideState) param does not work (04-02)
 
 ### Pending Todos
 
@@ -94,5 +100,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-18
-Stopped at: Completed 04-01-PLAN.md (Visual Feedback Pipeline)
-Resume file: .planning/phases/04-visual-and-audio-feedback/04-01-SUMMARY.md
+Stopped at: Completed 04-02-PLAN.md (Audio & Feedback Bridge) -- Phase 4 complete
+Resume file: .planning/phases/04-visual-and-audio-feedback/04-02-SUMMARY.md

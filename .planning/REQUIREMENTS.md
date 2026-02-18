@@ -102,19 +102,19 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **FEED-04**: Skill damage shows skill-colored medium damage numbers
 - [x] **FEED-05**: Particle effects on asteroid destruction (explosion into collectible particles)
 - [x] **FEED-06**: Particle trail when minerals fly toward ship
-- [ ] **FEED-07**: Subtle screen shake on critical hits and skill impacts
-- [ ] **FEED-08**: Edge glow warning when timer is in last 10 seconds
+- [x] **FEED-07**: Subtle screen shake on critical hits and skill impacts
+- [x] **FEED-08**: Edge glow warning when timer is in last 10 seconds
 
 ### Audio
 
-- [ ] **AUDI-01**: Mining hit SFX plays on each damage tick (spatial 3D at asteroid position)
-- [ ] **AUDI-02**: Asteroid destruction SFX (explosion/shatter)
-- [ ] **AUDI-03**: Mineral collection SFX (chime, pitch varies by tier)
-- [ ] **AUDI-04**: Skill activation SFX (unique per skill)
-- [ ] **AUDI-05**: Game over fanfare
-- [ ] **AUDI-06**: Space ambient background loop
-- [ ] **AUDI-07**: UI button click SFX
-- [ ] **AUDI-08**: AudioMixer with separate SFX and Music volume channels
+- [x] **AUDI-01**: Mining hit SFX plays on each damage tick (spatial 3D at asteroid position)
+- [x] **AUDI-02**: Asteroid destruction SFX (explosion/shatter)
+- [x] **AUDI-03**: Mineral collection SFX (chime, pitch varies by tier)
+- [x] **AUDI-04**: Skill activation SFX (unique per skill)
+- [x] **AUDI-05**: Game over fanfare
+- [x] **AUDI-06**: Space ambient background loop
+- [x] **AUDI-07**: UI button click SFX
+- [x] **AUDI-08**: AudioMixer with separate SFX and Music volume channels
 
 ### Persistence
 
@@ -222,16 +222,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 | FEED-04 | Phase 4 | Complete |
 | FEED-05 | Phase 4 | Complete |
 | FEED-06 | Phase 4 | Complete |
-| FEED-07 | Phase 4 | Pending |
-| FEED-08 | Phase 4 | Pending |
-| AUDI-01 | Phase 4 | Pending |
-| AUDI-02 | Phase 4 | Pending |
-| AUDI-03 | Phase 4 | Pending |
-| AUDI-04 | Phase 4 | Pending |
-| AUDI-05 | Phase 4 | Pending |
-| AUDI-06 | Phase 4 | Pending |
-| AUDI-07 | Phase 4 | Pending |
-| AUDI-08 | Phase 4 | Pending |
+| FEED-07 | Phase 4 | Complete |
+| FEED-08 | Phase 4 | Complete |
+| AUDI-01 | Phase 4 | Complete |
+| AUDI-02 | Phase 4 | Complete |
+| AUDI-03 | Phase 4 | Complete |
+| AUDI-04 | Phase 4 | Complete |
+| AUDI-05 | Phase 4 | Complete |
+| AUDI-06 | Phase 4 | Complete |
+| AUDI-07 | Phase 4 | Complete |
+| AUDI-08 | Phase 4 | Complete |
 | VISL-03 | Phase 4 | Complete |
 | VISL-04 | Phase 4 | Complete |
 | SKIL-01 | Phase 5 | Pending |
