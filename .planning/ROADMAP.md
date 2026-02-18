@@ -96,11 +96,11 @@ Plans:
   3. Critical hits occur at a configurable chance, display yellow "CRIT!" text with a scale-up animation, and deal multiplied damage
   4. Damage-over-time (DoT) applies a burning effect to asteroids that persists after they leave the mining circle, shown by ember particle trails
   5. Skills require unlocking via the Ship branch of the tech tree before they appear in the skill bar
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 05-01: Skill system architecture and four skill implementations
-- [ ] 05-02: Critical hits, DoT burning, and skill bar UI
+- [ ] 05-01-PLAN.md -- ECS skill components, four skill damage systems (Laser/Chain/EMP/Overcharge), crit integration, DoT burning system, input extension
+- [ ] 05-02-PLAN.md -- Skill bar UI with radial cooldowns, skill VFX (beam/lightning/blast/glow), ember particles for burning, audio wiring, Overcharge visual feedback
 
 ### Phase 6: Tech Tree and Level Progression
 **Goal**: The meta-game delivers long-term motivation -- players spend credits on a branching tech tree to become noticeably more powerful, then advance through levels with new resource tiers and tougher asteroids
@@ -134,4 +134,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 
 ---
 *Roadmap created: 2026-02-17*
-*Last updated: 2026-02-17 (Phase 3 Plan 2 complete)*
+*Last updated: 2026-02-18 (Phase 5 planned)*
