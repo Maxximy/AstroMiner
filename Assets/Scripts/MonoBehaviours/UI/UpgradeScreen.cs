@@ -8,8 +8,8 @@ using UnityEngine.UI;
 namespace MonoBehaviours.UI
 {
     /// <summary>
-    /// Placeholder upgrade screen for Phase 6 tech tree.
-    /// Shows total credits and a Start Run button.
+    /// Upgrade screen controller for the tech tree view between runs.
+    /// Shows the tech tree graph with pan/zoom navigation and a Start Run button.
     /// Wired by UISetup at runtime.
     /// </summary>
     public class UpgradeScreen : MonoBehaviour
@@ -18,6 +18,11 @@ namespace MonoBehaviours.UI
         private TextMeshProUGUI creditsText;
         private Button startRunButton;
         private GameObject root;
+
+        /// <summary>
+        /// Reference to the tech tree controller for refreshing state on show.
+        /// </summary>
+        public TechTreeController TechTreeController { get; set; }
 
         /// <summary>
         /// Called by UISetup to wire UI references.
@@ -44,6 +49,7 @@ namespace MonoBehaviours.UI
 
         /// <summary>
         /// Show the upgrade screen with current total credits.
+        /// Refreshes tech tree node states to reflect latest credit balance.
         /// </summary>
         public void Show()
         {
@@ -52,7 +58,13 @@ namespace MonoBehaviours.UI
                 root.SetActive(true);
             }
 
-            // Read current credits from ECS
+            // Refresh tech tree node states with latest credits
+            if (TechTreeController != null)
+            {
+                TechTreeController.RefreshAllNodeStates();
+            }
+
+            // Read current credits from ECS for header display
             long currentCredits = 0;
             var world = World.DefaultGameObjectInjectionWorld;
             if (world != null && world.IsCreated)
@@ -68,7 +80,7 @@ namespace MonoBehaviours.UI
 
             if (titleText != null)
             {
-                titleText.text = "Upgrades";
+                titleText.text = "Tech Tree";
             }
 
             if (creditsText != null)

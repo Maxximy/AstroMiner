@@ -1,3 +1,4 @@
+using Data;
 using MonoBehaviours.Audio;
 using MonoBehaviours.UI;
 using TMPro;
@@ -295,62 +296,83 @@ namespace MonoBehaviours.Core
             var bgImage = bgPanelGO.AddComponent<Image>();
             bgImage.color = new Color(0.1f, 0.1f, 0.15f, 1f);
 
-            // Title text (top center)
-            var titleTextGO = CreateTMPText("TitleText", "Upgrades", bgPanelGO.transform);
+            // Title text (top center) -- "Tech Tree"
+            var titleTextGO = CreateTMPText("TitleText", "Tech Tree", bgPanelGO.transform);
             var titleRect = titleTextGO.GetComponent<RectTransform>();
             titleRect.anchorMin = new Vector2(0.5f, 1);
             titleRect.anchorMax = new Vector2(0.5f, 1);
             titleRect.pivot = new Vector2(0.5f, 1);
-            titleRect.anchoredPosition = new Vector2(0, -30);
+            titleRect.anchoredPosition = new Vector2(0, -10);
             titleRect.sizeDelta = new Vector2(400, 50);
             var titleTMP = titleTextGO.GetComponent<TextMeshProUGUI>();
             titleTMP.fontSize = 40;
             titleTMP.color = Color.white;
             titleTMP.alignment = TextAlignmentOptions.Center;
 
-            // Credits text (top-right)
+            // Credits text (top-right) -- always visible
             var creditsTextGO = CreateTMPText("CreditsText", "0 credits", bgPanelGO.transform);
             var creditsRect = creditsTextGO.GetComponent<RectTransform>();
             creditsRect.anchorMin = new Vector2(1, 1);
             creditsRect.anchorMax = new Vector2(1, 1);
             creditsRect.pivot = new Vector2(1, 1);
-            creditsRect.anchoredPosition = new Vector2(-20, -35);
-            creditsRect.sizeDelta = new Vector2(200, 30);
+            creditsRect.anchoredPosition = new Vector2(-20, -20);
+            creditsRect.sizeDelta = new Vector2(250, 30);
             var creditsTMP = creditsTextGO.GetComponent<TextMeshProUGUI>();
             creditsTMP.fontSize = 24;
-            creditsTMP.color = Color.white;
+            creditsTMP.color = new Color(0.9f, 0.85f, 0.4f, 1f); // Gold
             creditsTMP.alignment = TextAlignmentOptions.Right;
 
-            // Placeholder text (center)
-            var placeholderGO = CreateTMPText("PlaceholderText", "Tech tree coming in Phase 6", bgPanelGO.transform);
-            var placeholderRect = placeholderGO.GetComponent<RectTransform>();
-            placeholderRect.anchorMin = new Vector2(0.5f, 0.5f);
-            placeholderRect.anchorMax = new Vector2(0.5f, 0.5f);
-            placeholderRect.pivot = new Vector2(0.5f, 0.5f);
-            placeholderRect.anchoredPosition = Vector2.zero;
-            placeholderRect.sizeDelta = new Vector2(400, 30);
-            var placeholderTMP = placeholderGO.GetComponent<TextMeshProUGUI>();
-            placeholderTMP.fontSize = 20;
-            placeholderTMP.color = new Color(0.5f, 0.5f, 0.5f, 1f);
-            placeholderTMP.alignment = TextAlignmentOptions.Center;
+            // Viewport panel: full-screen area minus top bar and bottom button
+            // Uses RectMask2D for clipping the pannable/zoomable content
+            var viewportGO = new GameObject("Viewport");
+            viewportGO.transform.SetParent(bgPanelGO.transform, false);
+            var viewportRect = viewportGO.AddComponent<RectTransform>();
+            viewportRect.anchorMin = Vector2.zero;
+            viewportRect.anchorMax = Vector2.one;
+            viewportRect.offsetMin = new Vector2(0, 70);   // Above Start Run button
+            viewportRect.offsetMax = new Vector2(0, -60);   // Below title bar
+            viewportGO.AddComponent<RectMask2D>();
+            // Need an Image for raycast detection (transparent)
+            var viewportImage = viewportGO.AddComponent<Image>();
+            viewportImage.color = new Color(0, 0, 0, 0.01f); // Near-transparent for raycast
 
-            // Start Run button (center bottom)
+            // Content panel: large pannable/zoomable surface (child of viewport)
+            var contentGO = new GameObject("Content");
+            contentGO.transform.SetParent(viewportGO.transform, false);
+            var contentRect = contentGO.AddComponent<RectTransform>();
+            contentRect.anchorMin = new Vector2(0.5f, 0.5f);
+            contentRect.anchorMax = new Vector2(0.5f, 0.5f);
+            contentRect.pivot = new Vector2(0.5f, 0.5f);
+            contentRect.anchoredPosition = Vector2.zero;
+            contentRect.sizeDelta = new Vector2(4000, 4000);
+
+            // Start Run button (bottom center, green)
             var startRunButton = CreateButton("StartRunButton", "Start Run", bgPanelGO.transform, new Vector2(200, 50));
             var startRunRect = startRunButton.GetComponent<RectTransform>();
             startRunRect.anchorMin = new Vector2(0.5f, 0);
             startRunRect.anchorMax = new Vector2(0.5f, 0);
             startRunRect.pivot = new Vector2(0.5f, 0);
-            startRunRect.anchoredPosition = new Vector2(0, 60);
-            // Green-ish background for start button
+            startRunRect.anchoredPosition = new Vector2(0, 10);
             var startRunImage = startRunButton.GetComponent<Image>();
             if (startRunImage != null)
             {
                 startRunImage.color = new Color(0.2f, 0.6f, 0.3f, 1f);
             }
 
+            // Create TechTreeController on the canvas
+            var techTreeController = upgradeCanvasGO.AddComponent<TechTreeController>();
+
+            // Build node data from TechTreeDefinitions (programmatic, Option A)
+            var treeData = TechTreeDefinitions.BuildTree();
+            techTreeController.Initialize(
+                treeData.AllNodes, treeData.StartNodeIndex,
+                contentRect, viewportRect, creditsTMP
+            );
+
             // UpgradeScreen component
             UpgradeScreen = upgradeCanvasGO.AddComponent<UpgradeScreen>();
             UpgradeScreen.Initialize(titleTMP, creditsTMP, startRunButton.GetComponent<Button>(), upgradeCanvasGO);
+            UpgradeScreen.TechTreeController = techTreeController;
         }
 
         private void CreateSkillBarCanvas()

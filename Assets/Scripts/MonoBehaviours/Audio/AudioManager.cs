@@ -276,6 +276,18 @@ namespace MonoBehaviours.Audio
             PlaySfx(critHitClip, position, 0.6f, 1.2f);
         }
 
+        /// <summary>
+        /// Plays "cha-ching" purchase SFX for tech tree node purchases.
+        /// Uses the collection chime at higher pitch as a placeholder until a dedicated clip exists.
+        /// </summary>
+        public void PlayPurchaseSFX()
+        {
+            var camPos = Camera.main != null ? Camera.main.transform.position : Vector3.zero;
+            // Use collection chime at pitch 1.5 for a satisfying "cha-ching" feel
+            var clip = collectionChimeClip;
+            PlaySfx(clip, camPos, 0.8f, 1.5f);
+        }
+
         // =========================================================================
         // Music Playback
         // =========================================================================
