@@ -59,4 +59,32 @@ namespace ECS.Components
         /// <summary>Resource tier for future tier-specific explosion colors.</summary>
         public int ResourceTier;
     }
+
+    /// <summary>
+    /// Buffer element emitted by skill systems for VFX bridge consumption.
+    /// Carries activation data so MonoBehaviour can render beam/lightning/blast/overcharge visuals.
+    /// </summary>
+    public struct SkillEvent : IBufferElementData
+    {
+        /// <summary>Skill type: 0=Laser, 1=Chain, 2=EMP, 3=Overcharge.</summary>
+        public byte SkillType;
+
+        /// <summary>Ship position (XZ).</summary>
+        public float2 OriginPos;
+
+        /// <summary>Mouse/target position (XZ).</summary>
+        public float2 TargetPos;
+
+        // Chain lightning target positions (XZ coords, up to 4 chain targets)
+        public float2 Chain1;
+        public float2 Chain2;
+        public float2 Chain3;
+        public float2 Chain4;
+
+        /// <summary>Number of valid chain targets (0-4).</summary>
+        public int ChainCount;
+
+        /// <summary>For EMP blast radius visual.</summary>
+        public float Radius;
+    }
 }

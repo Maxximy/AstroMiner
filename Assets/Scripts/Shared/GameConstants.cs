@@ -163,4 +163,76 @@ public static class GameConstants
 
     /// <summary>Timer warning vignette max intensity.</summary>
     public const float TimerWarningMaxIntensity = 0.4f;
+
+    // -- Skill Defaults -------------------------------------------------------
+
+    /// <summary>Laser Burst cooldown in seconds.</summary>
+    public const float LaserBurstCooldown = 8f;
+
+    /// <summary>Laser Burst damage per hit.</summary>
+    public const float LaserBurstDamage = 150f;
+
+    /// <summary>Laser Burst beam half-width for line collision.</summary>
+    public const float LaserBurstBeamHalfWidth = 0.25f;
+
+    /// <summary>Chain Lightning cooldown in seconds.</summary>
+    public const float ChainLightningCooldown = 10f;
+
+    /// <summary>Chain Lightning damage per chain target.</summary>
+    public const float ChainLightningDamage = 60f;
+
+    /// <summary>Maximum number of chain targets.</summary>
+    public const int ChainLightningMaxTargets = 4;
+
+    /// <summary>Maximum distance between chain targets.</summary>
+    public const float ChainLightningMaxChainDist = 5f;
+
+    /// <summary>EMP Pulse cooldown in seconds.</summary>
+    public const float EmpPulseCooldown = 12f;
+
+    /// <summary>EMP Pulse damage per hit.</summary>
+    public const float EmpPulseDamage = 80f;
+
+    /// <summary>EMP Pulse blast radius.</summary>
+    public const float EmpPulseRadius = 4f;
+
+    /// <summary>Overcharge cooldown in seconds.</summary>
+    public const float OverchargeCooldown = 15f;
+
+    /// <summary>Overcharge buff duration in seconds.</summary>
+    public const float OverchargeDuration = 5f;
+
+    /// <summary>Overcharge damage multiplier.</summary>
+    public const float OverchargeDamageMultiplier = 2f;
+
+    /// <summary>Overcharge radius multiplier.</summary>
+    public const float OverchargeRadiusMultiplier = 1.5f;
+
+    // -- Critical Hit Defaults -----------------------------------------------
+
+    /// <summary>Base critical hit chance (8%).</summary>
+    public const float CritChance = 0.08f;
+
+    /// <summary>Critical hit damage multiplier (2x).</summary>
+    public const float CritMultiplier = 2f;
+
+    // -- DoT Burning Defaults ------------------------------------------------
+
+    /// <summary>Laser DoT damage per tick.</summary>
+    public const float LaserDotDamagePerTick = 5f;
+
+    /// <summary>Laser DoT tick interval in seconds.</summary>
+    public const float LaserDotTickInterval = 0.5f;
+
+    /// <summary>Laser DoT total duration in seconds.</summary>
+    public const float LaserDotDuration = 3f;
+
+    /// <summary>EMP DoT damage per tick.</summary>
+    public const float EmpDotDamagePerTick = 3f;
+
+    /// <summary>EMP DoT tick interval in seconds.</summary>
+    public const float EmpDotTickInterval = 0.5f;
+
+    /// <summary>EMP DoT total duration in seconds.</summary>
+    public const float EmpDotDuration = 2f;
 }

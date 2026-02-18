@@ -59,7 +59,39 @@ namespace MonoBehaviours.Core
             var destructionEventEntity = em.CreateEntity();
             em.AddBuffer<DestructionEvent>(destructionEventEntity);
 
-            Debug.Log("ECS Bootstrap complete: singletons created (GameState, Input, AsteroidSpawnTimer, MiningConfig, CollectionEventBuffer, DamageEventBuffer, DestructionEventBuffer)");
+            // Phase 5: Skill system singletons
+            var skillInputEntity = em.CreateEntity(typeof(SkillInputData));
+            em.SetComponentData(skillInputEntity, new SkillInputData());
+
+            var skillCooldownEntity = em.CreateEntity(typeof(SkillCooldownData));
+            em.SetComponentData(skillCooldownEntity, new SkillCooldownData
+            {
+                Skill1MaxCooldown = GameConstants.LaserBurstCooldown,
+                Skill2MaxCooldown = GameConstants.ChainLightningCooldown,
+                Skill3MaxCooldown = GameConstants.EmpPulseCooldown,
+                Skill4MaxCooldown = GameConstants.OverchargeCooldown
+            });
+
+            var critConfigEntity = em.CreateEntity(typeof(CritConfigData));
+            em.SetComponentData(critConfigEntity, new CritConfigData
+            {
+                CritChance = GameConstants.CritChance,
+                CritMultiplier = GameConstants.CritMultiplier
+            });
+
+            var overchargeBuffEntity = em.CreateEntity(typeof(OverchargeBuffData));
+            em.SetComponentData(overchargeBuffEntity, new OverchargeBuffData
+            {
+                RemainingDuration = 0f,
+                DamageMultiplier = GameConstants.OverchargeDamageMultiplier,
+                RadiusMultiplier = GameConstants.OverchargeRadiusMultiplier
+            });
+
+            // Phase 5: SkillEvent buffer entity
+            var skillEventEntity = em.CreateEntity();
+            em.AddBuffer<SkillEvent>(skillEventEntity);
+
+            Debug.Log("ECS Bootstrap complete: singletons created (GameState, Input, AsteroidSpawnTimer, MiningConfig, CollectionEventBuffer, DamageEventBuffer, DestructionEventBuffer, SkillInput, SkillCooldown, CritConfig, OverchargeBuff, SkillEventBuffer)");
         }
     }
 }

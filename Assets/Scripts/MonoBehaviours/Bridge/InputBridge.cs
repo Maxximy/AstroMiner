@@ -11,6 +11,7 @@ namespace MonoBehaviours.Bridge
         private Camera mainCamera;
         private EntityManager em;
         private Entity inputEntity;
+        private Entity skillInputEntity;
         private Plane gameplayPlane;
 
         void Start()
@@ -18,6 +19,8 @@ namespace MonoBehaviours.Bridge
             mainCamera = Camera.main;
             em = World.DefaultGameObjectInjectionWorld.EntityManager;
             inputEntity = em.CreateEntityQuery(typeof(InputData))
+                .GetSingletonEntity();
+            skillInputEntity = em.CreateEntityQuery(typeof(SkillInputData))
                 .GetSingletonEntity();
 
             // Gameplay plane at Y=0, facing up
@@ -44,6 +47,21 @@ namespace MonoBehaviours.Bridge
             }
 
             em.SetComponentData(inputEntity, inputData);
+
+            // Skill activation input (keyboard keys 1-4, New Input System only)
+            // IMPORTANT: Read CURRENT data first, then OR keyboard presses on top.
+            // SkillBarController may have already set flags via UI button clicks this frame.
+            // We must NOT overwrite with a fresh struct or UI-triggered presses will be silently dropped.
+            var skillInput = em.GetComponentData<SkillInputData>(skillInputEntity);
+            var keyboard = Keyboard.current;
+            if (keyboard != null)
+            {
+                skillInput.Skill1Pressed |= keyboard.digit1Key.wasPressedThisFrame;
+                skillInput.Skill2Pressed |= keyboard.digit2Key.wasPressedThisFrame;
+                skillInput.Skill3Pressed |= keyboard.digit3Key.wasPressedThisFrame;
+                skillInput.Skill4Pressed |= keyboard.digit4Key.wasPressedThisFrame;
+            }
+            em.SetComponentData(skillInputEntity, skillInput);
         }
     }
 }
