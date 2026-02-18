@@ -33,6 +33,9 @@ public partial struct MiningDamageSystem : ISystem
         float radiusSq = config.Radius * config.Radius;
         float dt = SystemAPI.Time.DeltaTime;
 
+        // Get DamageEvent buffer for visual/audio feedback (Phase 4)
+        var damageBuffer = SystemAPI.GetSingletonBuffer<DamageEvent>();
+
         // Iterate all asteroids and apply tick-based damage if within mining circle
         foreach (var (transform, health, tickTimer) in
             SystemAPI.Query<RefRO<LocalTransform>, RefRW<HealthData>, RefRW<DamageTickTimer>>()
@@ -51,6 +54,16 @@ public partial struct MiningDamageSystem : ISystem
                 if (tickTimer.ValueRO.Elapsed >= config.TickInterval)
                 {
                     health.ValueRW.CurrentHP -= config.DamagePerTick;
+
+                    // Emit damage event for visual feedback (floating damage numbers)
+                    damageBuffer.Add(new DamageEvent
+                    {
+                        Position = transform.ValueRO.Position,
+                        Amount = config.DamagePerTick,
+                        Type = DamageType.Normal,
+                        ColorR = 255, ColorG = 255, ColorB = 255
+                    });
+
                     // Subtract rather than reset to preserve fractional accumulation
                     tickTimer.ValueRW.Elapsed -= config.TickInterval;
                 }

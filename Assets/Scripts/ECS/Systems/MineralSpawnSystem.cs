@@ -30,6 +30,9 @@ public partial struct MineralSpawnSystem : ISystem
         var ecb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>()
             .CreateCommandBuffer(state.WorldUnmanaged);
 
+        // Get DestructionEvent buffer for visual/audio feedback (Phase 4)
+        var destructionBuffer = SystemAPI.GetSingletonBuffer<DestructionEvent>();
+
         foreach (var (health, transform, entity) in
             SystemAPI.Query<RefRO<HealthData>, RefRO<LocalTransform>>()
                 .WithAll<AsteroidTag>()
@@ -42,6 +45,15 @@ public partial struct MineralSpawnSystem : ISystem
                 ecb.AddComponent<MineralsSpawnedTag>(entity);
 
                 float3 asteroidPos = transform.ValueRO.Position;
+
+                // Emit destruction event for explosion VFX and audio
+                destructionBuffer.Add(new DestructionEvent
+                {
+                    Position = asteroidPos,
+                    Scale = 1.0f,  // default scale; future: read from entity component
+                    ResourceTier = 0
+                });
+
                 int mineralCount = _rng.NextInt(GameConstants.MinMineralsPerAsteroid,
                     GameConstants.MaxMineralsPerAsteroid + 1);
 

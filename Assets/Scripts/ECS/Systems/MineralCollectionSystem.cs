@@ -30,6 +30,9 @@ public partial struct MineralCollectionSystem : ISystem
         var gameStateRW = SystemAPI.GetSingletonRW<GameStateData>();
         float3 shipPos = new float3(GameConstants.ShipPositionX, 0f, GameConstants.ShipPositionZ);
 
+        // Get CollectionEvent buffer for visual/audio feedback (Phase 4)
+        var collectionBuffer = SystemAPI.GetSingletonBuffer<CollectionEvent>();
+
         foreach (var (mineralData, transform, entity) in
             SystemAPI.Query<RefRO<MineralData>, RefRO<LocalTransform>>()
                 .WithAll<MineralTag>()
@@ -39,6 +42,15 @@ public partial struct MineralCollectionSystem : ISystem
             if (dist <= GameConstants.MineralCollectionRadius)
             {
                 gameStateRW.ValueRW.Credits += mineralData.ValueRO.CreditValue;
+
+                // Emit collection event for credit pop VFX and audio
+                collectionBuffer.Add(new CollectionEvent
+                {
+                    ResourceTier = mineralData.ValueRO.ResourceTier,
+                    CreditValue = mineralData.ValueRO.CreditValue,
+                    Position = transform.ValueRO.Position
+                });
+
                 ecb.DestroyEntity(entity);
             }
         }

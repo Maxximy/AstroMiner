@@ -90,4 +90,51 @@ public static class GameConstants
 
     /// <summary>Ship X coordinate (for mineral pull target).</summary>
     public const float ShipPositionX = 0f;
+
+    // ── Feedback / VFX Defaults ────────────────────────────────
+
+    /// <summary>Duration of damage popup float-up animation (seconds).</summary>
+    public const float DamagePopupDuration = 0.8f;
+
+    /// <summary>Speed at which damage popups rise (world units/sec).</summary>
+    public const float DamagePopupRiseSpeed = 1.5f;
+
+    /// <summary>Time before popup starts fading (seconds).</summary>
+    public const float DamagePopupFadeDelay = 0.3f;
+
+    /// <summary>Font size for normal damage numbers (world-space units).</summary>
+    public const float DamagePopupFontSizeNormal = 3f;
+
+    /// <summary>Font size for critical hit numbers (world-space units).</summary>
+    public const float DamagePopupFontSizeCrit = 5f;
+
+    /// <summary>Scale multiplier for critical hit popup.</summary>
+    public const float DamagePopupCritScale = 1.5f;
+
+    /// <summary>Number of debris particles per asteroid explosion.</summary>
+    public const int ExplosionParticleCount = 20;
+
+    /// <summary>Lifetime of debris particles (seconds).</summary>
+    public const float ExplosionParticleLifetime = 0.7f;
+
+    /// <summary>Outward velocity of debris particles (units/sec).</summary>
+    public const float ExplosionParticleSpeed = 4f;
+
+    /// <summary>Gravity applied to debris particles (units/sec^2).</summary>
+    public const float ExplosionParticleGravity = 2.5f;
+
+    /// <summary>Trail duration for mineral flight trails (seconds).</summary>
+    public const float MineralTrailDuration = 0.3f;
+
+    /// <summary>Trail start width for mineral flight trails.</summary>
+    public const float MineralTrailStartWidth = 0.15f;
+
+    /// <summary>HDR intensity multiplier for mineral glow.</summary>
+    public const float MineralEmissiveIntensity = 2f;
+
+    /// <summary>Duration of credit counter pop animation (seconds).</summary>
+    public const float CreditPopDuration = 0.2f;
+
+    /// <summary>Scale boost factor for credit counter pop.</summary>
+    public const float CreditPopScale = 1.3f;
 }
