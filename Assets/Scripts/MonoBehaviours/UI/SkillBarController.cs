@@ -97,7 +97,7 @@ namespace MonoBehaviours.UI
 
             // Show/hide based on game phase (visible only during Playing)
             var gameState = em.GetComponentData<GameStateData>(gameStateEntity);
-            bool visible = gameState.CurrentPhase == GamePhase.Playing;
+            bool visible = gameState.Phase == GamePhase.Playing;
             if (skillBarRoot.activeSelf != visible)
                 skillBarRoot.SetActive(visible);
 
