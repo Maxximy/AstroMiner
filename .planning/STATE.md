@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value:** The mining-collecting-upgrading loop must feel satisfying -- hovering the circle over asteroids, watching them break apart, collecting minerals, and spending credits on meaningful upgrades that make the next run noticeably better.
-**Current focus:** Phase 5 - Ship Skills & Advanced Damage (context gathered, ready for planning)
+**Current focus:** Phase 5 - Ship Skills & Advanced Damage (Plan 01 complete, Plan 02 next)
 
 ## Current Position
 
-Phase: 4 of 6 (Visual & Audio Feedback -- COMPLETE)
-Plan: 2 of 2 in current phase (04-02 complete)
-Status: Phase Complete
-Last activity: 2026-02-18 -- Completed 04-02 Audio & Feedback Bridge
+Phase: 5 of 6 (Ship Skills & Advanced Damage)
+Plan: 1 of 2 in current phase (05-01 complete)
+Status: In Progress
+Last activity: 2026-02-18 -- Completed 05-01 Skill Systems & Advanced Damage Backend
 
-Progress: [############░] 75%
+Progress: [##############░] 83%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
+- Total plans completed: 10
 - Average duration: 7 min
-- Total execution time: 1.0 hours
+- Total execution time: 1.1 hours
 
 **By Phase:**
 
@@ -31,9 +31,10 @@ Progress: [############░] 75%
 | 02-core-mining-loop | 2 | 28 min | 14 min |
 | 03-collection-economy-and-session | 3 | 11 min | 3.7 min |
 | 04-visual-and-audio-feedback | 2 | 13 min | 6.5 min |
+| 05-ship-skills-and-advanced-damage | 1 | 5 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-01 (3 min), 03-02 (4 min), 03-03 (4 min), 04-01 (5 min), 04-02 (8 min)
+- Last 5 plans: 03-02 (4 min), 03-03 (4 min), 04-01 (5 min), 04-02 (8 min), 05-01 (5 min)
 - Trend: consistent fast execution for well-specified plans
 
 *Updated after each plan completion*
@@ -87,6 +88,11 @@ Recent decisions affecting current work:
 - Mining hit SFX throttled to max 4/sec, collection chimes batch within 50ms window with pitch variation (04-02)
 - CameraShake attached directly to Main Camera GameObject for correct transform offset (04-02)
 - URP Vignette override state must be set per-property (intensity.overrideState, color.overrideState) -- Add<T>(overrideState) param does not work (04-02)
+- SkillInputResetSystem as separate system running after all skill systems ensures clean one-frame-per-press consumption (05-01)
+- OR-merge pattern (|=) in InputBridge preserves UI button presses set before keyboard polling (05-01)
+- Chain Lightning does NOT apply DoT per research discretion recommendation (05-01)
+- DoT damage popups use DamageType.Normal (white) not DamageType.DoT per user decision (05-01)
+- Each skill system RNG seeded with unique OR-mask to avoid identical crit sequences across systems (05-01)
 
 ### Pending Todos
 
@@ -100,5 +106,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-18
-Stopped at: Phase 5 context gathered
-Resume file: .planning/phases/05-ship-skills-and-advanced-damage/05-CONTEXT.md
+Stopped at: Completed 05-01-PLAN.md
+Resume file: .planning/phases/05-ship-skills-and-advanced-damage/05-01-SUMMARY.md
