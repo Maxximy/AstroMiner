@@ -77,8 +77,8 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **SKIL-04**: Overcharge temporarily doubles mining circle damage rate
 - [x] **SKIL-05**: Skills activated via keyboard (1-4) and on-screen UI buttons
 - [x] **SKIL-06**: Each skill has a cooldown timer displayed on the skill bar UI
-- [ ] **SKIL-07**: Skills must be unlocked via Ship branch of tech tree before use
-- [ ] **SKIL-08**: Skills are upgradeable (damage+, cooldown-, special effects) via tech tree
+- [x] **SKIL-07**: Skills must be unlocked via Ship branch of tech tree before use
+- [x] **SKIL-08**: Skills are upgradeable (damage+, cooldown-, special effects) via tech tree
 
 ### Damage System
 
@@ -240,8 +240,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SKIL-04 | Phase 5 | Complete |
 | SKIL-05 | Phase 5 | Complete |
 | SKIL-06 | Phase 5 | Complete |
-| SKIL-07 | Phase 5 | Pending |
-| SKIL-08 | Phase 5 | Pending |
+| SKIL-07 | Phase 5 | Complete |
+| SKIL-08 | Phase 5 | Complete |
 | DMGS-01 | Phase 5 | Complete |
 | DMGS-02 | Phase 5 | Complete |
 | DMGS-03 | Phase 5 | Complete |
