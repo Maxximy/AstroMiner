@@ -24,6 +24,8 @@ namespace ECS.Systems
             state.RequireForUpdate<InputData>();
             state.RequireForUpdate<GameStateData>();
             state.RequireForUpdate<CritConfigData>();
+            state.RequireForUpdate<SkillStatsData>();
+            state.RequireForUpdate<SkillUnlockData>();
         }
 
         [BurstCompile]
@@ -37,12 +39,16 @@ namespace ECS.Systems
             if (!skillInput.Skill2Pressed)
                 return;
 
+            var unlocks = SystemAPI.GetSingleton<SkillUnlockData>();
+            if (!unlocks.Skill2Unlocked) return;
+
             var cooldown = SystemAPI.GetSingletonRW<SkillCooldownData>();
             if (cooldown.ValueRO.Skill2Remaining > 0f)
                 return;
 
-            // Activate: set cooldown
-            cooldown.ValueRW.Skill2Remaining = cooldown.ValueRO.Skill2MaxCooldown;
+            // Activate: set cooldown from SkillStatsData
+            var stats = SystemAPI.GetSingleton<SkillStatsData>();
+            cooldown.ValueRW.Skill2Remaining = stats.ChainCooldown;
 
             var input = SystemAPI.GetSingleton<InputData>();
             var critConfig = SystemAPI.GetSingleton<CritConfigData>();
@@ -75,7 +81,7 @@ namespace ECS.Systems
             }
 
             // Step 1: Find nearest asteroid to mouse
-            var visited = new NativeList<int>(GameConstants.ChainLightningMaxTargets, Allocator.Temp);
+            var visited = new NativeList<int>(stats.ChainMaxTargets, Allocator.Temp);
             float minDistSq = float.MaxValue;
             int primaryIdx = -1;
 
@@ -100,10 +106,10 @@ namespace ECS.Systems
             visited.Add(primaryIdx);
 
             // Step 2: Chain to nearby unvisited asteroids
-            float maxChainDistSq = GameConstants.ChainLightningMaxChainDist * GameConstants.ChainLightningMaxChainDist;
+            float maxChainDistSq = stats.ChainMaxDist * stats.ChainMaxDist;
             int lastIdx = primaryIdx;
 
-            while (visited.Length < GameConstants.ChainLightningMaxTargets)
+            while (visited.Length < stats.ChainMaxTargets)
             {
                 float bestDistSq = float.MaxValue;
                 int bestIdx = -1;
@@ -147,8 +153,8 @@ namespace ECS.Systems
                 // Apply damage with crit roll
                 bool isCrit = rng.NextFloat() < critConfig.CritChance;
                 float damage = isCrit
-                    ? GameConstants.ChainLightningDamage * critConfig.CritMultiplier
-                    : GameConstants.ChainLightningDamage;
+                    ? stats.ChainDamage * critConfig.CritMultiplier
+                    : stats.ChainDamage;
 
                 var health = SystemAPI.GetComponentRW<HealthData>(entity);
                 health.ValueRW.CurrentHP -= damage;

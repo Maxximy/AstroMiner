@@ -25,6 +25,8 @@ namespace ECS.Systems
             state.RequireForUpdate<InputData>();
             state.RequireForUpdate<GameStateData>();
             state.RequireForUpdate<CritConfigData>();
+            state.RequireForUpdate<SkillStatsData>();
+            state.RequireForUpdate<SkillUnlockData>();
             state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         }
 
@@ -39,12 +41,16 @@ namespace ECS.Systems
             if (!skillInput.Skill1Pressed)
                 return;
 
+            var unlocks = SystemAPI.GetSingleton<SkillUnlockData>();
+            if (!unlocks.Skill1Unlocked) return;
+
             var cooldown = SystemAPI.GetSingletonRW<SkillCooldownData>();
             if (cooldown.ValueRO.Skill1Remaining > 0f)
                 return;
 
-            // Activate: set cooldown
-            cooldown.ValueRW.Skill1Remaining = cooldown.ValueRO.Skill1MaxCooldown;
+            // Activate: set cooldown from SkillStatsData
+            var stats = SystemAPI.GetSingleton<SkillStatsData>();
+            cooldown.ValueRW.Skill1Remaining = stats.LaserCooldown;
 
             // Read input and crit config
             var input = SystemAPI.GetSingleton<InputData>();
@@ -70,7 +76,7 @@ namespace ECS.Systems
             {
                 float2 asteroidPos = new float2(transform.ValueRO.Position.x, transform.ValueRO.Position.z);
                 float asteroidRadius = transform.ValueRO.Scale * 0.5f;
-                float hitDist = asteroidRadius + GameConstants.LaserBurstBeamHalfWidth;
+                float hitDist = asteroidRadius + stats.LaserBeamHalfWidth;
 
                 float distSq = PointToSegmentDistSq(asteroidPos, shipPos, mousePos);
                 if (distSq <= hitDist * hitDist)
@@ -78,8 +84,8 @@ namespace ECS.Systems
                     // Crit roll
                     bool isCrit = rng.NextFloat() < critConfig.CritChance;
                     float damage = isCrit
-                        ? GameConstants.LaserBurstDamage * critConfig.CritMultiplier
-                        : GameConstants.LaserBurstDamage;
+                        ? stats.LaserDamage * critConfig.CritMultiplier
+                        : stats.LaserDamage;
 
                     health.ValueRW.CurrentHP -= damage;
 
@@ -95,9 +101,9 @@ namespace ECS.Systems
                     // Apply or refresh DoT (BurningData)
                     var burning = new BurningData
                     {
-                        DamagePerTick = GameConstants.LaserDotDamagePerTick,
-                        TickInterval = GameConstants.LaserDotTickInterval,
-                        RemainingDuration = GameConstants.LaserDotDuration,
+                        DamagePerTick = stats.LaserDotDamagePerTick,
+                        TickInterval = stats.LaserDotTickInterval,
+                        RemainingDuration = stats.LaserDotDuration,
                         TickAccumulator = 0f
                     };
 

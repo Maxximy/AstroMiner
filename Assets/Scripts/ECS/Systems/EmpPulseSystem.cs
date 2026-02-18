@@ -24,6 +24,8 @@ namespace ECS.Systems
             state.RequireForUpdate<InputData>();
             state.RequireForUpdate<GameStateData>();
             state.RequireForUpdate<CritConfigData>();
+            state.RequireForUpdate<SkillStatsData>();
+            state.RequireForUpdate<SkillUnlockData>();
             state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         }
 
@@ -38,17 +40,21 @@ namespace ECS.Systems
             if (!skillInput.Skill3Pressed)
                 return;
 
+            var unlocks = SystemAPI.GetSingleton<SkillUnlockData>();
+            if (!unlocks.Skill3Unlocked) return;
+
             var cooldown = SystemAPI.GetSingletonRW<SkillCooldownData>();
             if (cooldown.ValueRO.Skill3Remaining > 0f)
                 return;
 
-            // Activate: set cooldown
-            cooldown.ValueRW.Skill3Remaining = cooldown.ValueRO.Skill3MaxCooldown;
+            // Activate: set cooldown from SkillStatsData
+            var stats = SystemAPI.GetSingleton<SkillStatsData>();
+            cooldown.ValueRW.Skill3Remaining = stats.EmpCooldown;
 
             var input = SystemAPI.GetSingleton<InputData>();
             var critConfig = SystemAPI.GetSingleton<CritConfigData>();
             float2 mousePos = input.MouseWorldPos;
-            float radiusSq = GameConstants.EmpPulseRadius * GameConstants.EmpPulseRadius;
+            float radiusSq = stats.EmpRadius * stats.EmpRadius;
 
             // Get ECB for structural changes (adding/refreshing BurningData)
             var ecb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>()
@@ -71,8 +77,8 @@ namespace ECS.Systems
                     // Crit roll
                     bool isCrit = rng.NextFloat() < critConfig.CritChance;
                     float damage = isCrit
-                        ? GameConstants.EmpPulseDamage * critConfig.CritMultiplier
-                        : GameConstants.EmpPulseDamage;
+                        ? stats.EmpDamage * critConfig.CritMultiplier
+                        : stats.EmpDamage;
 
                     health.ValueRW.CurrentHP -= damage;
 
@@ -88,9 +94,9 @@ namespace ECS.Systems
                     // Apply or refresh DoT (BurningData) -- EMP burn
                     var burning = new BurningData
                     {
-                        DamagePerTick = GameConstants.EmpDotDamagePerTick,
-                        TickInterval = GameConstants.EmpDotTickInterval,
-                        RemainingDuration = GameConstants.EmpDotDuration,
+                        DamagePerTick = stats.EmpDotDamagePerTick,
+                        TickInterval = stats.EmpDotTickInterval,
+                        RemainingDuration = stats.EmpDotDuration,
                         TickAccumulator = 0f
                     };
 
@@ -112,7 +118,7 @@ namespace ECS.Systems
                 OriginPos = new float2(GameConstants.ShipPositionX, GameConstants.ShipPositionZ),
                 TargetPos = mousePos,
                 ChainCount = 0,
-                Radius = GameConstants.EmpPulseRadius
+                Radius = stats.EmpRadius
             });
         }
     }

@@ -21,6 +21,8 @@ namespace ECS.Systems
             state.RequireForUpdate<OverchargeBuffData>();
             state.RequireForUpdate<GameStateData>();
             state.RequireForUpdate<InputData>();
+            state.RequireForUpdate<SkillStatsData>();
+            state.RequireForUpdate<SkillUnlockData>();
         }
 
         [BurstCompile]
@@ -36,11 +38,13 @@ namespace ECS.Systems
             var overcharge = SystemAPI.GetSingletonRW<OverchargeBuffData>();
             var input = SystemAPI.GetSingleton<InputData>();
 
-            // Activation: Skill4 pressed and cooldown ready
-            if (skillInput.Skill4Pressed && cooldown.ValueRO.Skill4Remaining <= 0f)
+            // Activation: Skill4 pressed, unlocked, and cooldown ready
+            var unlocks = SystemAPI.GetSingleton<SkillUnlockData>();
+            if (skillInput.Skill4Pressed && unlocks.Skill4Unlocked && cooldown.ValueRO.Skill4Remaining <= 0f)
             {
-                cooldown.ValueRW.Skill4Remaining = cooldown.ValueRO.Skill4MaxCooldown;
-                overcharge.ValueRW.RemainingDuration = GameConstants.OverchargeDuration;
+                var stats = SystemAPI.GetSingleton<SkillStatsData>();
+                cooldown.ValueRW.Skill4Remaining = stats.OverchargeCooldown;
+                overcharge.ValueRW.RemainingDuration = stats.OverchargeDuration;
 
                 // Emit SkillEvent for VFX bridge
                 var skillEventBuffer = SystemAPI.GetSingletonBuffer<SkillEvent>();
