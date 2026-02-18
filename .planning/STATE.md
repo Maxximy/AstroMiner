@@ -5,22 +5,22 @@
 See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value:** The mining-collecting-upgrading loop must feel satisfying -- hovering the circle over asteroids, watching them break apart, collecting minerals, and spending credits on meaningful upgrades that make the next run noticeably better.
-**Current focus:** Phase 6 - Tech Tree & Level Progression (all 3 plans complete)
+**Current focus:** Phase 6 - Tech Tree & Level Progression (all 4 plans complete, including gap closure)
 
 ## Current Position
 
 Phase: 6 of 6 (Tech Tree & Level Progression)
-Plan: 3 of 3 in current phase (all plans complete)
+Plan: 4 of 4 in current phase (all plans complete, including gap closure 06-04)
 Status: Complete
-Last activity: 2026-02-18 -- Completed 06-02 Tech Tree UI (controller, nodes, tooltip, purchase system)
+Last activity: 2026-02-18 -- Completed 06-04 Gap Closure (zoom sensitivity + tooltip positioning)
 
 Progress: [##################] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 15
-- Average duration: 7 min
+- Total plans completed: 16
+- Average duration: 6.6 min
 - Total execution time: 1.6 hours
 
 **By Phase:**
@@ -32,11 +32,11 @@ Progress: [##################] 100%
 | 03-collection-economy-and-session | 3 | 11 min | 3.7 min |
 | 04-visual-and-audio-feedback | 2 | 13 min | 6.5 min |
 | 05-ship-skills-and-advanced-damage | 3 | 18 min | 6 min |
-| 06-tech-tree-and-level-progression | 3 | 22 min | 7.3 min |
+| 06-tech-tree-and-level-progression | 4 | 23 min | 5.8 min |
 
 **Recent Trend:**
-- Last 5 plans: 05-02 (8 min), 05-03 (5 min), 06-01 (8 min), 06-02 (8 min), 06-03 (6 min)
-- Trend: consistent fast execution for well-specified plans
+- Last 5 plans: 05-03 (5 min), 06-01 (8 min), 06-02 (8 min), 06-03 (6 min), 06-04 (1 min)
+- Trend: consistent fast execution; surgical gap closure plans execute in under 1 min
 
 *Updated after each plan completion*
 
@@ -115,6 +115,8 @@ Recent decisions affecting current work:
 - PlayingState.ApplyLevelConfig writes level config into both RunConfigData and AsteroidSpawnTimer at run start (06-03)
 - HP-based asteroid size uses linear scaling: 30% of HP increase maps to size increase (06-03)
 - LuckyStrike doubles finalCredits (after ResourceMultiplier) not baseCredits for multiplicative stacking (06-03)
+- Scroll zoom normalized by /120 (standard notch delta) with ZoomSpeed=0.5f for ~3.4 notches full range traversal (06-04)
+- Tooltip anchor center (0.5, 0.5) to match ScreenPointToLocalPointInRectangle center-origin output; clamping logic unchanged (06-04)
 
 ### Pending Todos
 
@@ -128,5 +130,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-18
-Stopped at: Completed 06-02-PLAN.md (all Phase 6 plans now complete)
-Resume file: .planning/phases/06-tech-tree-and-level-progression/06-02-SUMMARY.md
+Stopped at: Completed 06-04-PLAN.md (gap closure -- all Phase 6 plans and UAT gaps resolved)
+Resume file: .planning/phases/06-tech-tree-and-level-progression/06-04-SUMMARY.md
