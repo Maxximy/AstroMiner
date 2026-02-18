@@ -81,7 +81,7 @@ public static class GameConstants
     // ── Session Defaults (consumed by Plan 03-02) ───────────────
 
     /// <summary>Default duration of a timed run in seconds.</summary>
-    public const float DefaultRunDuration = 10f;
+    public const float DefaultRunDuration = 20f;
 
     /// <summary>Grace period after run ends for collecting remaining minerals.</summary>
     public const float CollectingGracePeriod = 2f;

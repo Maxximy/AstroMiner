@@ -1,98 +1,102 @@
-using UnityEngine;
-using Unity.Entities;
+using ECS.Components;
 using TMPro;
+using Unity.Entities;
+using UnityEngine;
 
-/// <summary>
-/// Displays running credit total and countdown timer during gameplay.
-/// Shows HUD only during Playing and Collecting phases.
-/// Wired by UISetup at runtime.
-/// </summary>
-public class HUDController : MonoBehaviour
+namespace MonoBehaviours.UI
 {
-    private TextMeshProUGUI _creditsText;
-    private TextMeshProUGUI _timerText;
-    private GameObject _hudRoot;
-
-    private EntityManager _em;
-    private EntityQuery _gameStateQuery;
-    private bool _initialized;
-
-    // Credit counter pop animation state
-    private long _previousCredits;
-    private float _popTimer;
-    private Vector3 _creditsOriginalScale = Vector3.one;
-    private Color _creditsOriginalColor = Color.white;
-
     /// <summary>
-    /// Called by UISetup to wire text references and root object.
+    /// Displays running credit total and countdown timer during gameplay.
+    /// Shows HUD only during Playing and Collecting phases.
+    /// Wired by UISetup at runtime.
     /// </summary>
-    public void Initialize(TextMeshProUGUI creditsText, TextMeshProUGUI timerText, GameObject hudRoot)
+    public class HUDController : MonoBehaviour
     {
-        _creditsText = creditsText;
-        _timerText = timerText;
-        _hudRoot = hudRoot;
-    }
+        private TextMeshProUGUI creditsText;
+        private TextMeshProUGUI timerText;
+        private GameObject hudRoot;
 
-    void LateUpdate()
-    {
-        if (!_initialized)
+        private EntityManager em;
+        private EntityQuery gameStateQuery;
+        private bool initialized;
+
+        // Credit counter pop animation state
+        private long previousCredits;
+        private float popTimer;
+        private Vector3 creditsOriginalScale = Vector3.one;
+        private Color creditsOriginalColor = Color.white;
+
+        /// <summary>
+        /// Called by UISetup to wire text references and root object.
+        /// </summary>
+        public void Initialize(TextMeshProUGUI creditsText, TextMeshProUGUI timerText, GameObject hudRoot)
         {
-            var world = World.DefaultGameObjectInjectionWorld;
-            if (world == null || !world.IsCreated) return;
-
-            _em = world.EntityManager;
-            _gameStateQuery = _em.CreateEntityQuery(typeof(GameStateData));
-            _initialized = true;
+            this.creditsText = creditsText;
+            this.timerText = timerText;
+            this.hudRoot = hudRoot;
         }
 
-        if (_gameStateQuery.CalculateEntityCount() == 0) return;
-
-        var gameState = _gameStateQuery.GetSingleton<GameStateData>();
-
-        // Show HUD only during Playing and Collecting phases
-        bool showHUD = gameState.Phase == GamePhase.Playing || gameState.Phase == GamePhase.Collecting;
-        if (_hudRoot != null && _hudRoot.activeSelf != showHUD)
+        void LateUpdate()
         {
-            _hudRoot.SetActive(showHUD);
-        }
-
-        if (!showHUD) return;
-
-        // Credits display with K/M/B/T suffix formatting
-        if (_creditsText != null)
-        {
-            _creditsText.text = NumberFormatter.Format((double)gameState.Credits);
-
-            // Detect credit change and trigger pop animation
-            if (gameState.Credits != _previousCredits && _previousCredits != 0)
+            if (!initialized)
             {
-                _popTimer = GameConstants.CreditPopDuration;
-            }
-            _previousCredits = gameState.Credits;
+                var world = World.DefaultGameObjectInjectionWorld;
+                if (world == null || !world.IsCreated) return;
 
-            // Animate credit counter pop (scale up + gold flash)
-            if (_popTimer > 0)
-            {
-                _popTimer -= Time.deltaTime;
-                float t = Mathf.Clamp01(_popTimer / GameConstants.CreditPopDuration);
-                float scale = 1f + (GameConstants.CreditPopScale - 1f) * Mathf.Sin(t * Mathf.PI);
-                _creditsText.transform.localScale = _creditsOriginalScale * scale;
-                _creditsText.color = Color.Lerp(_creditsOriginalColor, new Color(1f, 0.9f, 0.3f), t);
+                em = world.EntityManager;
+                gameStateQuery = em.CreateEntityQuery(typeof(GameStateData));
+                initialized = true;
             }
-            else
-            {
-                _creditsText.transform.localScale = _creditsOriginalScale;
-                _creditsText.color = _creditsOriginalColor;
-            }
-        }
 
-        // Timer display as MM:SS
-        if (_timerText != null)
-        {
-            float timer = Mathf.Max(0f, gameState.Timer);
-            int minutes = (int)(timer / 60f);
-            int seconds = (int)(timer % 60f);
-            _timerText.text = $"{minutes}:{seconds:D2}";
+            if (gameStateQuery.CalculateEntityCount() == 0) return;
+
+            var gameState = gameStateQuery.GetSingleton<GameStateData>();
+
+            // Show HUD only during Playing and Collecting phases
+            bool showHUD = gameState.Phase == GamePhase.Playing || gameState.Phase == GamePhase.Collecting;
+            if (hudRoot != null && hudRoot.activeSelf != showHUD)
+            {
+                hudRoot.SetActive(showHUD);
+            }
+
+            if (!showHUD) return;
+
+            // Credits display with K/M/B/T suffix formatting
+            if (creditsText != null)
+            {
+                creditsText.text = NumberFormatter.Format((double)gameState.Credits);
+
+                // Detect credit change and trigger pop animation
+                if (gameState.Credits != previousCredits && previousCredits != 0)
+                {
+                    popTimer = GameConstants.CreditPopDuration;
+                }
+                previousCredits = gameState.Credits;
+
+                // Animate credit counter pop (scale up + gold flash)
+                if (popTimer > 0)
+                {
+                    popTimer -= Time.deltaTime;
+                    float t = Mathf.Clamp01(popTimer / GameConstants.CreditPopDuration);
+                    float scale = 1f + (GameConstants.CreditPopScale - 1f) * Mathf.Sin(t * Mathf.PI);
+                    creditsText.transform.localScale = creditsOriginalScale * scale;
+                    creditsText.color = Color.Lerp(creditsOriginalColor, new Color(1f, 0.9f, 0.3f), t);
+                }
+                else
+                {
+                    creditsText.transform.localScale = creditsOriginalScale;
+                    creditsText.color = creditsOriginalColor;
+                }
+            }
+
+            // Timer display as MM:SS
+            if (timerText != null)
+            {
+                float timer = Mathf.Max(0f, gameState.Timer);
+                int minutes = (int)(timer / 60f);
+                int seconds = (int)(timer % 60f);
+                timerText.text = $"{minutes}:{seconds:D2}";
+            }
         }
     }
 }

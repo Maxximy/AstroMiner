@@ -1,61 +1,65 @@
-using UnityEngine;
+using ECS.Components;
 using Unity.Entities;
 using Unity.Mathematics;
+using UnityEngine;
 
-public class ECSBootstrap : MonoBehaviour
+namespace MonoBehaviours.Core
 {
-    void Start()
+    public class ECSBootstrap : MonoBehaviour
     {
-        var world = World.DefaultGameObjectInjectionWorld;
-        var em = world.EntityManager;
-
-        // Create GameState singleton
-        var gameStateEntity = em.CreateEntity(typeof(GameStateData));
-        em.SetComponentData(gameStateEntity, new GameStateData
+        private void Start()
         {
-            Phase = GamePhase.Playing,
-            Timer = GameConstants.DefaultRunDuration,
-            Credits = 0
-        });
+            var world = World.DefaultGameObjectInjectionWorld;
+            var em = world.EntityManager;
 
-        // Create Input singleton
-        var inputEntity = em.CreateEntity(typeof(InputData));
-        em.SetComponentData(inputEntity, new InputData
-        {
-            MouseWorldPos = float2.zero,
-            MouseValid = false
-        });
+            // Create GameState singleton
+            var gameStateEntity = em.CreateEntity(typeof(GameStateData));
+            em.SetComponentData(gameStateEntity, new GameStateData
+            {
+                Phase = GamePhase.Playing,
+                Timer = GameConstants.DefaultRunDuration,
+                Credits = 0
+            });
 
-        // Create AsteroidSpawnTimer singleton
-        var spawnTimerEntity = em.CreateEntity(typeof(AsteroidSpawnTimer));
-        em.SetComponentData(spawnTimerEntity, new AsteroidSpawnTimer
-        {
-            SpawnInterval = GameConstants.DefaultSpawnInterval,
-            TimeUntilNextSpawn = 0f,
-            MaxActiveAsteroids = GameConstants.DefaultMaxAsteroids
-        });
+            // Create Input singleton
+            var inputEntity = em.CreateEntity(typeof(InputData));
+            em.SetComponentData(inputEntity, new InputData
+            {
+                MouseWorldPos = float2.zero,
+                MouseValid = false
+            });
 
-        // Create MiningConfigData singleton
-        var miningConfigEntity = em.CreateEntity(typeof(MiningConfigData));
-        em.SetComponentData(miningConfigEntity, new MiningConfigData
-        {
-            Radius = GameConstants.DefaultMiningRadius,
-            DamagePerTick = GameConstants.DefaultDamagePerTick,
-            TickInterval = GameConstants.DefaultTickInterval
-        });
+            // Create AsteroidSpawnTimer singleton
+            var spawnTimerEntity = em.CreateEntity(typeof(AsteroidSpawnTimer));
+            em.SetComponentData(spawnTimerEntity, new AsteroidSpawnTimer
+            {
+                SpawnInterval = GameConstants.DefaultSpawnInterval,
+                TimeUntilNextSpawn = 0f,
+                MaxActiveAsteroids = GameConstants.DefaultMaxAsteroids
+            });
 
-        // Create CollectionEvent buffer entity (Phase 4 visual/audio feedback)
-        var collectionEventEntity = em.CreateEntity();
-        em.AddBuffer<CollectionEvent>(collectionEventEntity);
+            // Create MiningConfigData singleton
+            var miningConfigEntity = em.CreateEntity(typeof(MiningConfigData));
+            em.SetComponentData(miningConfigEntity, new MiningConfigData
+            {
+                Radius = GameConstants.DefaultMiningRadius,
+                DamagePerTick = GameConstants.DefaultDamagePerTick,
+                TickInterval = GameConstants.DefaultTickInterval
+            });
 
-        // Create DamageEvent buffer entity (Phase 4 visual/audio feedback)
-        var damageEventEntity = em.CreateEntity();
-        em.AddBuffer<DamageEvent>(damageEventEntity);
+            // Create CollectionEvent buffer entity (Phase 4 visual/audio feedback)
+            var collectionEventEntity = em.CreateEntity();
+            em.AddBuffer<CollectionEvent>(collectionEventEntity);
 
-        // Create DestructionEvent buffer entity (Phase 4 explosion/audio feedback)
-        var destructionEventEntity = em.CreateEntity();
-        em.AddBuffer<DestructionEvent>(destructionEventEntity);
+            // Create DamageEvent buffer entity (Phase 4 visual/audio feedback)
+            var damageEventEntity = em.CreateEntity();
+            em.AddBuffer<DamageEvent>(damageEventEntity);
 
-        Debug.Log("ECS Bootstrap complete: singletons created (GameState, Input, AsteroidSpawnTimer, MiningConfig, CollectionEventBuffer, DamageEventBuffer, DestructionEventBuffer)");
+            // Create DestructionEvent buffer entity (Phase 4 explosion/audio feedback)
+            var destructionEventEntity = em.CreateEntity();
+            em.AddBuffer<DestructionEvent>(destructionEventEntity);
+
+            Debug.Log("ECS Bootstrap complete: singletons created (GameState, Input, AsteroidSpawnTimer, MiningConfig, CollectionEventBuffer, DamageEventBuffer, DestructionEventBuffer)");
+        }
     }
 }

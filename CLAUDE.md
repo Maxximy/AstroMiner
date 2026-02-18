@@ -63,7 +63,7 @@ Three-layer architecture with strict boundaries:
 
 - **Components**: PascalCase with `Data` or `Component` suffix (`GameStateData`, `HealthComponent`)
 - **Systems**: PascalCase + `System` suffix (`AsteroidMovementSystem`)
-- **Private fields**: `_camelCase` prefix
+- **Private fields**: camelCase (`activeCoroutine`); `[SerializeField] private` uses PascalCase like public fields (`FadeCanvasGroup`)
 - **Enums**: PascalCase (`GamePhase`)
 - **Scripts**: PascalCase matching class name
 

@@ -1,92 +1,97 @@
+using ECS.Components;
+using MonoBehaviours.Core;
+using TMPro;
+using Unity.Entities;
 using UnityEngine;
 using UnityEngine.UI;
-using Unity.Entities;
-using TMPro;
 
-/// <summary>
-/// Placeholder upgrade screen for Phase 6 tech tree.
-/// Shows total credits and a Start Run button.
-/// Wired by UISetup at runtime.
-/// </summary>
-public class UpgradeScreen : MonoBehaviour
+namespace MonoBehaviours.UI
 {
-    private TextMeshProUGUI _titleText;
-    private TextMeshProUGUI _creditsText;
-    private Button _startRunButton;
-    private GameObject _root;
-
     /// <summary>
-    /// Called by UISetup to wire UI references.
+    /// Placeholder upgrade screen for Phase 6 tech tree.
+    /// Shows total credits and a Start Run button.
+    /// Wired by UISetup at runtime.
     /// </summary>
-    public void Initialize(TextMeshProUGUI titleText, TextMeshProUGUI creditsText, Button startRunButton, GameObject root)
+    public class UpgradeScreen : MonoBehaviour
     {
-        _titleText = titleText;
-        _creditsText = creditsText;
-        _startRunButton = startRunButton;
-        _root = root;
+        private TextMeshProUGUI titleText;
+        private TextMeshProUGUI creditsText;
+        private Button startRunButton;
+        private GameObject root;
 
-        // Wire start run button
-        if (_startRunButton != null)
+        /// <summary>
+        /// Called by UISetup to wire UI references.
+        /// </summary>
+        public void Initialize(TextMeshProUGUI titleText, TextMeshProUGUI creditsText, Button startRunButton, GameObject root)
         {
-            _startRunButton.onClick.AddListener(OnStartRunClicked);
-        }
+            this.titleText = titleText;
+            this.creditsText = creditsText;
+            this.startRunButton = startRunButton;
+            this.root = root;
 
-        // Start hidden
-        if (_root != null)
-        {
-            _root.SetActive(false);
-        }
-    }
-
-    /// <summary>
-    /// Show the upgrade screen with current total credits.
-    /// </summary>
-    public void Show()
-    {
-        if (_root != null)
-        {
-            _root.SetActive(true);
-        }
-
-        // Read current credits from ECS
-        long currentCredits = 0;
-        var world = World.DefaultGameObjectInjectionWorld;
-        if (world != null && world.IsCreated)
-        {
-            var em = world.EntityManager;
-            var query = em.CreateEntityQuery(typeof(GameStateData));
-            if (query.CalculateEntityCount() > 0)
+            // Wire start run button
+            if (this.startRunButton != null)
             {
-                var gameState = query.GetSingleton<GameStateData>();
-                currentCredits = gameState.Credits;
+                this.startRunButton.onClick.AddListener(OnStartRunClicked);
+            }
+
+            // Start hidden
+            if (this.root != null)
+            {
+                this.root.SetActive(false);
             }
         }
 
-        if (_titleText != null)
+        /// <summary>
+        /// Show the upgrade screen with current total credits.
+        /// </summary>
+        public void Show()
         {
-            _titleText.text = "Upgrades";
+            if (root != null)
+            {
+                root.SetActive(true);
+            }
+
+            // Read current credits from ECS
+            long currentCredits = 0;
+            var world = World.DefaultGameObjectInjectionWorld;
+            if (world != null && world.IsCreated)
+            {
+                var em = world.EntityManager;
+                var query = em.CreateEntityQuery(typeof(GameStateData));
+                if (query.CalculateEntityCount() > 0)
+                {
+                    var gameState = query.GetSingleton<GameStateData>();
+                    currentCredits = gameState.Credits;
+                }
+            }
+
+            if (titleText != null)
+            {
+                titleText.text = "Upgrades";
+            }
+
+            if (creditsText != null)
+            {
+                creditsText.text = NumberFormatter.Format((double)currentCredits) + " credits";
+            }
         }
 
-        if (_creditsText != null)
+        /// <summary>
+        /// Hide the upgrade screen.
+        /// </summary>
+        public void Hide()
         {
-            _creditsText.text = NumberFormatter.Format((double)currentCredits) + " credits";
+            if (root != null)
+            {
+                root.SetActive(false);
+            }
         }
-    }
 
-    /// <summary>
-    /// Hide the upgrade screen.
-    /// </summary>
-    public void Hide()
-    {
-        if (_root != null)
+        private void OnStartRunClicked()
         {
-            _root.SetActive(false);
+            GameManager.Instance.ResetRun();
+            GameManager.Instance.TransitionTo(GamePhase.Playing);
         }
-    }
-
-    private void OnStartRunClicked()
-    {
-        GameManager.Instance.ResetRun();
-        GameManager.Instance.TransitionTo(GamePhase.Playing);
     }
 }

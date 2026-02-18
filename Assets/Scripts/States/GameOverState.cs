@@ -1,41 +1,48 @@
+using MonoBehaviours.Audio;
+using MonoBehaviours.Core;
+using MonoBehaviours.Save;
+using MonoBehaviours.UI;
 using UnityEngine;
 
-public class GameOverState : IGameState
+namespace States
 {
-    public void Enter(GameManager manager)
+    public class GameOverState : IGameState
     {
-        Debug.Log("Entering GameOver state");
-
-        // Auto-save credits at end of every run (SAVE-02)
-        SaveManager.Instance?.AutoSave();
-
-        // Play game over fanfare SFX (AUDI-05)
-        AudioManager.Instance?.PlayGameOverFanfare();
-
-        var resultsScreen = Object.FindAnyObjectByType<ResultsScreen>(FindObjectsInactive.Include);
-        if (resultsScreen != null)
+        public void Enter(GameManager manager)
         {
-            resultsScreen.Show();
-        }
-        else
-        {
-            Debug.LogWarning("GameOverState: ResultsScreen not found");
-        }
-    }
+            Debug.Log("Entering GameOver state");
 
-    public void Execute(GameManager manager)
-    {
-        // No-op: waiting for UI button (Continue)
-    }
+            // Auto-save credits at end of every run (SAVE-02)
+            SaveManager.Instance?.AutoSave();
 
-    public void Exit(GameManager manager)
-    {
-        var resultsScreen = Object.FindAnyObjectByType<ResultsScreen>(FindObjectsInactive.Include);
-        if (resultsScreen != null)
-        {
-            resultsScreen.Hide();
+            // Play game over fanfare SFX (AUDI-05)
+            AudioManager.Instance?.PlayGameOverFanfare();
+
+            var resultsScreen = Object.FindAnyObjectByType<ResultsScreen>(FindObjectsInactive.Include);
+            if (resultsScreen != null)
+            {
+                resultsScreen.Show();
+            }
+            else
+            {
+                Debug.LogWarning("GameOverState: ResultsScreen not found");
+            }
         }
 
-        Debug.Log("Exiting GameOver state");
+        public void Execute(GameManager manager)
+        {
+            // No-op: waiting for UI button (Continue)
+        }
+
+        public void Exit(GameManager manager)
+        {
+            var resultsScreen = Object.FindAnyObjectByType<ResultsScreen>(FindObjectsInactive.Include);
+            if (resultsScreen != null)
+            {
+                resultsScreen.Hide();
+            }
+
+            Debug.Log("Exiting GameOver state");
+        }
     }
 }

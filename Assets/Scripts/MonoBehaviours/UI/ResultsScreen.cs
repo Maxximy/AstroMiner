@@ -1,96 +1,101 @@
+using ECS.Components;
+using MonoBehaviours.Core;
+using TMPro;
+using Unity.Entities;
 using UnityEngine;
 using UnityEngine.UI;
-using Unity.Entities;
-using TMPro;
 
-/// <summary>
-/// Displays run results showing credits earned this run.
-/// Shown during GameOver phase, hidden otherwise.
-/// Continue button transitions to Upgrading phase.
-/// Wired by UISetup at runtime.
-/// </summary>
-public class ResultsScreen : MonoBehaviour
+namespace MonoBehaviours.UI
 {
-    private TextMeshProUGUI _titleText;
-    private TextMeshProUGUI _creditsEarnedText;
-    private Button _continueButton;
-    private GameObject _root;
-
     /// <summary>
-    /// Called by UISetup to wire UI references.
+    /// Displays run results showing credits earned this run.
+    /// Shown during GameOver phase, hidden otherwise.
+    /// Continue button transitions to Upgrading phase.
+    /// Wired by UISetup at runtime.
     /// </summary>
-    public void Initialize(TextMeshProUGUI titleText, TextMeshProUGUI creditsEarnedText, Button continueButton, GameObject root)
+    public class ResultsScreen : MonoBehaviour
     {
-        _titleText = titleText;
-        _creditsEarnedText = creditsEarnedText;
-        _continueButton = continueButton;
-        _root = root;
+        private TextMeshProUGUI titleText;
+        private TextMeshProUGUI creditsEarnedText;
+        private Button continueButton;
+        private GameObject root;
 
-        // Wire continue button
-        if (_continueButton != null)
+        /// <summary>
+        /// Called by UISetup to wire UI references.
+        /// </summary>
+        public void Initialize(TextMeshProUGUI titleText, TextMeshProUGUI creditsEarnedText, Button continueButton, GameObject root)
         {
-            _continueButton.onClick.AddListener(OnContinueClicked);
-        }
+            this.titleText = titleText;
+            this.creditsEarnedText = creditsEarnedText;
+            this.continueButton = continueButton;
+            this.root = root;
 
-        // Start hidden
-        if (_root != null)
-        {
-            _root.SetActive(false);
-        }
-    }
-
-    /// <summary>
-    /// Show the results screen with credits earned this run.
-    /// Reads current credits from ECS and computes delta from run start.
-    /// </summary>
-    public void Show()
-    {
-        if (_root != null)
-        {
-            _root.SetActive(true);
-        }
-
-        // Read current credits from ECS
-        long currentCredits = 0;
-        var world = World.DefaultGameObjectInjectionWorld;
-        if (world != null && world.IsCreated)
-        {
-            var em = world.EntityManager;
-            var query = em.CreateEntityQuery(typeof(GameStateData));
-            if (query.CalculateEntityCount() > 0)
+            // Wire continue button
+            if (this.continueButton != null)
             {
-                var gameState = query.GetSingleton<GameStateData>();
-                currentCredits = gameState.Credits;
+                this.continueButton.onClick.AddListener(OnContinueClicked);
+            }
+
+            // Start hidden
+            if (this.root != null)
+            {
+                this.root.SetActive(false);
             }
         }
 
-        long creditsThisRun = currentCredits - GameManager.Instance.CreditsAtRunStart;
-
-        if (_titleText != null)
+        /// <summary>
+        /// Show the results screen with credits earned this run.
+        /// Reads current credits from ECS and computes delta from run start.
+        /// </summary>
+        public void Show()
         {
-            _titleText.text = "Run Complete!";
+            if (root != null)
+            {
+                root.SetActive(true);
+            }
+
+            // Read current credits from ECS
+            long currentCredits = 0;
+            var world = World.DefaultGameObjectInjectionWorld;
+            if (world != null && world.IsCreated)
+            {
+                var em = world.EntityManager;
+                var query = em.CreateEntityQuery(typeof(GameStateData));
+                if (query.CalculateEntityCount() > 0)
+                {
+                    var gameState = query.GetSingleton<GameStateData>();
+                    currentCredits = gameState.Credits;
+                }
+            }
+
+            long creditsThisRun = currentCredits - GameManager.Instance.CreditsAtRunStart;
+
+            if (titleText != null)
+            {
+                titleText.text = "Run Complete!";
+            }
+
+            if (creditsEarnedText != null)
+            {
+                creditsEarnedText.text = NumberFormatter.Format((double)creditsThisRun) + " credits earned";
+            }
         }
 
-        if (_creditsEarnedText != null)
+        /// <summary>
+        /// Hide the results screen.
+        /// </summary>
+        public void Hide()
         {
-            _creditsEarnedText.text = NumberFormatter.Format((double)creditsThisRun) + " credits earned";
+            if (root != null)
+            {
+                root.SetActive(false);
+            }
         }
-    }
 
-    /// <summary>
-    /// Hide the results screen.
-    /// </summary>
-    public void Hide()
-    {
-        if (_root != null)
+        private void OnContinueClicked()
         {
-            _root.SetActive(false);
+            Debug.Log("continue");
+            GameManager.Instance.TransitionTo(GamePhase.Upgrading);
         }
-    }
-
-    private void OnContinueClicked()
-    {
-        Debug.Log("continue");
-        GameManager.Instance.TransitionTo(GamePhase.Upgrading);
     }
 }

@@ -1,41 +1,46 @@
+using ECS.Components;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Transforms;
 
-/// <summary>
-/// Destroys asteroid entities that have drifted below the bottom of the play area.
-/// Uses ECB for structural changes (entity destruction).
-/// Only runs during the Playing game phase.
-/// </summary>
-[BurstCompile]
-public partial struct AsteroidBoundsSystem : ISystem
+namespace ECS.Systems
 {
-    public void OnCreate(ref SystemState state)
-    {
-        state.RequireForUpdate<GameStateData>();
-    }
-
+    /// <summary>
+    /// Destroys asteroid entities that have drifted below the bottom of the play area.
+    /// Uses ECB for structural changes (entity destruction).
+    /// Only runs during the Playing game phase.
+    /// </summary>
     [BurstCompile]
-    public void OnUpdate(ref SystemState state)
+    public partial struct AsteroidBoundsSystem : ISystem
     {
-        // Only check bounds during Playing state
-        var gameState = SystemAPI.GetSingleton<GameStateData>();
-        if (gameState.Phase != GamePhase.Playing)
-            return;
-
-        // Get ECB for structural changes
-        var ecb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>()
-            .CreateCommandBuffer(state.WorldUnmanaged);
-
-        // Iterate all asteroid entities and destroy those below the play area
-        foreach (var (transform, entity) in
-            SystemAPI.Query<RefRO<LocalTransform>>()
-                .WithAll<AsteroidTag>()
-                .WithEntityAccess())
+        public void OnCreate(ref SystemState state)
         {
-            if (transform.ValueRO.Position.z < GameConstants.PlayAreaZMin)
+            state.RequireForUpdate<GameStateData>();
+            state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
+        }
+
+        [BurstCompile]
+        public void OnUpdate(ref SystemState state)
+        {
+            // Only check bounds during Playing state
+            var gameState = SystemAPI.GetSingleton<GameStateData>();
+            if (gameState.Phase != GamePhase.Playing)
+                return;
+
+            // Get ECB for structural changes
+            var ecb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>()
+                .CreateCommandBuffer(state.WorldUnmanaged);
+
+            // Iterate all asteroid entities and destroy those below the play area
+            foreach (var (transform, entity) in
+                     SystemAPI.Query<RefRO<LocalTransform>>()
+                         .WithAll<AsteroidTag>()
+                         .WithEntityAccess())
             {
-                ecb.DestroyEntity(entity);
+                if (transform.ValueRO.Position.z < GameConstants.PlayAreaZMin)
+                {
+                    ecb.DestroyEntity(entity);
+                }
             }
         }
     }

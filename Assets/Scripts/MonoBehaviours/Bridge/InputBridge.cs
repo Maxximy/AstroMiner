@@ -1,45 +1,49 @@
-using UnityEngine;
-using UnityEngine.InputSystem;
+using ECS.Components;
 using Unity.Entities;
 using Unity.Mathematics;
+using UnityEngine;
+using UnityEngine.InputSystem;
 
-public class InputBridge : MonoBehaviour
+namespace MonoBehaviours.Bridge
 {
-    private Camera _mainCamera;
-    private EntityManager _em;
-    private Entity _inputEntity;
-    private Plane _gameplayPlane;
-
-    void Start()
+    public class InputBridge : MonoBehaviour
     {
-        _mainCamera = Camera.main;
-        _em = World.DefaultGameObjectInjectionWorld.EntityManager;
-        _inputEntity = _em.CreateEntityQuery(typeof(InputData))
-            .GetSingletonEntity();
+        private Camera mainCamera;
+        private EntityManager em;
+        private Entity inputEntity;
+        private Plane gameplayPlane;
 
-        // Gameplay plane at Y=0, facing up
-        // For perspective top-down camera, the plane determines
-        // where mouse rays intersect the game world
-        _gameplayPlane = new Plane(Vector3.up, Vector3.zero);
-    }
-
-    void Update()
-    {
-        var mousePos = Mouse.current != null ? Mouse.current.position.ReadValue() : Vector2.zero;
-        var ray = _mainCamera.ScreenPointToRay(mousePos);
-
-        var inputData = new InputData();
-        if (_gameplayPlane.Raycast(ray, out float distance))
+        void Start()
         {
-            var worldPoint = ray.GetPoint(distance);
-            inputData.MouseWorldPos = new float2(worldPoint.x, worldPoint.z);
-            inputData.MouseValid = true;
-        }
-        else
-        {
-            inputData.MouseValid = false;
+            mainCamera = Camera.main;
+            em = World.DefaultGameObjectInjectionWorld.EntityManager;
+            inputEntity = em.CreateEntityQuery(typeof(InputData))
+                .GetSingletonEntity();
+
+            // Gameplay plane at Y=0, facing up
+            // For perspective top-down camera, the plane determines
+            // where mouse rays intersect the game world
+            gameplayPlane = new Plane(Vector3.up, Vector3.zero);
         }
 
-        _em.SetComponentData(_inputEntity, inputData);
+        void Update()
+        {
+            var mousePos = Mouse.current != null ? Mouse.current.position.ReadValue() : Vector2.zero;
+            var ray = mainCamera.ScreenPointToRay(mousePos);
+
+            var inputData = new InputData();
+            if (gameplayPlane.Raycast(ray, out float distance))
+            {
+                var worldPoint = ray.GetPoint(distance);
+                inputData.MouseWorldPos = new float2(worldPoint.x, worldPoint.z);
+                inputData.MouseValid = true;
+            }
+            else
+            {
+                inputData.MouseValid = false;
+            }
+
+            em.SetComponentData(inputEntity, inputData);
+        }
     }
 }

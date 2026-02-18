@@ -2,88 +2,91 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class FadeController : MonoBehaviour
+namespace MonoBehaviours.UI
 {
-    [SerializeField] private CanvasGroup _fadeCanvasGroup;
-    [SerializeField] private float _fadeDuration = 0.4f;
-
-    private Coroutine _activeCoroutine;
-
-    /// <summary>
-    /// Fade to black (alpha 0 -> 1). Blocks raycasts immediately.
-    /// Calls onComplete when fully black.
-    /// </summary>
-    public void FadeOut(Action onComplete = null)
+    public class FadeController : MonoBehaviour
     {
-        if (_activeCoroutine != null)
-            StopCoroutine(_activeCoroutine);
+        [SerializeField] private CanvasGroup FadeCanvasGroup;
+        [SerializeField] private float FadeDuration = 0.4f;
 
-        _fadeCanvasGroup.blocksRaycasts = true;
-        _activeCoroutine = StartCoroutine(FadeCoroutine(0f, 1f, onComplete));
-    }
+        private Coroutine activeCoroutine;
 
-    /// <summary>
-    /// Fade from black (alpha 1 -> 0). Disables blocksRaycasts when clear.
-    /// Calls onComplete when fully clear.
-    /// </summary>
-    public void FadeIn(Action onComplete = null)
-    {
-        if (_activeCoroutine != null)
-            StopCoroutine(_activeCoroutine);
-
-        _activeCoroutine = StartCoroutine(FadeCoroutine(1f, 0f, () =>
+        /// <summary>
+        /// Fade to black (alpha 0 -> 1). Blocks raycasts immediately.
+        /// Calls onComplete when fully black.
+        /// </summary>
+        public void FadeOut(Action onComplete = null)
         {
-            _fadeCanvasGroup.blocksRaycasts = false;
+            if (activeCoroutine != null)
+                StopCoroutine(activeCoroutine);
+
+            FadeCanvasGroup.blocksRaycasts = true;
+            activeCoroutine = StartCoroutine(FadeCoroutine(0f, 1f, onComplete));
+        }
+
+        /// <summary>
+        /// Fade from black (alpha 1 -> 0). Disables blocksRaycasts when clear.
+        /// Calls onComplete when fully clear.
+        /// </summary>
+        public void FadeIn(Action onComplete = null)
+        {
+            if (activeCoroutine != null)
+                StopCoroutine(activeCoroutine);
+
+            activeCoroutine = StartCoroutine(FadeCoroutine(1f, 0f, () =>
+            {
+                FadeCanvasGroup.blocksRaycasts = false;
+                onComplete?.Invoke();
+            }));
+        }
+
+        /// <summary>
+        /// Immediately set to fully black.
+        /// </summary>
+        public void SetBlack()
+        {
+            if (activeCoroutine != null)
+            {
+                StopCoroutine(activeCoroutine);
+                activeCoroutine = null;
+            }
+
+            FadeCanvasGroup.alpha = 1f;
+            FadeCanvasGroup.blocksRaycasts = true;
+        }
+
+        /// <summary>
+        /// Immediately set to fully clear (invisible).
+        /// </summary>
+        public void SetClear()
+        {
+            if (activeCoroutine != null)
+            {
+                StopCoroutine(activeCoroutine);
+                activeCoroutine = null;
+            }
+
+            FadeCanvasGroup.alpha = 0f;
+            FadeCanvasGroup.blocksRaycasts = false;
+        }
+
+        private IEnumerator FadeCoroutine(float from, float to, Action onComplete)
+        {
+            float elapsed = 0f;
+            FadeCanvasGroup.alpha = from;
+
+            while (elapsed < FadeDuration)
+            {
+                elapsed += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsed / FadeDuration);
+                // Smooth ease-in-out using SmoothStep
+                FadeCanvasGroup.alpha = Mathf.SmoothStep(from, to, t);
+                yield return null;
+            }
+
+            FadeCanvasGroup.alpha = to;
+            activeCoroutine = null;
             onComplete?.Invoke();
-        }));
-    }
-
-    /// <summary>
-    /// Immediately set to fully black.
-    /// </summary>
-    public void SetBlack()
-    {
-        if (_activeCoroutine != null)
-        {
-            StopCoroutine(_activeCoroutine);
-            _activeCoroutine = null;
         }
-
-        _fadeCanvasGroup.alpha = 1f;
-        _fadeCanvasGroup.blocksRaycasts = true;
-    }
-
-    /// <summary>
-    /// Immediately set to fully clear (invisible).
-    /// </summary>
-    public void SetClear()
-    {
-        if (_activeCoroutine != null)
-        {
-            StopCoroutine(_activeCoroutine);
-            _activeCoroutine = null;
-        }
-
-        _fadeCanvasGroup.alpha = 0f;
-        _fadeCanvasGroup.blocksRaycasts = false;
-    }
-
-    private IEnumerator FadeCoroutine(float from, float to, Action onComplete)
-    {
-        float elapsed = 0f;
-        _fadeCanvasGroup.alpha = from;
-
-        while (elapsed < _fadeDuration)
-        {
-            elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / _fadeDuration);
-            // Smooth ease-in-out using SmoothStep
-            _fadeCanvasGroup.alpha = Mathf.SmoothStep(from, to, t);
-            yield return null;
-        }
-
-        _fadeCanvasGroup.alpha = to;
-        _activeCoroutine = null;
-        onComplete?.Invoke();
     }
 }

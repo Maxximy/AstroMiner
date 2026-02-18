@@ -1,76 +1,82 @@
-using UnityEngine;
+using ECS.Components;
+using MonoBehaviours.Core;
+using MonoBehaviours.Save;
 using Unity.Entities;
+using UnityEngine;
 
-public class PlayingState : IGameState
+namespace States
 {
-    private EntityManager _em;
-    private Entity _gameStateEntity;
-    private bool _resolved;
-
-    /// <summary>
-    /// Static flag ensuring saved credits are loaded into ECS only once per session.
-    /// Persists across state re-entries within the same application lifetime.
-    /// </summary>
-    private static bool _saveLoaded = false;
-
-    public void Enter(GameManager manager)
+    public class PlayingState : IGameState
     {
-        Debug.Log("Entering Playing state");
+        private EntityManager em;
+        private Entity gameStateEntity;
+        private bool resolved;
 
-        var world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
+        /// <summary>
+        /// Static flag ensuring saved credits are loaded into ECS only once per session.
+        /// Persists across state re-entries within the same application lifetime.
+        /// </summary>
+        private static bool saveLoaded = false;
+
+        public void Enter(GameManager manager)
         {
-            Debug.LogError("PlayingState: ECS world not available");
-            return;
+            Debug.Log("Entering Playing state");
+
+            var world = World.DefaultGameObjectInjectionWorld;
+            if (world == null || !world.IsCreated)
+            {
+                Debug.LogError("PlayingState: ECS world not available");
+                return;
+            }
+
+            em = world.EntityManager;
+            var query = em.CreateEntityQuery(typeof(GameStateData));
+            if (query.CalculateEntityCount() == 0)
+            {
+                Debug.LogError("PlayingState: GameStateData singleton not found");
+                return;
+            }
+
+            gameStateEntity = query.GetSingletonEntity();
+            resolved = true;
+
+            // On first run of the session, load saved credits from prior session
+            if (!saveLoaded)
+            {
+                SaveManager.Instance?.LoadIntoECS();
+                saveLoaded = true;
+            }
+
+            // Initialize timer for this run
+            var data = em.GetComponentData<GameStateData>(gameStateEntity);
+            data.Timer = GameConstants.DefaultRunDuration;
+            em.SetComponentData(gameStateEntity, data);
+
+            // Snapshot credits at run start for "credits this run" calculation
+            manager.CreditsAtRunStart = data.Credits;
         }
 
-        _em = world.EntityManager;
-        var query = _em.CreateEntityQuery(typeof(GameStateData));
-        if (query.CalculateEntityCount() == 0)
+        public void Execute(GameManager manager)
         {
-            Debug.LogError("PlayingState: GameStateData singleton not found");
-            return;
+            if (!resolved) return;
+
+            var data = em.GetComponentData<GameStateData>(gameStateEntity);
+            data.Timer -= Time.deltaTime;
+
+            if (data.Timer <= 0f)
+            {
+                data.Timer = 0f;
+                em.SetComponentData(gameStateEntity, data);
+                manager.TransitionTo(GamePhase.Collecting);
+                return;
+            }
+
+            em.SetComponentData(gameStateEntity, data);
         }
 
-        _gameStateEntity = query.GetSingletonEntity();
-        _resolved = true;
-
-        // On first run of the session, load saved credits from prior session
-        if (!_saveLoaded)
+        public void Exit(GameManager manager)
         {
-            SaveManager.Instance?.LoadIntoECS();
-            _saveLoaded = true;
+            Debug.Log("Exiting Playing state");
         }
-
-        // Initialize timer for this run
-        var data = _em.GetComponentData<GameStateData>(_gameStateEntity);
-        data.Timer = GameConstants.DefaultRunDuration;
-        _em.SetComponentData(_gameStateEntity, data);
-
-        // Snapshot credits at run start for "credits this run" calculation
-        manager.CreditsAtRunStart = data.Credits;
-    }
-
-    public void Execute(GameManager manager)
-    {
-        if (!_resolved) return;
-
-        var data = _em.GetComponentData<GameStateData>(_gameStateEntity);
-        data.Timer -= Time.deltaTime;
-
-        if (data.Timer <= 0f)
-        {
-            data.Timer = 0f;
-            _em.SetComponentData(_gameStateEntity, data);
-            manager.TransitionTo(GamePhase.Collecting);
-            return;
-        }
-
-        _em.SetComponentData(_gameStateEntity, data);
-    }
-
-    public void Exit(GameManager manager)
-    {
-        Debug.Log("Exiting Playing state");
     }
 }

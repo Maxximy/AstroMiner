@@ -1,6 +1,11 @@
-public interface IGameState
+using MonoBehaviours.Core;
+
+namespace States
 {
-    void Enter(GameManager manager);
-    void Execute(GameManager manager);
-    void Exit(GameManager manager);
+    public interface IGameState
+    {
+        void Enter(GameManager manager);
+        void Execute(GameManager manager);
+        void Exit(GameManager manager);
+    }
 }

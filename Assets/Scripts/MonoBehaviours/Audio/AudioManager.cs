@@ -3,302 +3,305 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 
-/// <summary>
-/// Singleton audio system with pooled AudioSource playback, AudioMixer routing,
-/// and specialized methods for each game event type.
-/// Self-instantiates via [RuntimeInitializeOnLoadMethod] -- no manual scene setup required.
-/// Audio clips are loaded from Resources; null clips are handled gracefully (silent).
-/// </summary>
-public class AudioManager : MonoBehaviour
+namespace MonoBehaviours.Audio
 {
-    public static AudioManager Instance { get; private set; }
-
-    // -- AudioMixer integration -----------------------------------------------
-    private AudioMixer _mixer;
-    private AudioMixerGroup _sfxGroup;
-    private AudioMixerGroup _musicGroup;
-
-    // -- AudioSource pool for SFX --------------------------------------------
-    private readonly Queue<AudioSource> _sfxPool = new Queue<AudioSource>();
-
-    // -- Dedicated music source ----------------------------------------------
-    private AudioSource _musicSource;
-
-    // -- Audio clip references (loaded from Resources) -----------------------
-    private AudioClip _damageHitClip;
-    private AudioClip _destructionClip;
-    private AudioClip _collectionChimeClip;
-    private AudioClip _fanfareClip;
-    private AudioClip _uiClickClip;
-    private AudioClip _musicClip;
-
-    // -- Damage hit throttle -------------------------------------------------
-    private float _lastDamageHitTime;
-
-    // -- Collection chime batching -------------------------------------------
-    private int _collectionBatchCount;
-    private float _collectionBatchTimer;
-    private int _collectionBatchTier;
-
-    // -- Music auto-start ----------------------------------------------------
-    private bool _musicStarted;
-
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-    private static void AutoCreate()
+    /// <summary>
+    /// Singleton audio system with pooled AudioSource playback, AudioMixer routing,
+    /// and specialized methods for each game event type.
+    /// Self-instantiates via [RuntimeInitializeOnLoadMethod] -- no manual scene setup required.
+    /// Audio clips are loaded from Resources; null clips are handled gracefully (silent).
+    /// </summary>
+    public class AudioManager : MonoBehaviour
     {
-        if (Instance == null)
+        public static AudioManager Instance { get; private set; }
+
+        // -- AudioMixer integration -----------------------------------------------
+        private AudioMixer mixer;
+        private AudioMixerGroup sfxGroup;
+        private AudioMixerGroup musicGroup;
+
+        // -- AudioSource pool for SFX --------------------------------------------
+        private readonly Queue<AudioSource> sfxPool = new Queue<AudioSource>();
+
+        // -- Dedicated music source ----------------------------------------------
+        private AudioSource musicSource;
+
+        // -- Audio clip references (loaded from Resources) -----------------------
+        private AudioClip damageHitClip;
+        private AudioClip destructionClip;
+        private AudioClip collectionChimeClip;
+        private AudioClip fanfareClip;
+        private AudioClip uiClickClip;
+        private AudioClip musicClip;
+
+        // -- Damage hit throttle -------------------------------------------------
+        private float lastDamageHitTime;
+
+        // -- Collection chime batching -------------------------------------------
+        private int collectionBatchCount;
+        private float collectionBatchTimer;
+        private int collectionBatchTier;
+
+        // -- Music auto-start ----------------------------------------------------
+        private bool musicStarted;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        private static void AutoCreate()
         {
-            var go = new GameObject("AudioManager");
-            Instance = go.AddComponent<AudioManager>();
-            DontDestroyOnLoad(go);
-        }
-    }
-
-    private void Awake()
-    {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
-    }
-
-    private void Start()
-    {
-        // Load AudioMixer from Resources (graceful degradation if not found)
-        _mixer = Resources.Load<AudioMixer>("Audio/GameAudioMixer");
-        if (_mixer != null)
-        {
-            var sfxGroups = _mixer.FindMatchingGroups("SFX");
-            if (sfxGroups != null && sfxGroups.Length > 0)
-                _sfxGroup = sfxGroups[0];
-
-            var musicGroups = _mixer.FindMatchingGroups("Music");
-            if (musicGroups != null && musicGroups.Length > 0)
-                _musicGroup = musicGroups[0];
-
-            Debug.Log("AudioManager: AudioMixer loaded with SFX and Music groups.");
-        }
-        else
-        {
-            Debug.LogWarning("AudioManager: GameAudioMixer not found in Resources. Audio will play without mixer routing.");
-        }
-
-        // Create SFX AudioSource pool
-        for (int i = 0; i < GameConstants.AudioSFXPoolSize; i++)
-        {
-            var child = new GameObject($"SFXSource_{i}");
-            child.transform.SetParent(transform);
-
-            var source = child.AddComponent<AudioSource>();
-            source.spatialBlend = 0f; // 2D only -- WebGL spatial blend is broken
-            source.playOnAwake = false;
-
-            if (_sfxGroup != null)
-                source.outputAudioMixerGroup = _sfxGroup;
-
-            _sfxPool.Enqueue(source);
-        }
-
-        // Create dedicated Music AudioSource
-        var musicGO = new GameObject("MusicSource");
-        musicGO.transform.SetParent(transform);
-        _musicSource = musicGO.AddComponent<AudioSource>();
-        _musicSource.spatialBlend = 0f;
-        _musicSource.playOnAwake = false;
-        _musicSource.loop = true;
-
-        if (_musicGroup != null)
-            _musicSource.outputAudioMixerGroup = _musicGroup;
-
-        // Load audio clips from Resources (null is fine -- graceful degradation)
-        _damageHitClip = Resources.Load<AudioClip>("Audio/SFX/DamageHit");
-        _destructionClip = Resources.Load<AudioClip>("Audio/SFX/Destruction");
-        _collectionChimeClip = Resources.Load<AudioClip>("Audio/SFX/CollectionChime");
-        _fanfareClip = Resources.Load<AudioClip>("Audio/SFX/Fanfare");
-        _uiClickClip = Resources.Load<AudioClip>("Audio/SFX/UIClick");
-        _musicClip = Resources.Load<AudioClip>("Audio/Music/AmbientSpace");
-
-        Debug.Log("AudioManager: initialized with SFX pool of " + GameConstants.AudioSFXPoolSize + " sources.");
-    }
-
-    private void Update()
-    {
-        // Collection chime batching: play after 50ms window
-        if (_collectionBatchTimer > 0f)
-        {
-            _collectionBatchTimer -= Time.deltaTime;
-            if (_collectionBatchTimer <= 0f && _collectionBatchCount > 0)
+            if (Instance == null)
             {
-                float pitch = 1.0f + 0.05f * Mathf.Min(_collectionBatchCount, 10);
-                PlaySFX(_collectionChimeClip, Camera.main != null ? Camera.main.transform.position : Vector3.zero, 0.6f, pitch);
-                _collectionBatchCount = 0;
+                var go = new GameObject("AudioManager");
+                Instance = go.AddComponent<AudioManager>();
+                DontDestroyOnLoad(go);
             }
         }
 
-        // Auto-start music on first available frame
-        if (!_musicStarted && _musicClip != null)
+        private void Awake()
         {
-            PlayMusic(_musicClip);
-            _musicStarted = true;
-        }
-    }
-
-    // =========================================================================
-    // SFX Playback
-    // =========================================================================
-
-    /// <summary>
-    /// Plays a one-shot SFX clip from the pool with distance-based volume attenuation.
-    /// </summary>
-    public void PlaySFX(AudioClip clip, Vector3 position, float volume = 1f, float pitch = 1f)
-    {
-        if (clip == null || _sfxPool.Count == 0) return;
-
-        var source = _sfxPool.Dequeue();
-        source.clip = clip;
-        source.pitch = pitch;
-
-        // Manual distance-based volume attenuation (2D audio, no Unity spatial)
-        if (Camera.main != null)
-        {
-            float dist = Vector3.Distance(position, Camera.main.transform.position);
-            float attenuation = Mathf.Clamp01(1f - dist / GameConstants.SFXMaxDistance);
-            source.volume = volume * attenuation;
-        }
-        else
-        {
-            source.volume = volume;
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+            Instance = this;
         }
 
-        source.Play();
-        StartCoroutine(ReturnToPool(source, Mathf.Min(clip.length / Mathf.Abs(pitch), 3f)));
-    }
-
-    private IEnumerator ReturnToPool(AudioSource source, float delay)
-    {
-        yield return new WaitForSeconds(delay);
-
-        if (source != null)
+        private void Start()
         {
-            source.Stop();
-            source.clip = null;
-            _sfxPool.Enqueue(source);
+            // Load AudioMixer from Resources (graceful degradation if not found)
+            mixer = Resources.Load<AudioMixer>("Audio/GameAudioMixer");
+            if (mixer != null)
+            {
+                var sfxGroups = mixer.FindMatchingGroups("SFX");
+                if (sfxGroups != null && sfxGroups.Length > 0)
+                    sfxGroup = sfxGroups[0];
+
+                var musicGroups = mixer.FindMatchingGroups("Music");
+                if (musicGroups != null && musicGroups.Length > 0)
+                    musicGroup = musicGroups[0];
+
+                Debug.Log("AudioManager: AudioMixer loaded with SFX and Music groups.");
+            }
+            else
+            {
+                Debug.LogWarning("AudioManager: GameAudioMixer not found in Resources. Audio will play without mixer routing.");
+            }
+
+            // Create SFX AudioSource pool
+            for (int i = 0; i < GameConstants.AudioSFXPoolSize; i++)
+            {
+                var child = new GameObject($"SFXSource_{i}");
+                child.transform.SetParent(transform);
+
+                var source = child.AddComponent<AudioSource>();
+                source.spatialBlend = 0f; // 2D only -- WebGL spatial blend is broken
+                source.playOnAwake = false;
+
+                if (sfxGroup != null)
+                    source.outputAudioMixerGroup = sfxGroup;
+
+                sfxPool.Enqueue(source);
+            }
+
+            // Create dedicated Music AudioSource
+            var musicGo = new GameObject("MusicSource");
+            musicGo.transform.SetParent(transform);
+            musicSource = musicGo.AddComponent<AudioSource>();
+            musicSource.spatialBlend = 0f;
+            musicSource.playOnAwake = false;
+            musicSource.loop = true;
+
+            if (musicGroup != null)
+                musicSource.outputAudioMixerGroup = musicGroup;
+
+            // Load audio clips from Resources (null is fine -- graceful degradation)
+            damageHitClip = Resources.Load<AudioClip>("Audio/SFX/DamageHit");
+            destructionClip = Resources.Load<AudioClip>("Audio/SFX/Destruction");
+            collectionChimeClip = Resources.Load<AudioClip>("Audio/SFX/CollectionChime");
+            fanfareClip = Resources.Load<AudioClip>("Audio/SFX/Fanfare");
+            uiClickClip = Resources.Load<AudioClip>("Audio/SFX/UIClick");
+            musicClip = Resources.Load<AudioClip>("Audio/Music/AmbientSpace");
+
+            Debug.Log("AudioManager: initialized with SFX pool of " + GameConstants.AudioSFXPoolSize + " sources.");
         }
-    }
 
-    // =========================================================================
-    // Specialized Playback Methods
-    // =========================================================================
-
-    /// <summary>
-    /// Plays mining hit SFX, throttled to max 4 per second (AUDI-01).
-    /// </summary>
-    public void PlayDamageHit(Vector3 position)
-    {
-        if (Time.time - _lastDamageHitTime < GameConstants.DamageHitSFXCooldown) return;
-        _lastDamageHitTime = Time.time;
-
-        PlaySFX(_damageHitClip, position, 0.5f, Random.Range(0.9f, 1.1f));
-    }
-
-    /// <summary>
-    /// Plays asteroid destruction SFX (AUDI-02).
-    /// </summary>
-    public void PlayDestruction(Vector3 position)
-    {
-        PlaySFX(_destructionClip, position, 0.8f);
-    }
-
-    /// <summary>
-    /// Queues a collection chime for batching within 50ms window (AUDI-03).
-    /// </summary>
-    public void QueueCollectionChime(int resourceTier)
-    {
-        _collectionBatchCount++;
-        _collectionBatchTier = resourceTier;
-        if (_collectionBatchTimer <= 0f)
+        private void Update()
         {
-            _collectionBatchTimer = GameConstants.CollectionChimeBatchWindow;
+            // Collection chime batching: play after 50ms window
+            if (collectionBatchTimer > 0f)
+            {
+                collectionBatchTimer -= Time.deltaTime;
+                if (collectionBatchTimer <= 0f && collectionBatchCount > 0)
+                {
+                    float pitch = 1.0f + 0.05f * Mathf.Min(collectionBatchCount, 10);
+                    PlaySfx(collectionChimeClip, Camera.main != null ? Camera.main.transform.position : Vector3.zero, 0.6f, pitch);
+                    collectionBatchCount = 0;
+                }
+            }
+
+            // Auto-start music on first available frame
+            if (!musicStarted && musicClip != null)
+            {
+                PlayMusic(musicClip);
+                musicStarted = true;
+            }
         }
-    }
 
-    /// <summary>
-    /// Plays game over fanfare SFX (AUDI-05).
-    /// </summary>
-    public void PlayGameOverFanfare()
-    {
-        var camPos = Camera.main != null ? Camera.main.transform.position : Vector3.zero;
-        PlaySFX(_fanfareClip, camPos, 1.0f);
-    }
+        // =========================================================================
+        // SFX Playback
+        // =========================================================================
 
-    /// <summary>
-    /// Plays UI button click SFX (AUDI-07).
-    /// </summary>
-    public void PlayUIClick()
-    {
-        var camPos = Camera.main != null ? Camera.main.transform.position : Vector3.zero;
-        PlaySFX(_uiClickClip, camPos, 0.6f);
-    }
+        /// <summary>
+        /// Plays a one-shot SFX clip from the pool with distance-based volume attenuation.
+        /// </summary>
+        public void PlaySfx(AudioClip clip, Vector3 position, float volume = 1f, float pitch = 1f)
+        {
+            if (clip == null || sfxPool.Count == 0) return;
 
-    /// <summary>
-    /// Stub for skill activation SFX (AUDI-04). Phase 5 will implement real skill sounds.
-    /// </summary>
-    public void PlaySkillSFX(int skillType)
-    {
-        // Phase 5 placeholder -- no-op until skill system exists
-    }
+            var source = sfxPool.Dequeue();
+            source.clip = clip;
+            source.pitch = pitch;
 
-    // =========================================================================
-    // Music Playback
-    // =========================================================================
+            // Manual distance-based volume attenuation (2D audio, no Unity spatial)
+            if (Camera.main != null)
+            {
+                float dist = Vector3.Distance(position, Camera.main.transform.position);
+                float attenuation = Mathf.Clamp01(1f - dist / GameConstants.SFXMaxDistance);
+                source.volume = volume * attenuation;
+            }
+            else
+            {
+                source.volume = volume;
+            }
 
-    /// <summary>
-    /// Starts background music loop (AUDI-06).
-    /// </summary>
-    public void PlayMusic(AudioClip clip)
-    {
-        if (clip == null || _musicSource == null) return;
-        _musicSource.clip = clip;
-        _musicSource.Play();
-    }
+            source.Play();
+            StartCoroutine(ReturnToPool(source, Mathf.Min(clip.length / Mathf.Abs(pitch), 3f)));
+        }
 
-    /// <summary>
-    /// Stops background music.
-    /// </summary>
-    public void StopMusic()
-    {
-        if (_musicSource != null)
-            _musicSource.Stop();
-    }
+        private IEnumerator ReturnToPool(AudioSource source, float delay)
+        {
+            yield return new WaitForSeconds(delay);
 
-    // =========================================================================
-    // Volume Control
-    // =========================================================================
+            if (source != null)
+            {
+                source.Stop();
+                source.clip = null;
+                sfxPool.Enqueue(source);
+            }
+        }
 
-    /// <summary>
-    /// Sets SFX volume (0-1 linear) via AudioMixer exposed parameter (AUDI-08).
-    /// </summary>
-    public void SetSFXVolume(float linearValue)
-    {
-        if (_mixer == null) return;
-        float db = linearValue > 0.001f ? Mathf.Log10(linearValue) * 20f : -80f;
-        _mixer.SetFloat("SFXVolume", db);
-    }
+        // =========================================================================
+        // Specialized Playback Methods
+        // =========================================================================
 
-    /// <summary>
-    /// Sets Music volume (0-1 linear) via AudioMixer exposed parameter (AUDI-08).
-    /// </summary>
-    public void SetMusicVolume(float linearValue)
-    {
-        if (_mixer == null) return;
-        float db = linearValue > 0.001f ? Mathf.Log10(linearValue) * 20f : -80f;
-        _mixer.SetFloat("MusicVolume", db);
-    }
+        /// <summary>
+        /// Plays mining hit SFX, throttled to max 4 per second (AUDI-01).
+        /// </summary>
+        public void PlayDamageHit(Vector3 position)
+        {
+            if (Time.time - lastDamageHitTime < GameConstants.DamageHitSFXCooldown) return;
+            lastDamageHitTime = Time.time;
 
-    private void OnDestroy()
-    {
-        if (Instance == this) Instance = null;
+            PlaySfx(damageHitClip, position, 0.5f, Random.Range(0.9f, 1.1f));
+        }
+
+        /// <summary>
+        /// Plays asteroid destruction SFX (AUDI-02).
+        /// </summary>
+        public void PlayDestruction(Vector3 position)
+        {
+            PlaySfx(destructionClip, position, 0.8f);
+        }
+
+        /// <summary>
+        /// Queues a collection chime for batching within 50ms window (AUDI-03).
+        /// </summary>
+        public void QueueCollectionChime(int resourceTier)
+        {
+            collectionBatchCount++;
+            collectionBatchTier = resourceTier;
+            if (collectionBatchTimer <= 0f)
+            {
+                collectionBatchTimer = GameConstants.CollectionChimeBatchWindow;
+            }
+        }
+
+        /// <summary>
+        /// Plays game over fanfare SFX (AUDI-05).
+        /// </summary>
+        public void PlayGameOverFanfare()
+        {
+            var camPos = Camera.main != null ? Camera.main.transform.position : Vector3.zero;
+            PlaySfx(fanfareClip, camPos, 1.0f);
+        }
+
+        /// <summary>
+        /// Plays UI button click SFX (AUDI-07).
+        /// </summary>
+        public void PlayUIClick()
+        {
+            var camPos = Camera.main != null ? Camera.main.transform.position : Vector3.zero;
+            PlaySfx(uiClickClip, camPos, 0.6f);
+        }
+
+        /// <summary>
+        /// Stub for skill activation SFX (AUDI-04). Phase 5 will implement real skill sounds.
+        /// </summary>
+        public void PlaySkillSfx(int skillType)
+        {
+            // Phase 5 placeholder -- no-op until skill system exists
+        }
+
+        // =========================================================================
+        // Music Playback
+        // =========================================================================
+
+        /// <summary>
+        /// Starts background music loop (AUDI-06).
+        /// </summary>
+        public void PlayMusic(AudioClip clip)
+        {
+            if (clip == null || musicSource == null) return;
+            musicSource.clip = clip;
+            musicSource.Play();
+        }
+
+        /// <summary>
+        /// Stops background music.
+        /// </summary>
+        public void StopMusic()
+        {
+            if (musicSource != null)
+                musicSource.Stop();
+        }
+
+        // =========================================================================
+        // Volume Control
+        // =========================================================================
+
+        /// <summary>
+        /// Sets SFX volume (0-1 linear) via AudioMixer exposed parameter (AUDI-08).
+        /// </summary>
+        public void SetSfxVolume(float linearValue)
+        {
+            if (mixer == null) return;
+            float db = linearValue > 0.001f ? Mathf.Log10(linearValue) * 20f : -80f;
+            mixer.SetFloat("SFXVolume", db);
+        }
+
+        /// <summary>
+        /// Sets Music volume (0-1 linear) via AudioMixer exposed parameter (AUDI-08).
+        /// </summary>
+        public void SetMusicVolume(float linearValue)
+        {
+            if (mixer == null) return;
+            float db = linearValue > 0.001f ? Mathf.Log10(linearValue) * 20f : -80f;
+            mixer.SetFloat("MusicVolume", db);
+        }
+
+        private void OnDestroy()
+        {
+            if (Instance == this) Instance = null;
+        }
     }
 }
