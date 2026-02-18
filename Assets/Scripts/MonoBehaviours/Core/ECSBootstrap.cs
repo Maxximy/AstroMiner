@@ -91,16 +91,16 @@ namespace MonoBehaviours.Core
             var skillEventEntity = em.CreateEntity();
             em.AddBuffer<SkillEvent>(skillEventEntity);
 
-            // Phase 5 gap closure: Skill unlock gating
-            // All skills default to UNLOCKED. Phase 6 tech tree will change defaults to false
-            // and flip to true on Ship branch purchases.
+            // Phase 6: Skill unlock gating -- skills locked by default
+            // Phase 6 tech tree Ship branch purchases flip to true.
+            // Save migration handles backward compat (pre-Phase-6 saves keep skills unlocked).
             var skillUnlockEntity = em.CreateEntity(typeof(SkillUnlockData));
             em.SetComponentData(skillUnlockEntity, new SkillUnlockData
             {
-                Skill1Unlocked = true,
-                Skill2Unlocked = true,
-                Skill3Unlocked = true,
-                Skill4Unlocked = true
+                Skill1Unlocked = false,
+                Skill2Unlocked = false,
+                Skill3Unlocked = false,
+                Skill4Unlocked = false
             });
 
             // Phase 5 gap closure: Runtime-mutable skill stats
@@ -130,7 +130,30 @@ namespace MonoBehaviours.Core
                 OverchargeRadiusMultiplier = GameConstants.OverchargeRadiusMultiplier
             });
 
-            Debug.Log("ECS Bootstrap complete: singletons created (GameState, Input, AsteroidSpawnTimer, MiningConfig, CollectionEventBuffer, DamageEventBuffer, DestructionEventBuffer, SkillInput, SkillCooldown, CritConfig, OverchargeBuff, SkillEventBuffer, SkillUnlock, SkillStats)");
+            // Phase 6: Economy bonus singleton
+            var playerBonusEntity = em.CreateEntity(typeof(PlayerBonusData));
+            em.SetComponentData(playerBonusEntity, new PlayerBonusData
+            {
+                ResourceMultiplier = GameConstants.DefaultResourceMultiplier,
+                LuckyStrikeChance = GameConstants.DefaultLuckyStrikeChance,
+                ComboMasteryMultiplier = GameConstants.DefaultComboMasteryMultiplier,
+                ComboMasteryWindow = GameConstants.DefaultComboMasteryWindow,
+                LastSkillUseTime = 0f,
+                SkillsUsedInWindow = 0
+            });
+
+            // Phase 6: Run configuration singleton
+            var runConfigEntity = em.CreateEntity(typeof(RunConfigData));
+            em.SetComponentData(runConfigEntity, new RunConfigData
+            {
+                RunDuration = GameConstants.DefaultRunDuration,
+                SpawnInterval = GameConstants.DefaultSpawnInterval,
+                MaxActiveAsteroids = GameConstants.DefaultMaxAsteroids,
+                AsteroidHPMultiplier = 1f,
+                CurrentLevel = 1
+            });
+
+            Debug.Log("ECS Bootstrap complete: singletons created (GameState, Input, AsteroidSpawnTimer, MiningConfig, CollectionEventBuffer, DamageEventBuffer, DestructionEventBuffer, SkillInput, SkillCooldown, CritConfig, OverchargeBuff, SkillEventBuffer, SkillUnlock, SkillStats, PlayerBonus, RunConfig)");
         }
     }
 }
