@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Data;
 using ECS.Components;
 using MonoBehaviours.Pool;
 using Unity.Entities;
@@ -12,13 +13,10 @@ namespace MonoBehaviours.Rendering
     /// Syncs ECS mineral entities to pooled GameObjects each frame.
     /// Handles dynamic entity lifecycle: new entities get a pooled sphere,
     /// destroyed entities have their sphere returned to the pool.
-    /// Mirrors AsteroidRenderer's pattern for consistency.
+    /// Applies per-tier colors from ResourceTierDefinitions based on MineralData.ResourceTier.
     /// </summary>
     public class MineralRenderer : MonoBehaviour
     {
-        // Default mineral color: warm gold/amber for Iron tier
-        private static readonly Color DefaultMineralColor = new Color(0.9f, 0.75f, 0.3f);
-
         private EntityManager em;
         private EntityQuery mineralQuery;
         private bool initialized;
@@ -53,10 +51,11 @@ namespace MonoBehaviours.Rendering
 
             em = world.EntityManager;
 
-            // Query for mineral entities with transforms
+            // Query for mineral entities with transforms and mineral data (for tier lookup)
             mineralQuery = em.CreateEntityQuery(
                 typeof(MineralTag),
-                typeof(LocalTransform)
+                typeof(LocalTransform),
+                typeof(MineralData)
             );
 
             entityToGo = new Dictionary<Entity, GameObject>();
@@ -84,28 +83,36 @@ namespace MonoBehaviours.Rendering
             Debug.Log($"MineralRenderer: initialized. Pool pre-warmed with {preWarmCount} objects.");
         }
 
-        private void ConfigureMineralVisual(GameObject go)
+        /// <summary>
+        /// Configure mineral visual appearance based on resource tier.
+        /// Applies tier-specific color, emissive glow, and trail from ResourceTierDefinitions.
+        /// </summary>
+        private void ConfigureMineralVisual(GameObject go, int resourceTier)
         {
+            var tierInfo = ResourceTierDefinitions.GetTier(resourceTier);
+            Color mineralColor = tierInfo.MineralColor;
+            float emissiveIntensity = tierInfo.EmissiveIntensity;
+
             // Uniform scale for minerals
             go.transform.localScale = Vector3.one * GameConstants.MineralScale;
 
-            // Set mineral color via MaterialPropertyBlock (warm gold/amber for Iron tier)
+            // Set mineral color via MaterialPropertyBlock (per-tier color)
             var rend = go.GetComponent<Renderer>();
             if (rend != null)
             {
                 var block = new MaterialPropertyBlock();
                 rend.GetPropertyBlock(block);
-                block.SetColor("_BaseColor", DefaultMineralColor);
+                block.SetColor("_BaseColor", mineralColor);
 
-                // HDR emissive color for mineral glow (VISL-04)
-                Color hdrColor = DefaultMineralColor * GameConstants.MineralEmissiveIntensity;
+                // HDR emissive color for mineral glow
+                Color hdrColor = mineralColor * emissiveIntensity;
                 block.SetColor("_EmissionColor", hdrColor);
                 rend.material.EnableKeyword("_EMISSION");
 
                 rend.SetPropertyBlock(block);
             }
 
-            // TrailRenderer for mineral flight trails (FEED-06)
+            // TrailRenderer for mineral flight trails
             var trail = go.GetComponent<TrailRenderer>();
             if (trail == null) trail = go.AddComponent<TrailRenderer>();
             trail.time = GameConstants.MineralTrailDuration;
@@ -115,11 +122,11 @@ namespace MonoBehaviours.Rendering
             trail.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             trail.receiveShadows = false;
 
-            // HDR emissive trail material matching mineral color
+            // HDR emissive trail material matching tier color
             var trailMat = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
             if (trailMat != null)
             {
-                Color trailColor = DefaultMineralColor * GameConstants.MineralEmissiveIntensity;
+                Color trailColor = mineralColor * emissiveIntensity;
                 trailMat.SetColor("_BaseColor", trailColor);
                 trail.material = trailMat;
             }
@@ -144,9 +151,10 @@ namespace MonoBehaviours.Rendering
 
                 if (!entityToGo.TryGetValue(entity, out var go))
                 {
-                    // New entity discovered -- assign a pooled GameObject
+                    // New entity discovered -- read tier and assign a pooled GameObject
+                    var mineralData = em.GetComponentData<MineralData>(entity);
                     go = mineralPool.Get();
-                    ConfigureMineralVisual(go);
+                    ConfigureMineralVisual(go, mineralData.ResourceTier);
                     entityToGo[entity] = go;
                 }
 

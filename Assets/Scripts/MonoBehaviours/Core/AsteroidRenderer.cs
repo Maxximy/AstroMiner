@@ -125,10 +125,14 @@ namespace MonoBehaviours.Core
             }
         }
 
-        private void ConfigureAsteroidVisual(GameObject go)
+        private void ConfigureAsteroidVisual(GameObject go, float maxHP)
         {
-            // Random scale
-            float scale = rng.NextFloat(AsteroidScaleMin, AsteroidScaleMax);
+            // Base random scale plus HP-based size scaling
+            // Higher HP asteroids are larger: linear scaling, 30% of HP increase maps to size
+            float baseScale = rng.NextFloat(AsteroidScaleMin, AsteroidScaleMax);
+            float hpRatio = maxHP / GameConstants.DefaultAsteroidHP;
+            float hpScaleBonus = (hpRatio - 1f) * 0.3f;
+            float scale = baseScale * (1f + hpScaleBonus);
             go.transform.localScale = Vector3.one * scale;
 
             // Random color from palette via MaterialPropertyBlock
@@ -165,8 +169,15 @@ namespace MonoBehaviours.Core
                 if (!entityToGo.TryGetValue(entity, out var go))
                 {
                     // New entity discovered -- assign a pooled GameObject
+                    // Read HealthData for HP-based size scaling
+                    float maxHP = GameConstants.DefaultAsteroidHP;
+                    if (em.HasComponent<HealthData>(entity))
+                    {
+                        maxHP = em.GetComponentData<HealthData>(entity).MaxHP;
+                    }
+
                     go = asteroidPool.Get();
-                    ConfigureAsteroidVisual(go);
+                    ConfigureAsteroidVisual(go, maxHP);
                     entityToGo[entity] = go;
                 }
 

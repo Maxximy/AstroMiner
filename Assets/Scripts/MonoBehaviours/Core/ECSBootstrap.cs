@@ -150,7 +150,14 @@ namespace MonoBehaviours.Core
                 SpawnInterval = GameConstants.DefaultSpawnInterval,
                 MaxActiveAsteroids = GameConstants.DefaultMaxAsteroids,
                 AsteroidHPMultiplier = 1f,
-                CurrentLevel = 1
+                CurrentLevel = 1,
+                // Level 1 default drop table: 100% Iron
+                TierWeight0 = 100f,
+                TierWeight1 = 0f,
+                TierWeight2 = 0f,
+                TierWeight3 = 0f,
+                TierWeight4 = 0f,
+                TierWeight5 = 0f
             });
 
             Debug.Log("ECS Bootstrap complete: singletons created (GameState, Input, AsteroidSpawnTimer, MiningConfig, CollectionEventBuffer, DamageEventBuffer, DestructionEventBuffer, SkillInput, SkillCooldown, CritConfig, OverchargeBuff, SkillEventBuffer, SkillUnlock, SkillStats, PlayerBonus, RunConfig)");

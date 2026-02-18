@@ -10,6 +10,7 @@ namespace ECS.Systems
     /// Spawns mineral entities when asteroids reach 0 HP.
     /// Runs BEFORE AsteroidDestructionSystem to read asteroid positions before they are destroyed.
     /// Uses MineralsSpawnedTag to prevent double-spawn on the same dead asteroid.
+    /// Reads AsteroidResourceTier to assign per-tier credit values and mineral counts.
     /// </summary>
     [BurstCompile]
     [UpdateBefore(typeof(AsteroidDestructionSystem))]
@@ -37,8 +38,8 @@ namespace ECS.Systems
             // Get DestructionEvent buffer for visual/audio feedback (Phase 4)
             var destructionBuffer = SystemAPI.GetSingletonBuffer<DestructionEvent>();
 
-            foreach (var (health, transform, entity) in
-                     SystemAPI.Query<RefRO<HealthData>, RefRO<LocalTransform>>()
+            foreach (var (health, transform, asteroidTier, entity) in
+                     SystemAPI.Query<RefRO<HealthData>, RefRO<LocalTransform>, RefRO<AsteroidResourceTier>>()
                          .WithAll<AsteroidTag>()
                          .WithNone<MineralsSpawnedTag>()
                          .WithEntityAccess())
@@ -49,17 +50,25 @@ namespace ECS.Systems
                     ecb.AddComponent<MineralsSpawnedTag>(entity);
 
                     float3 asteroidPos = transform.ValueRO.Position;
+                    int tier = asteroidTier.ValueRO.Tier;
 
                     // Emit destruction event for explosion VFX and audio
+                    // Scale based on HP for visually larger explosions on tougher asteroids
+                    float scale = 1f + tier * 0.15f;
                     destructionBuffer.Add(new DestructionEvent
                     {
                         Position = asteroidPos,
-                        Scale = 1.0f,  // default scale; future: read from entity component
-                        ResourceTier = 0
+                        Scale = scale,
+                        ResourceTier = tier
                     });
 
-                    int mineralCount = rng.NextInt(GameConstants.MinMineralsPerAsteroid,
-                        GameConstants.MaxMineralsPerAsteroid + 1);
+                    // Determine mineral count based on resource tier
+                    int mineralMin, mineralMax;
+                    GetMineralCountRange(tier, out mineralMin, out mineralMax);
+                    int mineralCount = rng.NextInt(mineralMin, mineralMax + 1);
+
+                    // Get credit value per mineral based on tier
+                    int creditValue = GetCreditValueForTier(tier);
 
                     for (int i = 0; i < mineralCount; i++)
                     {
@@ -75,8 +84,8 @@ namespace ECS.Systems
                         ecb.AddComponent(mineralEntity, new MineralTag());
                         ecb.AddComponent(mineralEntity, new MineralData
                         {
-                            ResourceTier = 0,
-                            CreditValue = GameConstants.DefaultCreditValuePerMineral
+                            ResourceTier = tier,
+                            CreditValue = creditValue
                         });
                         ecb.AddComponent(mineralEntity, new MineralPullData
                         {
@@ -88,6 +97,37 @@ namespace ECS.Systems
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Burst-compatible credit value lookup by tier index.
+        /// </summary>
+        [BurstCompile]
+        private static int GetCreditValueForTier(int tier)
+        {
+            if (tier == 0) return GameConstants.IronCreditValue;
+            if (tier == 1) return GameConstants.CopperCreditValue;
+            if (tier == 2) return GameConstants.SilverCreditValue;
+            if (tier == 3) return GameConstants.CobaltCreditValue;
+            if (tier == 4) return GameConstants.GoldCreditValue;
+            if (tier == 5) return GameConstants.TitaniumCreditValue;
+            return GameConstants.IronCreditValue; // fallback
+        }
+
+        /// <summary>
+        /// Burst-compatible mineral count range lookup by tier index.
+        /// Rarer tiers drop fewer minerals but each worth more credits.
+        /// </summary>
+        [BurstCompile]
+        private static void GetMineralCountRange(int tier, out int min, out int max)
+        {
+            if (tier == 0) { min = 3; max = 8; } // Iron
+            else if (tier == 1) { min = 3; max = 7; } // Copper
+            else if (tier == 2) { min = 2; max = 6; } // Silver
+            else if (tier == 3) { min = 2; max = 5; } // Cobalt
+            else if (tier == 4) { min = 1; max = 4; } // Gold
+            else if (tier == 5) { min = 1; max = 3; } // Titanium
+            else { min = 3; max = 8; } // fallback
         }
     }
 }

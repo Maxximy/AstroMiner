@@ -35,6 +35,17 @@ namespace ECS.Components
     }
 
     /// <summary>
+    /// Tracks which resource tier an asteroid drops when destroyed.
+    /// Set by AsteroidSpawnSystem based on the current level's drop table.
+    /// Read by MineralSpawnSystem to assign mineral credit values and colors.
+    /// </summary>
+    public struct AsteroidResourceTier : IComponentData
+    {
+        /// <summary>Resource tier index (0=Iron, 1=Copper, 2=Silver, 3=Cobalt, 4=Gold, 5=Titanium).</summary>
+        public int Tier;
+    }
+
+    /// <summary>
     /// Singleton component controlling asteroid spawn timing and limits.
     /// Created by ECSBootstrap, read/written by AsteroidSpawnSystem.
     /// </summary>

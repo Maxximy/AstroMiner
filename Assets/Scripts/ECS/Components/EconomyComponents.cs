@@ -49,5 +49,26 @@ namespace ECS.Components
 
         /// <summary>Current level number (1-5).</summary>
         public int CurrentLevel;
+
+        // Per-tier drop weights for Burst-accessible weighted random in AsteroidSpawnSystem.
+        // Set by PlayingState.Enter() from LevelConfigDefinitions based on CurrentLevel.
+
+        /// <summary>Weight for Iron (tier 0) in the current level's drop table.</summary>
+        public float TierWeight0;
+
+        /// <summary>Weight for Copper (tier 1) in the current level's drop table.</summary>
+        public float TierWeight1;
+
+        /// <summary>Weight for Silver (tier 2) in the current level's drop table.</summary>
+        public float TierWeight2;
+
+        /// <summary>Weight for Cobalt (tier 3) in the current level's drop table.</summary>
+        public float TierWeight3;
+
+        /// <summary>Weight for Gold (tier 4) in the current level's drop table.</summary>
+        public float TierWeight4;
+
+        /// <summary>Weight for Titanium (tier 5) in the current level's drop table.</summary>
+        public float TierWeight5;
     }
 }
