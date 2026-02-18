@@ -135,6 +135,12 @@ public class AsteroidRenderer : MonoBehaviour
             var block = new MaterialPropertyBlock();
             renderer.GetPropertyBlock(block);
             block.SetColor("_BaseColor", AsteroidColors[_rng.NextInt(AsteroidColors.Length)]);
+
+            // Add subtle emissive tint for visual richness (VISL-03)
+            Color emissive = AsteroidColors[_rng.NextInt(AsteroidColors.Length)] * 0.3f;
+            block.SetColor("_EmissionColor", emissive);
+            renderer.material.EnableKeyword("_EMISSION");
+
             renderer.SetPropertyBlock(block);
         }
     }

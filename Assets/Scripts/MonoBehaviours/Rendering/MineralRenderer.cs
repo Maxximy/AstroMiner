@@ -93,8 +93,36 @@ public class MineralRenderer : MonoBehaviour
             var block = new MaterialPropertyBlock();
             renderer.GetPropertyBlock(block);
             block.SetColor("_BaseColor", DefaultMineralColor);
+
+            // HDR emissive color for mineral glow (VISL-04)
+            Color hdrColor = DefaultMineralColor * GameConstants.MineralEmissiveIntensity;
+            block.SetColor("_EmissionColor", hdrColor);
+            renderer.material.EnableKeyword("_EMISSION");
+
             renderer.SetPropertyBlock(block);
         }
+
+        // TrailRenderer for mineral flight trails (FEED-06)
+        var trail = go.GetComponent<TrailRenderer>();
+        if (trail == null) trail = go.AddComponent<TrailRenderer>();
+        trail.time = GameConstants.MineralTrailDuration;
+        trail.startWidth = GameConstants.MineralTrailStartWidth;
+        trail.endWidth = 0f;
+        trail.minVertexDistance = 0.1f;
+        trail.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        trail.receiveShadows = false;
+
+        // HDR emissive trail material matching mineral color
+        var trailMat = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
+        if (trailMat != null)
+        {
+            Color trailColor = DefaultMineralColor * GameConstants.MineralEmissiveIntensity;
+            trailMat.SetColor("_BaseColor", trailColor);
+            trail.material = trailMat;
+        }
+
+        // Clear trail on initial config to prevent ghost trails
+        trail.Clear();
     }
 
     void LateUpdate()
@@ -130,6 +158,10 @@ public class MineralRenderer : MonoBehaviour
         {
             if (!activeEntities.Contains(kvp.Key))
             {
+                // Clear trail to prevent ghost trails on pool reuse
+                var trail = kvp.Value.GetComponent<TrailRenderer>();
+                if (trail != null) trail.Clear();
+
                 _mineralPool.Release(kvp.Value);
                 _entitiesToRemove.Add(kvp.Key);
             }

@@ -17,6 +17,12 @@ public class HUDController : MonoBehaviour
     private EntityQuery _gameStateQuery;
     private bool _initialized;
 
+    // Credit counter pop animation state
+    private long _previousCredits;
+    private float _popTimer;
+    private Vector3 _creditsOriginalScale = Vector3.one;
+    private Color _creditsOriginalColor = Color.white;
+
     /// <summary>
     /// Called by UISetup to wire text references and root object.
     /// </summary>
@@ -56,6 +62,28 @@ public class HUDController : MonoBehaviour
         if (_creditsText != null)
         {
             _creditsText.text = NumberFormatter.Format((double)gameState.Credits);
+
+            // Detect credit change and trigger pop animation
+            if (gameState.Credits != _previousCredits && _previousCredits != 0)
+            {
+                _popTimer = GameConstants.CreditPopDuration;
+            }
+            _previousCredits = gameState.Credits;
+
+            // Animate credit counter pop (scale up + gold flash)
+            if (_popTimer > 0)
+            {
+                _popTimer -= Time.deltaTime;
+                float t = Mathf.Clamp01(_popTimer / GameConstants.CreditPopDuration);
+                float scale = 1f + (GameConstants.CreditPopScale - 1f) * Mathf.Sin(t * Mathf.PI);
+                _creditsText.transform.localScale = _creditsOriginalScale * scale;
+                _creditsText.color = Color.Lerp(_creditsOriginalColor, new Color(1f, 0.9f, 0.3f), t);
+            }
+            else
+            {
+                _creditsText.transform.localScale = _creditsOriginalScale;
+                _creditsText.color = _creditsOriginalColor;
+            }
         }
 
         // Timer display as MM:SS
