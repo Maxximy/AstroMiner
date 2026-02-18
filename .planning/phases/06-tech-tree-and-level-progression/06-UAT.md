@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 06-tech-tree-and-level-progression
 source: 06-01-SUMMARY.md, 06-02-SUMMARY.md, 06-03-SUMMARY.md
 started: 2026-02-18T16:00:00Z
@@ -75,17 +75,21 @@ skipped: 0
   reason: "User reported: drag works, scroll is too slow, you have to scroll a lot to zoom in a tiny bit"
   severity: minor
   test: 3
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "ZoomSpeed=0.1f combined with *0.01f multiplier gives only 0.001 zoom per scroll unit (120*0.001=0.12 per notch). Need ~14 scroll events to traverse full range."
+  artifacts:
+    - path: "Assets/Scripts/MonoBehaviours/UI/TechTreeController.cs"
+      issue: "ZoomSpeed constant too low at 0.1f with additional 0.01f multiplier on line 643"
+  missing:
+    - "Increase ZoomSpeed from 0.1f to 1.0f for responsive scroll zoom"
 
 - truth: "Tooltip appears near the hovered node, following the mouse pointer"
   status: failed
   reason: "User reported: tooltip works, but too far away from the mouse pointer: hovering in the center shows it barly visible in the lower left corner"
   severity: major
   test: 5
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "Anchor/pivot mismatch: anchors at (0,0) but pivot at (0,1). Clamping logic uses halfW/halfH assuming center-origin but anchors are bottom-left. Bottom clamp triggers when centered (localPos.y≈0, 0-tooltipHeight < -halfH) pushing tooltip to lower left."
+  artifacts:
+    - path: "Assets/Scripts/MonoBehaviours/UI/TechTreeTooltip.cs"
+      issue: "anchorMin/Max set to (0,0) with pivot (0,1); clamping logic assumes center-origin coordinates"
+  missing:
+    - "Change anchors to (0.5, 0.5) center-anchored and fix clamping logic to match"
