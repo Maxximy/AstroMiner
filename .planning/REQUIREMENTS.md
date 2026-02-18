@@ -58,15 +58,15 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Tech Tree
 
-- [ ] **TECH-01**: Tech tree UI displayed between runs with 5 branches visible
+- [x] **TECH-01**: Tech tree UI displayed between runs with 5 branches visible
 - [x] **TECH-02**: Mining branch: Circle Radius (I/II/III), Damage (I/II), Rate (I/II), Crit Chance, Crit Multi, DoT (I/II)
 - [x] **TECH-03**: Economy branch: Resource Multiplier (I/II/III), Lucky Strike (I/II/III), Abundance (I/II)
 - [x] **TECH-04**: Ship branch: Laser Burst (I/II/III), Chain Lightning (I/II/III), EMP (I/II/III), Overcharge (I/II/III), Combo Mastery
 - [x] **TECH-05**: Run branch: Level Time (I/II/III)
 - [x] **TECH-06**: Progression branch: Advance to Level N (one per level transition)
-- [ ] **TECH-07**: Upgrades have prerequisite gating (must unlock parent before child)
+- [x] **TECH-07**: Upgrades have prerequisite gating (must unlock parent before child)
 - [x] **TECH-08**: Upgrade costs scale per tier (1x/3x/8x base cost)
-- [ ] **TECH-09**: Purchasing an upgrade immediately applies its stat effect
+- [x] **TECH-09**: Purchasing an upgrade immediately applies its stat effect
 - [x] **TECH-10**: Tech tree data is defined in ScriptableObjects for easy tuning
 
 ### Ship Skills
@@ -245,15 +245,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DMGS-01 | Phase 5 | Complete |
 | DMGS-02 | Phase 5 | Complete |
 | DMGS-03 | Phase 5 | Complete |
-| TECH-01 | Phase 6 | Pending |
+| TECH-01 | Phase 6 | Complete |
 | TECH-02 | Phase 6 | Complete |
 | TECH-03 | Phase 6 | Complete |
 | TECH-04 | Phase 6 | Complete |
 | TECH-05 | Phase 6 | Complete |
 | TECH-06 | Phase 6 | Complete |
-| TECH-07 | Phase 6 | Pending |
+| TECH-07 | Phase 6 | Complete |
 | TECH-08 | Phase 6 | Complete |
-| TECH-09 | Phase 6 | Pending |
+| TECH-09 | Phase 6 | Complete |
 | TECH-10 | Phase 6 | Complete |
 | LEVL-01 | Phase 6 | Complete |
 | LEVL-02 | Phase 6 | Complete |
