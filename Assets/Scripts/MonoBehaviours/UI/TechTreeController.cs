@@ -41,7 +41,7 @@ namespace MonoBehaviours.UI
         private float currentZoom = 1f;
         private const float MinZoom = 0.3f;
         private const float MaxZoom = 2f;
-        private const float ZoomSpeed = 0.1f;
+        private const float ZoomSpeed = 0.5f;
         private bool isDragging;
         private Vector2 lastDragPos;
 
@@ -640,7 +640,7 @@ namespace MonoBehaviours.UI
             var scroll = Mouse.current.scroll.ReadValue().y;
             if (Mathf.Abs(scroll) < 0.01f) return;
 
-            float newZoom = Mathf.Clamp(currentZoom + scroll * ZoomSpeed * 0.01f, MinZoom, MaxZoom);
+            float newZoom = Mathf.Clamp(currentZoom + (scroll / 120f) * ZoomSpeed, MinZoom, MaxZoom);
             if (Mathf.Approximately(newZoom, currentZoom)) return;
 
             // Zoom toward mouse pivot

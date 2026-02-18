@@ -34,8 +34,8 @@ namespace MonoBehaviours.UI
             var rootGO = new GameObject("TooltipRoot");
             rootGO.transform.SetParent(parent, false);
             tooltipRect = rootGO.AddComponent<RectTransform>();
-            tooltipRect.anchorMin = Vector2.zero;
-            tooltipRect.anchorMax = Vector2.zero;
+            tooltipRect.anchorMin = new Vector2(0.5f, 0.5f);
+            tooltipRect.anchorMax = new Vector2(0.5f, 0.5f);
             tooltipRect.pivot = new Vector2(0, 1); // Top-left pivot
             tooltipRect.sizeDelta = new Vector2(260, 200);
 
