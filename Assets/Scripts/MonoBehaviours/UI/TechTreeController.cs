@@ -41,7 +41,7 @@ namespace MonoBehaviours.UI
         private float currentZoom = 1f;
         private const float MinZoom = 0.3f;
         private const float MaxZoom = 2f;
-        private const float ZoomSpeed = 0.5f;
+        private const float ZoomSpeed = 1.0f;
         private bool isDragging;
         private Vector2 lastDragPos;
 

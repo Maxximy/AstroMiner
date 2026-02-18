@@ -353,18 +353,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1020013e5f60013a1b2c3d4e5f60013, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _asteroidCount: 100
-  _mineralCount: 1000
-  _xMin: -12
-  _xMax: 12
-  _yMin: -2
-  _yMax: 15
-  _asteroidDriftMin: 0.5
-  _asteroidDriftMax: 2
-  _asteroidSpinMin: 0.5
-  _asteroidSpinMax: 3
-  _mineralDriftMin: 0.3
-  _mineralDriftMax: 1
+  AsteroidCount: 100
+  MineralCount: 1000
+  XMin: -12
+  XMax: 12
+  YMin: -2
+  YMax: 15
+  AsteroidDriftMin: 0.5
+  AsteroidDriftMax: 2
+  AsteroidSpinMin: 0.5
+  AsteroidSpinMax: 3
+  MineralDriftMin: 0.3
+  MineralDriftMax: 1
 --- !u!114 &200000023
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -377,10 +377,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1020014e5f60014a1b2c3d4e5f60014, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _asteroidScaleMin: 1
-  _asteroidScaleMax: 1.5
-  _mineralScaleMin: 0.15
-  _mineralScaleMax: 0.25
+  AsteroidScaleMin: 1
+  AsteroidScaleMax: 1.5
+  MineralScaleMin: 0.15
+  MineralScaleMax: 0.25
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -738,6 +738,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1007739143
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1007739144}
+  m_Layer: 0
+  m_Name: Config
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1007739144
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1007739143}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1923596853
 GameObject:
   m_ObjectHideFlags: 0
@@ -767,8 +798,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a7f5fa1782e8804bb5798764a901703, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AsteroidRenderer
-  _asteroidScaleMin: 0.8
-  _asteroidScaleMax: 1.5
+  AsteroidScaleMin: 0.8
+  AsteroidScaleMax: 1.5
 --- !u!4 &1923596855
 Transform:
   m_ObjectHideFlags: 0
@@ -813,9 +844,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 371b181cf8e420d429603c82630d4045, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MiningCircleVisual
-  _segments: 64
-  _lineWidth: 0.08
-  _hdrIntensity: 4
+  Segments: 64
+  LineWidth: 0.08
+  HDRIntensity: 4
 --- !u!4 &2123274065
 Transform:
   m_ObjectHideFlags: 0
@@ -846,3 +877,4 @@ SceneRoots:
   - {fileID: 2123274065}
   - {fileID: 490928878}
   - {fileID: 56181238}
+  - {fileID: 1007739144}
