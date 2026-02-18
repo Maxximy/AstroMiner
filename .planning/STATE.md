@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value:** The mining-collecting-upgrading loop must feel satisfying -- hovering the circle over asteroids, watching them break apart, collecting minerals, and spending credits on meaningful upgrades that make the next run noticeably better.
-**Current focus:** Phase 5 fully complete (including gap closure). Ready for Phase 6 - Tech Tree & Level Progression
+**Current focus:** Phase 6 - Tech Tree & Level Progression (plan 01 of 3 complete)
 
 ## Current Position
 
-Phase: 5 of 6 (Ship Skills & Advanced Damage) -- COMPLETE
-Plan: 3 of 3 in current phase (05-03 gap closure complete, phase done)
-Status: Phase 5 Complete
-Last activity: 2026-02-18 -- Completed 05-03 Gap Closure (SkillUnlockData + SkillStatsData)
+Phase: 6 of 6 (Tech Tree & Level Progression)
+Plan: 1 of 3 in current phase (06-01 data foundation complete)
+Status: In Progress
+Last activity: 2026-02-18 -- Completed 06-01 Data Foundation (ScriptableObjects, ECS singletons, save expansion)
 
-Progress: [################] 95%
+Progress: [################--] 96%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 12
+- Total plans completed: 13
 - Average duration: 7 min
-- Total execution time: 1.3 hours
+- Total execution time: 1.4 hours
 
 **By Phase:**
 
@@ -32,9 +32,10 @@ Progress: [################] 95%
 | 03-collection-economy-and-session | 3 | 11 min | 3.7 min |
 | 04-visual-and-audio-feedback | 2 | 13 min | 6.5 min |
 | 05-ship-skills-and-advanced-damage | 3 | 18 min | 6 min |
+| 06-tech-tree-and-level-progression | 1 | 8 min | 8 min |
 
 **Recent Trend:**
-- Last 5 plans: 04-01 (5 min), 04-02 (8 min), 05-01 (5 min), 05-02 (8 min), 05-03 (5 min)
+- Last 5 plans: 04-02 (8 min), 05-01 (5 min), 05-02 (8 min), 05-03 (5 min), 06-01 (8 min)
 - Trend: consistent fast execution for well-specified plans
 
 *Updated after each plan completion*
@@ -101,6 +102,10 @@ Recent decisions affecting current work:
 - Runtime-mutable singleton pattern: GameConstants seeds ECSBootstrap, systems read SkillStatsData singleton, Phase 6 modifies at runtime (05-03)
 - Defense-in-depth unlock gating: UI hides slots + systems guard activation on same SkillUnlockData (05-03)
 - OverchargeSystem unlock guard inside activation conditional to allow active buff tick even if skill becomes locked (05-03)
+- Skills locked by default in ECSBootstrap (false); save migration keeps old saves unlocked for backward compat (06-01)
+- Save v1->v2 migration uses threshold checks to detect zero-initialized fields from old saves (06-01)
+- RunConfigData SpawnInterval/MaxActiveAsteroids/HPMultiplier left at defaults in LoadIntoECS; level system overrides on run start (06-01)
+- ComboMasteryMultiplier 1.0 in save (no bonus) vs 1.5 in GameConstants distinguishes purchased from unpurchased (06-01)
 
 ### Pending Todos
 
@@ -114,5 +119,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-18
-Stopped at: Phase 6 context gathered
-Resume file: .planning/phases/06-tech-tree-and-level-progression/06-CONTEXT.md
+Stopped at: Completed 06-01-PLAN.md
+Resume file: .planning/phases/06-tech-tree-and-level-progression/06-01-SUMMARY.md
