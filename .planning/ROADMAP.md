@@ -13,8 +13,8 @@ Astrominer delivers a satisfying mining-collecting-upgrading loop across six pha
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation and WebGL Validation** - ECS world, game state machine, bridge layer, object pooling, and WebGL performance confirmation _(completed 2026-02-17)_
-- [x] **Phase 2: Core Mining Loop** - Asteroids spawn and drift, mining circle follows mouse and damages them, playable mining (completed 2026-02-17)
-- [x] **Phase 3: Collection, Economy, and Session** - Minerals fly to ship, credits awarded, timed runs with results, persistent save system (completed 2026-02-17)
+- [x] **Phase 2: Core Mining Loop** - Asteroids spawn and drift, mining circle follows mouse and damages them, playable mining _(completed 2026-02-17)_
+- [x] **Phase 3: Collection, Economy, and Session** - Minerals fly to ship, credits awarded, timed runs with results, persistent save system _(completed 2026-02-17)_
 - [ ] **Phase 4: Visual and Audio Feedback** - Damage numbers, particle effects, screen shake, audio SFX, space aesthetic polish
 - [ ] **Phase 5: Ship Skills and Advanced Damage** - Four active skills, critical hits, damage-over-time, skill bar UI
 - [ ] **Phase 6: Tech Tree and Level Progression** - Branching upgrade tree, level system with tiered resources, full meta-game loop
@@ -80,11 +80,11 @@ Plans:
   3. Screen shakes subtly on critical hits and skill impacts, and the screen edge glows red in the last 10 seconds of a run
   4. Every meaningful action has audio: mining hits, destruction, mineral collection chimes (pitch varies by tier), and skill activation each play spatial SFX
   5. Ambient space music loops in the background with separate SFX and Music volume controls via AudioMixer
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 04-01: Damage popup system and visual particle effects
-- [ ] 04-02: Audio system, screen shake, and timer warning effects
+- [ ] 04-01-PLAN.md -- ECS event pipeline (DamageEvent/DestructionEvent/CollectionEvent buffers), damage popup manager, explosion particles, mineral trails, material improvements, credit counter pop
+- [ ] 04-02-PLAN.md -- Audio system (AudioManager, AudioMixer, SFX/Music), FeedbackEventBridge, CameraShake, TimerWarningEffect, UI click SFX, game over fanfare
 
 ### Phase 5: Ship Skills and Advanced Damage
 **Goal**: Combat gains depth -- the player has four active skills to aim and fire, a critical hit system that rewards lucky moments, and damage-over-time that makes every hit count even after asteroids leave the mining circle
