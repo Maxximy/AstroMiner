@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value:** The mining-collecting-upgrading loop must feel satisfying -- hovering the circle over asteroids, watching them break apart, collecting minerals, and spending credits on meaningful upgrades that make the next run noticeably better.
-**Current focus:** Phase 6 - Tech Tree & Level Progression (plan 01 of 3 complete)
+**Current focus:** Phase 6 - Tech Tree & Level Progression (plan 03 of 3 complete)
 
 ## Current Position
 
 Phase: 6 of 6 (Tech Tree & Level Progression)
-Plan: 1 of 3 in current phase (06-01 data foundation complete)
+Plan: 3 of 3 in current phase (06-03 level progression and resource tiers complete)
 Status: In Progress
-Last activity: 2026-02-18 -- Completed 06-01 Data Foundation (ScriptableObjects, ECS singletons, save expansion)
+Last activity: 2026-02-18 -- Completed 06-03 Level Progression (resource tiers, economy bonuses, level configs)
 
-Progress: [################--] 96%
+Progress: [#################-] 97%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 13
+- Total plans completed: 14
 - Average duration: 7 min
-- Total execution time: 1.4 hours
+- Total execution time: 1.5 hours
 
 **By Phase:**
 
@@ -32,10 +32,10 @@ Progress: [################--] 96%
 | 03-collection-economy-and-session | 3 | 11 min | 3.7 min |
 | 04-visual-and-audio-feedback | 2 | 13 min | 6.5 min |
 | 05-ship-skills-and-advanced-damage | 3 | 18 min | 6 min |
-| 06-tech-tree-and-level-progression | 1 | 8 min | 8 min |
+| 06-tech-tree-and-level-progression | 2 | 14 min | 7 min |
 
 **Recent Trend:**
-- Last 5 plans: 04-02 (8 min), 05-01 (5 min), 05-02 (8 min), 05-03 (5 min), 06-01 (8 min)
+- Last 5 plans: 05-01 (5 min), 05-02 (8 min), 05-03 (5 min), 06-01 (8 min), 06-03 (6 min)
 - Trend: consistent fast execution for well-specified plans
 
 *Updated after each plan completion*
@@ -106,6 +106,10 @@ Recent decisions affecting current work:
 - Save v1->v2 migration uses threshold checks to detect zero-initialized fields from old saves (06-01)
 - RunConfigData SpawnInterval/MaxActiveAsteroids/HPMultiplier left at defaults in LoadIntoECS; level system overrides on run start (06-01)
 - ComboMasteryMultiplier 1.0 in save (no bonus) vs 1.5 in GameConstants distinguishes purchased from unpurchased (06-01)
+- Tier weights stored as 6 float fields in RunConfigData for Burst accessibility -- no managed arrays in IComponentData (06-03)
+- PlayingState.ApplyLevelConfig writes level config into both RunConfigData and AsteroidSpawnTimer at run start (06-03)
+- HP-based asteroid size uses linear scaling: 30% of HP increase maps to size increase (06-03)
+- LuckyStrike doubles finalCredits (after ResourceMultiplier) not baseCredits for multiplicative stacking (06-03)
 
 ### Pending Todos
 
@@ -119,5 +123,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-18
-Stopped at: Completed 06-01-PLAN.md
-Resume file: .planning/phases/06-tech-tree-and-level-progression/06-01-SUMMARY.md
+Stopped at: Completed 06-03-PLAN.md
+Resume file: .planning/phases/06-tech-tree-and-level-progression/06-03-SUMMARY.md

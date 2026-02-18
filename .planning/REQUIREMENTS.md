@@ -31,7 +31,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **ASTR-03**: Asteroids have 3D PBR models with per-resource-type visual appearance
 - [ ] **ASTR-04**: Asteroids rotate (spin) while drifting for visual interest
 - [ ] **ASTR-05**: Asteroids that reach the bottom of the screen are destroyed (missed)
-- [ ] **ASTR-06**: 6 resource tiers: Iron, Copper, Silver, Cobalt, Gold, Titanium with distinct visuals
+- [x] **ASTR-06**: 6 resource tiers: Iron, Copper, Silver, Cobalt, Gold, Titanium with distinct visuals
 
 ### Minerals
 
@@ -88,9 +88,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Levels
 
-- [ ] **LEVL-01**: Fixed set of levels (5+), each with a predefined drop table config
-- [ ] **LEVL-02**: Higher levels introduce rarer resource tiers and tougher asteroids (more HP)
-- [ ] **LEVL-03**: Level advancement requires meeting credit threshold and purchasing Advance upgrade
+- [x] **LEVL-01**: Fixed set of levels (5+), each with a predefined drop table config
+- [x] **LEVL-02**: Higher levels introduce rarer resource tiers and tougher asteroids (more HP)
+- [x] **LEVL-03**: Level advancement requires meeting credit threshold and purchasing Advance upgrade
 - [x] **LEVL-04**: Upgrades carry over between levels (no resets)
 - [x] **LEVL-05**: Level configs defined in ScriptableObjects (drop rates, HP multipliers, spawn rate, thresholds)
 
@@ -255,12 +255,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TECH-08 | Phase 6 | Complete |
 | TECH-09 | Phase 6 | Pending |
 | TECH-10 | Phase 6 | Complete |
-| LEVL-01 | Phase 6 | Pending |
-| LEVL-02 | Phase 6 | Pending |
-| LEVL-03 | Phase 6 | Pending |
+| LEVL-01 | Phase 6 | Complete |
+| LEVL-02 | Phase 6 | Complete |
+| LEVL-03 | Phase 6 | Complete |
 | LEVL-04 | Phase 6 | Complete |
 | LEVL-05 | Phase 6 | Complete |
-| ASTR-06 | Phase 6 | Pending |
+| ASTR-06 | Phase 6 | Complete |
 
 **Coverage:**
 - v1 requirements: 83 total
