@@ -369,6 +369,13 @@ namespace MonoBehaviours.Core
                 contentRect, viewportRect, creditsTMP
             );
 
+            // Create tooltip on the background panel (not viewport, so it's not clipped/scaled)
+            var tooltipGO = new GameObject("TechTreeTooltip");
+            tooltipGO.transform.SetParent(bgPanelGO.transform, false);
+            var tooltip = tooltipGO.AddComponent<TechTreeTooltip>();
+            tooltip.Initialize(bgRect);
+            techTreeController.SetTooltip(tooltip);
+
             // UpgradeScreen component
             UpgradeScreen = upgradeCanvasGO.AddComponent<UpgradeScreen>();
             UpgradeScreen.Initialize(titleTMP, creditsTMP, startRunButton.GetComponent<Button>(), upgradeCanvasGO);
