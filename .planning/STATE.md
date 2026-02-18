@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value:** The mining-collecting-upgrading loop must feel satisfying -- hovering the circle over asteroids, watching them break apart, collecting minerals, and spending credits on meaningful upgrades that make the next run noticeably better.
-**Current focus:** Phase 3 - Collection, Economy & Session (COMPLETE)
+**Current focus:** Phase 4 - Visual & Audio Feedback (IN PROGRESS)
 
 ## Current Position
 
-Phase: 3 of 6 (Collection, Economy & Session)
-Plan: 3 of 3 in current phase (03-03 complete -- PHASE COMPLETE)
-Status: Phase Complete
-Last activity: 2026-02-17 -- Completed 03-03 Save System & Persistence
+Phase: 4 of 6 (Visual & Audio Feedback)
+Plan: 1 of 2 in current phase (04-01 complete)
+Status: In Progress
+Last activity: 2026-02-18 -- Completed 04-01 Visual Feedback Pipeline
 
-Progress: [#########░] 58%
+Progress: [##########░] 67%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
+- Total plans completed: 8
 - Average duration: 7 min
-- Total execution time: 0.8 hours
+- Total execution time: 0.9 hours
 
 **By Phase:**
 
@@ -30,10 +30,11 @@ Progress: [#########░] 58%
 | 01-foundation-webgl-validation | 2 | 12 min | 6 min |
 | 02-core-mining-loop | 2 | 28 min | 14 min |
 | 03-collection-economy-and-session | 3 | 11 min | 3.7 min |
+| 04-visual-and-audio-feedback | 1 | 5 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-01 (3 min), 02-02 (25 min), 03-01 (3 min), 03-02 (4 min), 03-03 (4 min)
-- Trend: fast execution for component-heavy plans without checkpoints
+- Last 5 plans: 02-02 (25 min), 03-01 (3 min), 03-02 (4 min), 03-03 (4 min), 04-01 (5 min)
+- Trend: consistent fast execution for well-specified plans
 
 *Updated after each plan completion*
 
@@ -74,6 +75,12 @@ Recent decisions affecting current work:
 - File.IO primary with PlayerPrefs fallback for save robustness across all platforms (03-03)
 - Save schema pre-includes Phase 6 placeholder fields (TechTreeUnlocks, PlayerStatsData) to avoid future migration (03-03)
 - Static _saveLoaded flag in PlayingState ensures credits load exactly once per session (03-03)
+- DamageEvent/DestructionEvent use unmanaged byte RGB for Burst safety in ISystem (04-01)
+- DamagePopupManager and ExplosionManager self-instantiate via RuntimeInitializeOnLoadMethod(AfterSceneLoad) (04-01)
+- World-space Canvas at 0.02 scale with TMPro for damage popups -- billboard rotation each frame (04-01)
+- Struct ActivePopup list for popup animation to minimize GC pressure (04-01)
+- TrailRenderer.Clear() on pool release to prevent ghost trail artifacts (04-01)
+- ECS DynamicBuffer event pipeline: ISystem adds to singleton buffer -> MonoBehaviour drains in Update -> buffer.Clear() (04-01)
 
 ### Pending Todos
 
@@ -87,5 +94,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-18
-Stopped at: Phase 4 context gathered -- ready for /gsd:plan-phase 4
-Resume file: .planning/phases/04-visual-and-audio-feedback/04-CONTEXT.md
+Stopped at: Completed 04-01-PLAN.md (Visual Feedback Pipeline)
+Resume file: .planning/phases/04-visual-and-audio-feedback/04-01-SUMMARY.md

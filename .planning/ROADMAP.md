@@ -83,7 +83,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 04-01-PLAN.md -- ECS event pipeline (DamageEvent/DestructionEvent/CollectionEvent buffers), damage popup manager, explosion particles, mineral trails, material improvements, credit counter pop
+- [x] 04-01-PLAN.md -- ECS event pipeline (DamageEvent/DestructionEvent/CollectionEvent buffers), damage popup manager, explosion particles, mineral trails, material improvements, credit counter pop _(completed 2026-02-18)_
 - [ ] 04-02-PLAN.md -- Audio system (AudioManager, AudioMixer, SFX/Music), FeedbackEventBridge, CameraShake, TimerWarningEffect, UI click SFX, game over fanfare
 
 ### Phase 5: Ship Skills and Advanced Damage
@@ -128,7 +128,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 1. Foundation and WebGL Validation | 2/2 | Complete | 2026-02-17 |
 | 2. Core Mining Loop | 0/2 | Complete    | 2026-02-17 |
 | 3. Collection, Economy, and Session | 2/3 | Complete    | 2026-02-17 |
-| 4. Visual and Audio Feedback | 0/2 | Not started | - |
+| 4. Visual and Audio Feedback | 1/2 | In Progress | - |
 | 5. Ship Skills and Advanced Damage | 0/2 | Not started | - |
 | 6. Tech Tree and Level Progression | 0/2 | Not started | - |
 

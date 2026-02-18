@@ -96,12 +96,12 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Feedback
 
-- [ ] **FEED-01**: Floating damage numbers on each damage tick (white, small, float up and fade)
-- [ ] **FEED-02**: Critical hits show yellow "CRIT!" text with scale-up pop animation
-- [ ] **FEED-03**: DoT ticks show orange italicized damage numbers
-- [ ] **FEED-04**: Skill damage shows skill-colored medium damage numbers
-- [ ] **FEED-05**: Particle effects on asteroid destruction (explosion into collectible particles)
-- [ ] **FEED-06**: Particle trail when minerals fly toward ship
+- [x] **FEED-01**: Floating damage numbers on each damage tick (white, small, float up and fade)
+- [x] **FEED-02**: Critical hits show yellow "CRIT!" text with scale-up pop animation
+- [x] **FEED-03**: DoT ticks show orange italicized damage numbers
+- [x] **FEED-04**: Skill damage shows skill-colored medium damage numbers
+- [x] **FEED-05**: Particle effects on asteroid destruction (explosion into collectible particles)
+- [x] **FEED-06**: Particle trail when minerals fly toward ship
 - [ ] **FEED-07**: Subtle screen shake on critical hits and skill impacts
 - [ ] **FEED-08**: Edge glow warning when timer is in last 10 seconds
 
@@ -128,8 +128,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [ ] **VISL-01**: Realistic space aesthetic with starfield skybox
 - [ ] **VISL-02**: URP post-processing: bloom, tonemapping
-- [ ] **VISL-03**: PBR materials on asteroids with per-resource-type appearance
-- [ ] **VISL-04**: Emissive/glow materials on rare minerals and star
+- [x] **VISL-03**: PBR materials on asteroids with per-resource-type appearance
+- [x] **VISL-04**: Emissive/glow materials on rare minerals and star
 - [ ] **VISL-05**: Ship visual at bottom of screen (stationary)
 
 ## v2 Requirements
@@ -216,12 +216,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SAVE-03 | Phase 3 | Complete |
 | SAVE-04 | Phase 3 | Complete |
 | SAVE-05 | Phase 3 | Complete |
-| FEED-01 | Phase 4 | Pending |
-| FEED-02 | Phase 4 | Pending |
-| FEED-03 | Phase 4 | Pending |
-| FEED-04 | Phase 4 | Pending |
-| FEED-05 | Phase 4 | Pending |
-| FEED-06 | Phase 4 | Pending |
+| FEED-01 | Phase 4 | Complete |
+| FEED-02 | Phase 4 | Complete |
+| FEED-03 | Phase 4 | Complete |
+| FEED-04 | Phase 4 | Complete |
+| FEED-05 | Phase 4 | Complete |
+| FEED-06 | Phase 4 | Complete |
 | FEED-07 | Phase 4 | Pending |
 | FEED-08 | Phase 4 | Pending |
 | AUDI-01 | Phase 4 | Pending |
@@ -232,8 +232,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUDI-06 | Phase 4 | Pending |
 | AUDI-07 | Phase 4 | Pending |
 | AUDI-08 | Phase 4 | Pending |
-| VISL-03 | Phase 4 | Pending |
-| VISL-04 | Phase 4 | Pending |
+| VISL-03 | Phase 4 | Complete |
+| VISL-04 | Phase 4 | Complete |
 | SKIL-01 | Phase 5 | Pending |
 | SKIL-02 | Phase 5 | Pending |
 | SKIL-03 | Phase 5 | Pending |
