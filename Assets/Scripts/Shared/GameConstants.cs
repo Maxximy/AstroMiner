@@ -137,4 +137,30 @@ public static class GameConstants
 
     /// <summary>Scale boost factor for credit counter pop.</summary>
     public const float CreditPopScale = 1.3f;
+
+    // ── Audio Defaults ───────────────────────────────────────────
+
+    /// <summary>Maximum simultaneous SFX AudioSources.</summary>
+    public const int AudioSFXPoolSize = 20;
+
+    /// <summary>Minimum interval between mining hit SFX plays (seconds).</summary>
+    public const float DamageHitSFXCooldown = 0.25f;
+
+    /// <summary>Collection chime batch window (seconds).</summary>
+    public const float CollectionChimeBatchWindow = 0.05f;
+
+    /// <summary>Max distance for SFX volume attenuation.</summary>
+    public const float SFXMaxDistance = 30f;
+
+    /// <summary>Screen shake duration (seconds, ~3 frames at 60fps).</summary>
+    public const float ScreenShakeDuration = 0.05f;
+
+    /// <summary>Screen shake magnitude (world units offset).</summary>
+    public const float ScreenShakeMagnitude = 0.15f;
+
+    /// <summary>Timer warning vignette trigger threshold (seconds remaining).</summary>
+    public const float TimerWarningThreshold = 10f;
+
+    /// <summary>Timer warning vignette max intensity.</summary>
+    public const float TimerWarningMaxIntensity = 0.4f;
 }

@@ -382,6 +382,9 @@ public class UISetup : MonoBehaviour
         var button = buttonGO.AddComponent<Button>();
         button.targetGraphic = buttonImage;
 
+        // Wire click SFX for all buttons (AUDI-07)
+        button.onClick.AddListener(() => AudioManager.Instance?.PlayUIClick());
+
         // Button label text
         var labelGO = new GameObject("Label");
         labelGO.transform.SetParent(buttonGO.transform, false);

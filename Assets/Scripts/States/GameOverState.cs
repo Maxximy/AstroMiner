@@ -9,6 +9,9 @@ public class GameOverState : IGameState
         // Auto-save credits at end of every run (SAVE-02)
         SaveManager.Instance?.AutoSave();
 
+        // Play game over fanfare SFX (AUDI-05)
+        AudioManager.Instance?.PlayGameOverFanfare();
+
         var resultsScreen = Object.FindAnyObjectByType<ResultsScreen>(FindObjectsInactive.Include);
         if (resultsScreen != null)
         {

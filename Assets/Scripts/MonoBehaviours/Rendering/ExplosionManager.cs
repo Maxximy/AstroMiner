@@ -1,12 +1,10 @@
 using System.Collections;
 using UnityEngine;
-using Unity.Entities;
 using Unity.Mathematics;
 
 /// <summary>
 /// Singleton MonoBehaviour that spawns pooled ParticleSystem debris explosions.
-/// Drains the ECS DestructionEvent buffer each frame and plays chunky debris
-/// particle effects at asteroid death positions.
+/// Called by FeedbackEventBridge when DestructionEvents are drained from ECS buffers.
 /// Self-instantiates via [RuntimeInitializeOnLoadMethod] -- no manual scene setup required.
 /// </summary>
 public class ExplosionManager : MonoBehaviour
@@ -16,9 +14,8 @@ public class ExplosionManager : MonoBehaviour
     private GameObjectPool _explosionPool;
     private GameObject _explosionPrefab;
 
-    private EntityManager _em;
-    private EntityQuery _destructionBufferQuery;
-    private bool _ecsInitialized;
+    // Note: ECS event draining is handled centrally by FeedbackEventBridge.
+    // ExplosionManager only exposes the public PlayExplosion() method for dispatching.
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void AutoCreate()
@@ -154,37 +151,6 @@ public class ExplosionManager : MonoBehaviour
         {
             _explosionPool.Release(go);
         }
-    }
-
-    private void Update()
-    {
-        DrainEventBuffer();
-    }
-
-    private void DrainEventBuffer()
-    {
-        if (!_ecsInitialized)
-        {
-            var world = World.DefaultGameObjectInjectionWorld;
-            if (world == null || !world.IsCreated) return;
-
-            _em = world.EntityManager;
-            _destructionBufferQuery = _em.CreateEntityQuery(typeof(DestructionEvent));
-            _ecsInitialized = true;
-        }
-
-        if (_destructionBufferQuery.CalculateEntityCount() == 0) return;
-
-        var entity = _destructionBufferQuery.GetSingletonEntity();
-        var buffer = _em.GetBuffer<DestructionEvent>(entity);
-
-        for (int i = 0; i < buffer.Length; i++)
-        {
-            var evt = buffer[i];
-            PlayExplosion(evt.Position, evt.Scale);
-        }
-
-        buffer.Clear();
     }
 
     private void OnDestroy()

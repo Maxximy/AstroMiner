@@ -1,13 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.Entities;
 using Unity.Mathematics;
 using TMPro;
 
 /// <summary>
 /// Singleton MonoBehaviour that spawns pooled world-space TMPro damage popups.
-/// Drains the ECS DamageEvent buffer each frame and creates floating damage numbers
-/// that rise upward, fade out, and billboard toward the camera.
+/// Called by FeedbackEventBridge when DamageEvents are drained from ECS buffers.
+/// Creates floating damage numbers that rise upward, fade out, and billboard toward the camera.
 /// Self-instantiates via [RuntimeInitializeOnLoadMethod] -- no manual scene setup required.
 /// </summary>
 public class DamagePopupManager : MonoBehaviour
@@ -27,9 +26,8 @@ public class DamagePopupManager : MonoBehaviour
     private GameObject _popupPrefab;
     private readonly List<ActivePopup> _activePopups = new List<ActivePopup>(128);
 
-    private EntityManager _em;
-    private EntityQuery _damageBufferQuery;
-    private bool _ecsInitialized;
+    // Note: ECS event draining is handled centrally by FeedbackEventBridge.
+    // DamagePopupManager only exposes the public Spawn() method for dispatching.
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void AutoCreate()
@@ -180,9 +178,6 @@ public class DamagePopupManager : MonoBehaviour
 
     private void Update()
     {
-        // Drain ECS DamageEvent buffer
-        DrainEventBuffer();
-
         // Animate active popups
         float dt = Time.deltaTime;
         var cam = Camera.main;
@@ -222,32 +217,6 @@ public class DamagePopupManager : MonoBehaviour
                 _activePopups.RemoveAt(i);
             }
         }
-    }
-
-    private void DrainEventBuffer()
-    {
-        if (!_ecsInitialized)
-        {
-            var world = World.DefaultGameObjectInjectionWorld;
-            if (world == null || !world.IsCreated) return;
-
-            _em = world.EntityManager;
-            _damageBufferQuery = _em.CreateEntityQuery(typeof(DamageEvent));
-            _ecsInitialized = true;
-        }
-
-        if (_damageBufferQuery.CalculateEntityCount() == 0) return;
-
-        var entity = _damageBufferQuery.GetSingletonEntity();
-        var buffer = _em.GetBuffer<DamageEvent>(entity);
-
-        for (int i = 0; i < buffer.Length; i++)
-        {
-            var evt = buffer[i];
-            Spawn(evt.Position, evt.Amount, evt.Type, evt.ColorR, evt.ColorG, evt.ColorB);
-        }
-
-        buffer.Clear();
     }
 
     private void OnDestroy()
