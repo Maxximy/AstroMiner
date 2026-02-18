@@ -113,11 +113,12 @@ Plans:
   3. Upgrade costs scale per tier (1x/3x/8x) and all tech tree data is defined in ScriptableObjects
   4. At least 5 levels exist with distinct drop tables; higher levels introduce rarer resource tiers (up to 6 tiers: Iron through Titanium) and tougher asteroids with more HP
   5. Level advancement requires meeting a credit threshold and purchasing an Advance upgrade; all upgrades carry over between levels
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 06-01: Tech tree data model, UI, and upgrade application
-- [ ] 06-02: Level progression system and resource tier content
+- [ ] 06-01-PLAN.md -- Data model foundation: ScriptableObject classes, enums, ECS singletons, save system expansion, bootstrap changes
+- [ ] 06-02-PLAN.md -- Tech tree UI and purchase system: center-outward node graph, pan/zoom, color-coded states, one-click purchase with stat application, tooltip, VFX/SFX, ~40 node definitions
+- [ ] 06-03-PLAN.md -- Level progression and resource tiers: 5 level configs, 6 resource tier colors, asteroid HP/size scaling, economy bonus integration
 
 ## Progress
 
@@ -131,8 +132,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 3. Collection, Economy, and Session | 2/3 | Complete    | 2026-02-17 |
 | 4. Visual and Audio Feedback | 2/2 | Complete | 2026-02-18 |
 | 5. Ship Skills and Advanced Damage | 2/3 | Gap closure | 2026-02-18 |
-| 6. Tech Tree and Level Progression | 0/2 | Not started | - |
+| 6. Tech Tree and Level Progression | 0/3 | Planning complete | - |
 
 ---
 *Roadmap created: 2026-02-17*
-*Last updated: 2026-02-18 (Phase 5 complete)*
+*Last updated: 2026-02-18 (Phase 6 planning complete)*
