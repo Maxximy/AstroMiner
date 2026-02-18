@@ -11,12 +11,16 @@ namespace ECS.Systems
     /// Reads mouse position from InputData singleton and mining config from MiningConfigData.
     /// Applies damage to all asteroids within mining radius at a configurable tick rate.
     /// Resets per-asteroid tick timers when they leave the mining circle.
+    /// Integrates Overcharge buff (damage/radius multipliers) and critical hit rolls.
     /// </summary>
     [BurstCompile]
     public partial struct MiningDamageSystem : ISystem
     {
+        private Random rng;
+
         public void OnCreate(ref SystemState state)
         {
+            rng = new Random((uint)System.Environment.TickCount | 1u);
             state.RequireForUpdate<GameStateData>();
         }
 
@@ -38,10 +42,19 @@ namespace ECS.Systems
 
             // Read mining configuration
             var config = SystemAPI.GetSingleton<MiningConfigData>();
-            float radiusSq = config.Radius * config.Radius;
             float dt = SystemAPI.Time.DeltaTime;
 
-            // Get DamageEvent buffer for visual/audio feedback (Phase 4)
+            // Read Overcharge buff -- apply multipliers if active
+            var overcharge = SystemAPI.GetSingleton<OverchargeBuffData>();
+            bool overchargeActive = overcharge.RemainingDuration > 0f;
+            float effectiveRadius = overchargeActive ? config.Radius * overcharge.RadiusMultiplier : config.Radius;
+            float effectiveDamage = overchargeActive ? config.DamagePerTick * overcharge.DamageMultiplier : config.DamagePerTick;
+            float radiusSq = effectiveRadius * effectiveRadius;
+
+            // Read crit configuration
+            var critConfig = SystemAPI.GetSingleton<CritConfigData>();
+
+            // Get DamageEvent buffer for visual/audio feedback
             var damageBuffer = SystemAPI.GetSingletonBuffer<DamageEvent>();
 
             // Iterate all asteroids and apply tick-based damage if within mining circle
@@ -61,14 +74,18 @@ namespace ECS.Systems
                     // Apply damage on each tick interval
                     if (tickTimer.ValueRO.Elapsed >= config.TickInterval)
                     {
-                        health.ValueRW.CurrentHP -= config.DamagePerTick;
+                        // Crit roll
+                        bool isCrit = rng.NextFloat() < critConfig.CritChance;
+                        float damage = isCrit ? effectiveDamage * critConfig.CritMultiplier : effectiveDamage;
+
+                        health.ValueRW.CurrentHP -= damage;
 
                         // Emit damage event for visual feedback (floating damage numbers)
                         damageBuffer.Add(new DamageEvent
                         {
                             Position = transform.ValueRO.Position,
-                            Amount = config.DamagePerTick,
-                            Type = DamageType.Normal,
+                            Amount = damage,
+                            Type = isCrit ? DamageType.Critical : DamageType.Normal,
                             ColorR = 255, ColorG = 255, ColorB = 255
                         });
 
