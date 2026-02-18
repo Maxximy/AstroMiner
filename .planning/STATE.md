@@ -114,5 +114,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-18
-Stopped at: Completed 05-03-PLAN.md (Phase 5 gap closure complete)
-Resume file: .planning/phases/05-ship-skills-and-advanced-damage/05-03-SUMMARY.md
+Stopped at: Phase 6 context gathered
+Resume file: .planning/phases/06-tech-tree-and-level-progression/06-CONTEXT.md
