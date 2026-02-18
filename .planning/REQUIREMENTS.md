@@ -76,7 +76,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **SKIL-03**: EMP Pulse emits AoE damage centered on circle position
 - [x] **SKIL-04**: Overcharge temporarily doubles mining circle damage rate
 - [x] **SKIL-05**: Skills activated via keyboard (1-4) and on-screen UI buttons
-- [ ] **SKIL-06**: Each skill has a cooldown timer displayed on the skill bar UI
+- [x] **SKIL-06**: Each skill has a cooldown timer displayed on the skill bar UI
 - [ ] **SKIL-07**: Skills must be unlocked via Ship branch of tech tree before use
 - [ ] **SKIL-08**: Skills are upgradeable (damage+, cooldown-, special effects) via tech tree
 
@@ -84,7 +84,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **DMGS-01**: Critical hit system with configurable chance and multiplier (from tech tree)
 - [x] **DMGS-02**: Damage-over-time (DoT) burning effect that persists after asteroid leaves mining circle
-- [ ] **DMGS-03**: DoT visually indicated by ember particles trailing from affected asteroid
+- [x] **DMGS-03**: DoT visually indicated by ember particles trailing from affected asteroid
 
 ### Levels
 
@@ -239,12 +239,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SKIL-03 | Phase 5 | Complete |
 | SKIL-04 | Phase 5 | Complete |
 | SKIL-05 | Phase 5 | Complete |
-| SKIL-06 | Phase 5 | Pending |
+| SKIL-06 | Phase 5 | Complete |
 | SKIL-07 | Phase 5 | Pending |
 | SKIL-08 | Phase 5 | Pending |
 | DMGS-01 | Phase 5 | Complete |
 | DMGS-02 | Phase 5 | Complete |
-| DMGS-03 | Phase 5 | Pending |
+| DMGS-03 | Phase 5 | Complete |
 | TECH-01 | Phase 6 | Pending |
 | TECH-02 | Phase 6 | Pending |
 | TECH-03 | Phase 6 | Pending |

@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value:** The mining-collecting-upgrading loop must feel satisfying -- hovering the circle over asteroids, watching them break apart, collecting minerals, and spending credits on meaningful upgrades that make the next run noticeably better.
-**Current focus:** Phase 5 - Ship Skills & Advanced Damage (Plan 01 complete, Plan 02 next)
+**Current focus:** Phase 5 complete. Ready for Phase 6 - Tech Tree & Level Progression
 
 ## Current Position
 
-Phase: 5 of 6 (Ship Skills & Advanced Damage)
-Plan: 1 of 2 in current phase (05-01 complete)
-Status: In Progress
-Last activity: 2026-02-18 -- Completed 05-01 Skill Systems & Advanced Damage Backend
+Phase: 5 of 6 (Ship Skills & Advanced Damage) -- COMPLETE
+Plan: 2 of 2 in current phase (05-02 complete, phase done)
+Status: Phase 5 Complete
+Last activity: 2026-02-18 -- Completed 05-02 Skill UI, VFX, and Audio
 
-Progress: [##############░] 83%
+Progress: [###############░] 92%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
+- Total plans completed: 11
 - Average duration: 7 min
-- Total execution time: 1.1 hours
+- Total execution time: 1.2 hours
 
 **By Phase:**
 
@@ -31,10 +31,10 @@ Progress: [##############░] 83%
 | 02-core-mining-loop | 2 | 28 min | 14 min |
 | 03-collection-economy-and-session | 3 | 11 min | 3.7 min |
 | 04-visual-and-audio-feedback | 2 | 13 min | 6.5 min |
-| 05-ship-skills-and-advanced-damage | 1 | 5 min | 5 min |
+| 05-ship-skills-and-advanced-damage | 2 | 13 min | 6.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-02 (4 min), 03-03 (4 min), 04-01 (5 min), 04-02 (8 min), 05-01 (5 min)
+- Last 5 plans: 03-03 (4 min), 04-01 (5 min), 04-02 (8 min), 05-01 (5 min), 05-02 (8 min)
 - Trend: consistent fast execution for well-specified plans
 
 *Updated after each plan completion*
@@ -93,6 +93,10 @@ Recent decisions affecting current work:
 - Chain Lightning does NOT apply DoT per research discretion recommendation (05-01)
 - DoT damage popups use DamageType.Normal (white) not DamageType.DoT per user decision (05-01)
 - Each skill system RNG seeded with unique OR-mask to avoid identical crit sequences across systems (05-01)
+- Removed CameraShake on critical hits per user decision -- crits have sound only, no screen shake (05-02)
+- SkillVFXManager and BurningEffectManager self-instantiate via RuntimeInitializeOnLoadMethod matching ExplosionManager pattern (05-02)
+- Skill bar created programmatically by UISetup with radial fill overlays and keybind badges (05-02)
+- BurningEffectManager tracks burning entities via Dictionary<Entity, GameObject> matching AsteroidRenderer pattern (05-02)
 
 ### Pending Todos
 
@@ -106,5 +110,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-18
-Stopped at: Completed 05-01-PLAN.md
-Resume file: .planning/phases/05-ship-skills-and-advanced-damage/05-01-SUMMARY.md
+Stopped at: Completed 05-02-PLAN.md (Phase 5 complete)
+Resume file: .planning/phases/05-ship-skills-and-advanced-damage/05-02-SUMMARY.md

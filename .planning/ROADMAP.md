@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Core Mining Loop** - Asteroids spawn and drift, mining circle follows mouse and damages them, playable mining _(completed 2026-02-17)_
 - [x] **Phase 3: Collection, Economy, and Session** - Minerals fly to ship, credits awarded, timed runs with results, persistent save system _(completed 2026-02-17)_
 - [x] **Phase 4: Visual and Audio Feedback** - Damage numbers, particle effects, screen shake, audio SFX, space aesthetic polish _(completed 2026-02-18)_
-- [ ] **Phase 5: Ship Skills and Advanced Damage** - Four active skills, critical hits, damage-over-time, skill bar UI
+- [x] **Phase 5: Ship Skills and Advanced Damage** - Four active skills, critical hits, damage-over-time, skill bar UI _(completed 2026-02-18)_
 - [ ] **Phase 6: Tech Tree and Level Progression** - Branching upgrade tree, level system with tiered resources, full meta-game loop
 
 ## Phase Details
@@ -99,8 +99,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 05-01-PLAN.md -- ECS skill components, four skill damage systems (Laser/Chain/EMP/Overcharge), crit integration, DoT burning system, input extension
-- [ ] 05-02-PLAN.md -- Skill bar UI with radial cooldowns, skill VFX (beam/lightning/blast/glow), ember particles for burning, audio wiring, Overcharge visual feedback
+- [x] 05-01-PLAN.md -- ECS skill components, four skill damage systems (Laser/Chain/EMP/Overcharge), crit integration, DoT burning system, input extension _(completed 2026-02-18)_
+- [x] 05-02-PLAN.md -- Skill bar UI with radial cooldowns, skill VFX (beam/lightning/blast/glow), ember particles for burning, audio wiring, Overcharge visual feedback _(completed 2026-02-18)_
 
 ### Phase 6: Tech Tree and Level Progression
 **Goal**: The meta-game delivers long-term motivation -- players spend credits on a branching tech tree to become noticeably more powerful, then advance through levels with new resource tiers and tougher asteroids
@@ -129,9 +129,9 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 2. Core Mining Loop | 0/2 | Complete    | 2026-02-17 |
 | 3. Collection, Economy, and Session | 2/3 | Complete    | 2026-02-17 |
 | 4. Visual and Audio Feedback | 2/2 | Complete | 2026-02-18 |
-| 5. Ship Skills and Advanced Damage | 0/2 | Not started | - |
+| 5. Ship Skills and Advanced Damage | 2/2 | Complete | 2026-02-18 |
 | 6. Tech Tree and Level Progression | 0/2 | Not started | - |
 
 ---
 *Roadmap created: 2026-02-17*
-*Last updated: 2026-02-18 (Phase 5 planned)*
+*Last updated: 2026-02-18 (Phase 5 complete)*
