@@ -235,4 +235,38 @@ public static class GameConstants
 
     /// <summary>EMP DoT total duration in seconds.</summary>
     public const float EmpDotDuration = 2f;
+
+    // -- Economy Defaults (Phase 6) ------------------------------------------
+
+    /// <summary>Default resource credit multiplier (1.0 = no bonus).</summary>
+    public const float DefaultResourceMultiplier = 1f;
+
+    /// <summary>Default lucky strike chance (0.0 = no chance).</summary>
+    public const float DefaultLuckyStrikeChance = 0f;
+
+    /// <summary>Default combo mastery time window in seconds.</summary>
+    public const float DefaultComboMasteryWindow = 5f;
+
+    /// <summary>Default combo mastery damage multiplier.</summary>
+    public const float DefaultComboMasteryMultiplier = 1.5f;
+
+    // -- Resource Tier Credit Values (Phase 6) --------------------------------
+
+    /// <summary>Credits per Iron mineral (tier 0).</summary>
+    public const int IronCreditValue = 10;
+
+    /// <summary>Credits per Copper mineral (tier 1).</summary>
+    public const int CopperCreditValue = 25;
+
+    /// <summary>Credits per Silver mineral (tier 2).</summary>
+    public const int SilverCreditValue = 75;
+
+    /// <summary>Credits per Cobalt mineral (tier 3).</summary>
+    public const int CobaltCreditValue = 150;
+
+    /// <summary>Credits per Gold mineral (tier 4).</summary>
+    public const int GoldCreditValue = 400;
+
+    /// <summary>Credits per Titanium mineral (tier 5).</summary>
+    public const int TitaniumCreditValue = 1000;
 }
