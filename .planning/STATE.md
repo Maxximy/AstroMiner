@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-02-17)
 
 **Core value:** The mining-collecting-upgrading loop must feel satisfying -- hovering the circle over asteroids, watching them break apart, collecting minerals, and spending credits on meaningful upgrades that make the next run noticeably better.
-**Current focus:** Phase 5 - Ship Skills & Advanced Damage (NEXT)
+**Current focus:** Phase 5 - Ship Skills & Advanced Damage (context gathered, ready for planning)
 
 ## Current Position
 
@@ -100,5 +100,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-18
-Stopped at: Completed 04-02-PLAN.md (Audio & Feedback Bridge) -- Phase 4 complete
-Resume file: .planning/phases/04-visual-and-audio-feedback/04-02-SUMMARY.md
+Stopped at: Phase 5 context gathered
+Resume file: .planning/phases/05-ship-skills-and-advanced-damage/05-CONTEXT.md
