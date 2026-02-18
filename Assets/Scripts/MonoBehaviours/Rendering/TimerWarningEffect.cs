@@ -49,7 +49,9 @@ public class TimerWarningEffect : MonoBehaviour
             if (!_volume.profile.TryGet<Vignette>(out _vignette))
             {
                 // Add Vignette override if not present in the profile
-                _vignette = _volume.profile.Add<Vignette>(overrideState: true);
+                _vignette = _volume.profile.Add<Vignette>();
+                _vignette.intensity.overrideState = true;
+                _vignette.color.overrideState = true;
             }
             Debug.Log("TimerWarningEffect: Vignette control initialized.");
         }

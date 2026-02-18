@@ -67,7 +67,7 @@ public class AudioManager : MonoBehaviour
     private void Start()
     {
         // Load AudioMixer from Resources (graceful degradation if not found)
-        _mixer = Resources.Load<AudioMixer>("GameAudioMixer");
+        _mixer = Resources.Load<AudioMixer>("Audio/GameAudioMixer");
         if (_mixer != null)
         {
             var sfxGroups = _mixer.FindMatchingGroups("SFX");
