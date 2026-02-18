@@ -57,4 +57,53 @@ namespace ECS.Components
         public float RemainingDuration;
         public float TickAccumulator;
     }
+
+    /// <summary>
+    /// Singleton: tracks which skills are unlocked.
+    /// Phase 6 tech tree will set these to false by default and flip to true on purchase.
+    /// Currently all default to true so gameplay is not broken before tech tree exists.
+    /// </summary>
+    public struct SkillUnlockData : IComponentData
+    {
+        public bool Skill1Unlocked; // Laser Burst
+        public bool Skill2Unlocked; // Chain Lightning
+        public bool Skill3Unlocked; // EMP Pulse
+        public bool Skill4Unlocked; // Overcharge
+    }
+
+    /// <summary>
+    /// Singleton: runtime-mutable skill stats that replace compile-time GameConstants values.
+    /// Phase 6 tech tree modifies these values when upgrades are purchased.
+    /// ECSBootstrap seeds from GameConstants defaults. Skill systems read from this singleton.
+    /// </summary>
+    public struct SkillStatsData : IComponentData
+    {
+        // Laser Burst
+        public float LaserDamage;
+        public float LaserCooldown;
+        public float LaserBeamHalfWidth;
+        public float LaserDotDamagePerTick;
+        public float LaserDotTickInterval;
+        public float LaserDotDuration;
+
+        // Chain Lightning
+        public float ChainDamage;
+        public float ChainCooldown;
+        public int ChainMaxTargets;
+        public float ChainMaxDist;
+
+        // EMP Pulse
+        public float EmpDamage;
+        public float EmpCooldown;
+        public float EmpRadius;
+        public float EmpDotDamagePerTick;
+        public float EmpDotTickInterval;
+        public float EmpDotDuration;
+
+        // Overcharge
+        public float OverchargeCooldown;
+        public float OverchargeDuration;
+        public float OverchargeDamageMultiplier;
+        public float OverchargeRadiusMultiplier;
+    }
 }

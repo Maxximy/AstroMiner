@@ -401,6 +401,7 @@ namespace MonoBehaviours.Core
             var overlays = new Image[4];
             var cooldownTexts = new TextMeshProUGUI[4];
             var buttons = new Button[4];
+            var slotRoots = new GameObject[4];
 
             for (int i = 0; i < 4; i++)
             {
@@ -420,6 +421,7 @@ namespace MonoBehaviours.Core
                 button.targetGraphic = bgImage;
                 button.onClick.AddListener(() => AudioManager.Instance?.PlayUIClick());
                 buttons[i] = button;
+                slotRoots[i] = slotGO;
 
                 // Icon child
                 var iconGO = new GameObject("Icon");
@@ -503,7 +505,7 @@ namespace MonoBehaviours.Core
 
             // Add SkillBarController and initialize
             SkillBarController = skillBarCanvasGO.AddComponent<SkillBarController>();
-            SkillBarController.Initialize(overlays, cooldownTexts, buttons, panelGO);
+            SkillBarController.Initialize(overlays, cooldownTexts, buttons, panelGO, slotRoots);
         }
 
         private GameObject CreateTMPText(string name, string defaultText, Transform parent)

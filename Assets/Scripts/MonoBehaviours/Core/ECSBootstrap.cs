@@ -91,7 +91,46 @@ namespace MonoBehaviours.Core
             var skillEventEntity = em.CreateEntity();
             em.AddBuffer<SkillEvent>(skillEventEntity);
 
-            Debug.Log("ECS Bootstrap complete: singletons created (GameState, Input, AsteroidSpawnTimer, MiningConfig, CollectionEventBuffer, DamageEventBuffer, DestructionEventBuffer, SkillInput, SkillCooldown, CritConfig, OverchargeBuff, SkillEventBuffer)");
+            // Phase 5 gap closure: Skill unlock gating
+            // All skills default to UNLOCKED. Phase 6 tech tree will change defaults to false
+            // and flip to true on Ship branch purchases.
+            var skillUnlockEntity = em.CreateEntity(typeof(SkillUnlockData));
+            em.SetComponentData(skillUnlockEntity, new SkillUnlockData
+            {
+                Skill1Unlocked = true,
+                Skill2Unlocked = true,
+                Skill3Unlocked = true,
+                Skill4Unlocked = true
+            });
+
+            // Phase 5 gap closure: Runtime-mutable skill stats
+            // Seeded from GameConstants. Phase 6 tech tree will modify these at runtime.
+            var skillStatsEntity = em.CreateEntity(typeof(SkillStatsData));
+            em.SetComponentData(skillStatsEntity, new SkillStatsData
+            {
+                LaserDamage = GameConstants.LaserBurstDamage,
+                LaserCooldown = GameConstants.LaserBurstCooldown,
+                LaserBeamHalfWidth = GameConstants.LaserBurstBeamHalfWidth,
+                LaserDotDamagePerTick = GameConstants.LaserDotDamagePerTick,
+                LaserDotTickInterval = GameConstants.LaserDotTickInterval,
+                LaserDotDuration = GameConstants.LaserDotDuration,
+                ChainDamage = GameConstants.ChainLightningDamage,
+                ChainCooldown = GameConstants.ChainLightningCooldown,
+                ChainMaxTargets = GameConstants.ChainLightningMaxTargets,
+                ChainMaxDist = GameConstants.ChainLightningMaxChainDist,
+                EmpDamage = GameConstants.EmpPulseDamage,
+                EmpCooldown = GameConstants.EmpPulseCooldown,
+                EmpRadius = GameConstants.EmpPulseRadius,
+                EmpDotDamagePerTick = GameConstants.EmpDotDamagePerTick,
+                EmpDotTickInterval = GameConstants.EmpDotTickInterval,
+                EmpDotDuration = GameConstants.EmpDotDuration,
+                OverchargeCooldown = GameConstants.OverchargeCooldown,
+                OverchargeDuration = GameConstants.OverchargeDuration,
+                OverchargeDamageMultiplier = GameConstants.OverchargeDamageMultiplier,
+                OverchargeRadiusMultiplier = GameConstants.OverchargeRadiusMultiplier
+            });
+
+            Debug.Log("ECS Bootstrap complete: singletons created (GameState, Input, AsteroidSpawnTimer, MiningConfig, CollectionEventBuffer, DamageEventBuffer, DestructionEventBuffer, SkillInput, SkillCooldown, CritConfig, OverchargeBuff, SkillEventBuffer, SkillUnlock, SkillStats)");
         }
     }
 }

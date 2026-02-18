@@ -17,12 +17,15 @@ namespace MonoBehaviours.UI
         private TextMeshProUGUI[] cooldownTexts;
         private Button[] skillButtons;
         private GameObject skillBarRoot;
+        private GameObject[] slotRoots;  // Root GO of each skill slot for show/hide
 
         // ECS access (lazy init)
         private EntityManager em;
         private Entity skillInputEntity;
         private Entity skillCooldownEntity;
         private Entity gameStateEntity;
+        private Entity skillUnlockEntity;
+        private Entity skillStatsEntity;
         private bool ecsInitialized;
 
         // Ready flash tracking
@@ -36,12 +39,13 @@ namespace MonoBehaviours.UI
         /// Called by UISetup after creating the skill bar UI hierarchy.
         /// </summary>
         public void Initialize(Image[] overlays, TextMeshProUGUI[] texts,
-                               Button[] buttons, GameObject root)
+                               Button[] buttons, GameObject root, GameObject[] slots)
         {
             cooldownOverlays = overlays;
             cooldownTexts = texts;
             skillButtons = buttons;
             skillBarRoot = root;
+            slotRoots = slots;
 
             // Wire button click handlers
             for (int i = 0; i < 4; i++)
@@ -54,6 +58,18 @@ namespace MonoBehaviours.UI
         private void OnSkillButtonClicked(int skillIndex)
         {
             if (!TryInitECS()) return;
+
+            // Guard: prevent activation of locked skills
+            var unlockData = em.GetComponentData<SkillUnlockData>(skillUnlockEntity);
+            bool isUnlocked = skillIndex switch
+            {
+                0 => unlockData.Skill1Unlocked,
+                1 => unlockData.Skill2Unlocked,
+                2 => unlockData.Skill3Unlocked,
+                3 => unlockData.Skill4Unlocked,
+                _ => false
+            };
+            if (!isUnlocked) return;
 
             var inputData = em.GetComponentData<SkillInputData>(skillInputEntity);
             switch (skillIndex)
@@ -87,6 +103,14 @@ namespace MonoBehaviours.UI
             if (gameStateQuery.CalculateEntityCount() == 0) return false;
             gameStateEntity = gameStateQuery.GetSingletonEntity();
 
+            var unlockQuery = em.CreateEntityQuery(typeof(SkillUnlockData));
+            if (unlockQuery.CalculateEntityCount() == 0) return false;
+            skillUnlockEntity = unlockQuery.GetSingletonEntity();
+
+            var statsQuery = em.CreateEntityQuery(typeof(SkillStatsData));
+            if (statsQuery.CalculateEntityCount() == 0) return false;
+            skillStatsEntity = statsQuery.GetSingletonEntity();
+
             ecsInitialized = true;
             return true;
         }
@@ -104,12 +128,27 @@ namespace MonoBehaviours.UI
             if (!visible) return;
 
             var cooldowns = em.GetComponentData<SkillCooldownData>(skillCooldownEntity);
+            var unlocks = em.GetComponentData<SkillUnlockData>(skillUnlockEntity);
+            var stats = em.GetComponentData<SkillStatsData>(skillStatsEntity);
 
-            // Update each slot
-            UpdateSlot(0, cooldowns.Skill1Remaining, cooldowns.Skill1MaxCooldown);
-            UpdateSlot(1, cooldowns.Skill2Remaining, cooldowns.Skill2MaxCooldown);
-            UpdateSlot(2, cooldowns.Skill3Remaining, cooldowns.Skill3MaxCooldown);
-            UpdateSlot(3, cooldowns.Skill4Remaining, cooldowns.Skill4MaxCooldown);
+            bool[] unlocked = { unlocks.Skill1Unlocked, unlocks.Skill2Unlocked,
+                                unlocks.Skill3Unlocked, unlocks.Skill4Unlocked };
+
+            // Toggle slot visibility based on unlock state
+            for (int i = 0; i < 4; i++)
+            {
+                if (slotRoots != null && slotRoots[i] != null)
+                {
+                    if (slotRoots[i].activeSelf != unlocked[i])
+                        slotRoots[i].SetActive(unlocked[i]);
+                }
+            }
+
+            // Update each slot (skip locked slots)
+            if (unlocked[0]) UpdateSlot(0, cooldowns.Skill1Remaining, stats.LaserCooldown);
+            if (unlocked[1]) UpdateSlot(1, cooldowns.Skill2Remaining, stats.ChainCooldown);
+            if (unlocked[2]) UpdateSlot(2, cooldowns.Skill3Remaining, stats.EmpCooldown);
+            if (unlocked[3]) UpdateSlot(3, cooldowns.Skill4Remaining, stats.OverchargeCooldown);
         }
 
         private void UpdateSlot(int index, float remaining, float maxCooldown)
