@@ -14,14 +14,13 @@ namespace MonoBehaviours.Core
         private FadeController fadeController;
 
         private IGameState currentState;
-        private GamePhase currentPhase;
         private Dictionary<GamePhase, IGameState> states;
         private bool isTransitioning;
 
         /// <summary>
         /// The current game phase. Read-only from outside.
         /// </summary>
-        public GamePhase CurrentPhase => currentPhase;
+        public GamePhase CurrentPhase { get; private set; }
 
         /// <summary>
         /// Credits snapshot at the start of the current run.
@@ -29,8 +28,9 @@ namespace MonoBehaviours.Core
         /// </summary>
         public long CreditsAtRunStart { get; set; }
 
-        void Awake()
+        private void Awake()
         {
+            Application.targetFrameRate = 60;
             if (Instance != null && Instance != this)
             {
                 Destroy(gameObject);
@@ -48,7 +48,7 @@ namespace MonoBehaviours.Core
             };
         }
 
-        void Start()
+        private void Start()
         {
             // Find FadeController created by UISetup (runs in Awake)
             fadeController = FindAnyObjectByType<FadeController>();
@@ -56,7 +56,7 @@ namespace MonoBehaviours.Core
                 Debug.LogError("GameManager: FadeController not found. Ensure UISetup runs before GameManager.Start.");
 
             // Set initial state to Playing without fade (immediate)
-            currentPhase = GamePhase.Playing;
+            CurrentPhase = GamePhase.Playing;
             currentState = states[GamePhase.Playing];
             currentState.Enter(this);
             fadeController?.SetClear();
@@ -65,7 +65,7 @@ namespace MonoBehaviours.Core
             WritePhaseToEcs(GamePhase.Playing);
         }
 
-        void Update()
+        private void Update()
         {
             currentState?.Execute(this);
         }
@@ -79,15 +79,15 @@ namespace MonoBehaviours.Core
             if (isTransitioning) return;
 
             // Guard: prevent transition to same state
-            if (currentPhase == newPhase) return;
+            if (CurrentPhase == newPhase) return;
 
             isTransitioning = true;
 
             // Special case: Playing -> Collecting has NO fade (per user decision: gameplay stays visible)
-            if (currentPhase == GamePhase.Playing && newPhase == GamePhase.Collecting)
+            if (CurrentPhase == GamePhase.Playing && newPhase == GamePhase.Collecting)
             {
                 currentState?.Exit(this);
-                currentPhase = newPhase;
+                CurrentPhase = newPhase;
                 WritePhaseToEcs(newPhase);
                 currentState = states[newPhase];
                 currentState.Enter(this);
@@ -101,7 +101,7 @@ namespace MonoBehaviours.Core
 
             fadeController.FadeOut(() =>
             {
-                currentPhase = newPhase;
+                CurrentPhase = newPhase;
                 WritePhaseToEcs(newPhase);
                 currentState = states[newPhase];
                 currentState.Enter(this);

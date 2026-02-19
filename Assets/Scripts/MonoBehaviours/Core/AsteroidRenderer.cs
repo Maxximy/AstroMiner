@@ -108,7 +108,7 @@ namespace MonoBehaviours.Core
             // Ship positioned on XZ plane (Y=0), near bottom of visible area
             shipGo.transform.position = new Vector3(0f, 0f, GameConstants.ShipPositionZ);
             shipGo.transform.localScale = new Vector3(1.0f, 0.1f, 0.5f);
-            shipGo.transform.rotation = Quaternion.Euler(0f, 45f, 0f);
+            shipGo.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
 
             // Remove collider
             var col = shipGo.GetComponent<Collider>();

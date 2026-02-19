@@ -24,17 +24,6 @@ namespace ECS.Components
     }
 
     /// <summary>
-    /// Per-entity damage tick accumulator.
-    /// Tracks elapsed time since last damage application from the mining circle.
-    /// Used by MiningDamageSystem (Plan 02-02).
-    /// </summary>
-    public struct DamageTickTimer : IComponentData
-    {
-        /// <summary>Seconds elapsed since last damage tick.</summary>
-        public float Elapsed;
-    }
-
-    /// <summary>
     /// Tracks which resource tier an asteroid drops when destroyed.
     /// Set by AsteroidSpawnSystem based on the current level's drop table.
     /// Read by MineralSpawnSystem to assign mineral credit values and colors.

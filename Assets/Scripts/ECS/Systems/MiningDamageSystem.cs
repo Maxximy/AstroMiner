@@ -1,8 +1,10 @@
+using System;
 using ECS.Components;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using Random = Unity.Mathematics.Random;
 
 namespace ECS.Systems
 {
@@ -17,86 +19,68 @@ namespace ECS.Systems
     public partial struct MiningDamageSystem : ISystem
     {
         private Random rng;
+        private float tickElapsed;
 
         public void OnCreate(ref SystemState state)
         {
-            rng = new Random((uint)System.Environment.TickCount | 1u);
+            state.RequireForUpdate<CritConfigData>();
+            state.RequireForUpdate<OverchargeBuffData>();
+            state.RequireForUpdate<MiningConfigData>();
+            state.RequireForUpdate<InputData>();
+            rng = new Random((uint)Environment.TickCount | 1u);
             state.RequireForUpdate<GameStateData>();
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            // Guard: require GameStateData singleton
-            if (!SystemAPI.HasSingleton<GameStateData>())
-                return;
-
             var gameState = SystemAPI.GetSingleton<GameStateData>();
-            if (gameState.Phase != GamePhase.Playing)
-                return;
+            if (gameState.Phase != GamePhase.Playing) return;
 
-            // Guard: require valid mouse input
             var input = SystemAPI.GetSingleton<InputData>();
-            if (!input.MouseValid)
-                return;
+            if (!input.MouseValid) return;
 
-            // Read mining configuration
             var config = SystemAPI.GetSingleton<MiningConfigData>();
-            float dt = SystemAPI.Time.DeltaTime;
+
+            // Accumulate global tick timer
+            tickElapsed += SystemAPI.Time.DeltaTime;
+            if (tickElapsed < config.TickInterval) return;
+            tickElapsed -= config.TickInterval;
 
             // Read Overcharge buff -- apply multipliers if active
             var overcharge = SystemAPI.GetSingleton<OverchargeBuffData>();
-            bool overchargeActive = overcharge.RemainingDuration > 0f;
-            float effectiveRadius = overchargeActive ? config.Radius * overcharge.RadiusMultiplier : config.Radius;
-            float effectiveDamage = overchargeActive ? config.DamagePerTick * overcharge.DamageMultiplier : config.DamagePerTick;
-            float radiusSq = effectiveRadius * effectiveRadius;
+            var overchargeActive = overcharge.RemainingDuration > 0f;
+            var effectiveRadius = overchargeActive ? config.Radius * overcharge.RadiusMultiplier : config.Radius;
+            var effectiveDamage = overchargeActive
+                ? config.DamagePerTick * overcharge.DamageMultiplier
+                : config.DamagePerTick;
+            var radiusSq = effectiveRadius * effectiveRadius;
 
-            // Read crit configuration
             var critConfig = SystemAPI.GetSingleton<CritConfigData>();
-
-            // Get DamageEvent buffer for visual/audio feedback
             var damageBuffer = SystemAPI.GetSingletonBuffer<DamageEvent>();
 
-            // Iterate all asteroids and apply tick-based damage if within mining circle
-            foreach (var (transform, health, tickTimer) in
-                     SystemAPI.Query<RefRO<LocalTransform>, RefRW<HealthData>, RefRW<DamageTickTimer>>()
+            // Damage all asteroids currently inside the mining circle
+            foreach (var (transform, health) in
+                     SystemAPI.Query<RefRO<LocalTransform>, RefRW<HealthData>>()
                          .WithAll<AsteroidTag>())
             {
-                // Distance check on XZ plane (InputBridge writes float2(worldPoint.x, worldPoint.z))
-                float2 asteroidPos = new float2(transform.ValueRO.Position.x, transform.ValueRO.Position.z);
-                float distSq = math.distancesq(asteroidPos, input.MouseWorldPos);
+                var asteroidPos = new float2(transform.ValueRO.Position.x, transform.ValueRO.Position.z);
+                var distSq = math.distancesq(asteroidPos, input.MouseWorldPos);
 
                 if (distSq <= radiusSq)
                 {
-                    // Inside mining circle: accumulate tick timer
-                    tickTimer.ValueRW.Elapsed += dt;
+                    var isCrit = rng.NextFloat() < critConfig.CritChance;
+                    var damage = isCrit ? effectiveDamage * critConfig.CritMultiplier : effectiveDamage;
 
-                    // Apply damage on each tick interval
-                    if (tickTimer.ValueRO.Elapsed >= config.TickInterval)
+                    health.ValueRW.CurrentHP -= damage;
+
+                    damageBuffer.Add(new DamageEvent
                     {
-                        // Crit roll
-                        bool isCrit = rng.NextFloat() < critConfig.CritChance;
-                        float damage = isCrit ? effectiveDamage * critConfig.CritMultiplier : effectiveDamage;
-
-                        health.ValueRW.CurrentHP -= damage;
-
-                        // Emit damage event for visual feedback (floating damage numbers)
-                        damageBuffer.Add(new DamageEvent
-                        {
-                            Position = transform.ValueRO.Position,
-                            Amount = damage,
-                            Type = isCrit ? DamageType.Critical : DamageType.Normal,
-                            ColorR = 255, ColorG = 255, ColorB = 255
-                        });
-
-                        // Subtract rather than reset to preserve fractional accumulation
-                        tickTimer.ValueRW.Elapsed -= config.TickInterval;
-                    }
-                }
-                else
-                {
-                    // Outside mining circle: reset tick timer
-                    tickTimer.ValueRW.Elapsed = 0f;
+                        Position = transform.ValueRO.Position,
+                        Amount = damage,
+                        Type = isCrit ? DamageType.Critical : DamageType.Normal,
+                        ColorR = 255, ColorG = 255, ColorB = 255
+                    });
                 }
             }
         }

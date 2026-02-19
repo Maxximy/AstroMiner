@@ -69,12 +69,12 @@ namespace ECS.Systems
             var spinSpeed = rng.NextFloat(GameConstants.DefaultSpinMin, GameConstants.DefaultSpinMax);
 
             // Pick resource tier via weighted random from RunConfigData tier weights
-            int tier = PickResourceTier(ref rng, runConfig);
+            var tier = PickResourceTier(ref rng, runConfig);
 
             // Calculate HP based on level multiplier and tier bonus
             // Higher tiers have slightly more HP: base * (1 + tier * 0.2) * levelMultiplier
-            float baseHP = GameConstants.DefaultAsteroidHP;
-            float hp = baseHP * (1f + tier * 0.2f) * runConfig.AsteroidHPMultiplier;
+            var baseHP = GameConstants.DefaultAsteroidHP;
+            var hp = baseHP * (1f + tier * 0.2f) * runConfig.AsteroidHPMultiplier;
 
             // Create asteroid entity on XZ plane (Y=0, spawn at top Z)
             var entity = ecb.CreateEntity();
@@ -88,7 +88,6 @@ namespace ECS.Systems
                 MaxHP = hp,
                 CurrentHP = hp
             });
-            ecb.AddComponent(entity, new DamageTickTimer { Elapsed = 0f });
             ecb.AddComponent(entity, new AsteroidResourceTier { Tier = tier });
         }
 
@@ -99,14 +98,14 @@ namespace ECS.Systems
         [BurstCompile]
         private static int PickResourceTier(ref Random rng, RunConfigData config)
         {
-            float totalWeight = config.TierWeight0 + config.TierWeight1 + config.TierWeight2
+            var totalWeight = config.TierWeight0 + config.TierWeight1 + config.TierWeight2
                               + config.TierWeight3 + config.TierWeight4 + config.TierWeight5;
 
             // Fallback: if no weights set, return tier 0 (Iron)
             if (totalWeight <= 0f)
                 return 0;
 
-            float roll = rng.NextFloat(0f, totalWeight);
+            var roll = rng.NextFloat(0f, totalWeight);
 
             roll -= config.TierWeight0;
             if (roll <= 0f) return 0;

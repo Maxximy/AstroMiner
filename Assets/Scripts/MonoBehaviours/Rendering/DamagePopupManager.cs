@@ -95,7 +95,7 @@ namespace MonoBehaviours.Rendering
             var tmp = textGO.AddComponent<TextMeshProUGUI>();
             tmp.fontSize = GameConstants.DamagePopupFontSizeNormal / 0.02f; // Compensate for canvas scale
             tmp.alignment = TextAlignmentOptions.Center;
-            tmp.enableWordWrapping = false;
+            tmp.textWrappingMode = TextWrappingModes.NoWrap;
             tmp.overflowMode = TextOverflowModes.Overflow;
             tmp.color = Color.white;
             tmp.fontStyle = FontStyles.Bold;

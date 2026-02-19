@@ -19,7 +19,7 @@ public static class GameConstants
     public const float PlayAreaZMax = 12f;
 
     /// <summary>Ship placeholder Z position (near bottom of visible area).</summary>
-    public const float ShipPositionZ = -6f;
+    public const float ShipPositionZ = -10f;
 
     // ── Asteroid Defaults ─────────────────────────────────────────
 
@@ -30,7 +30,7 @@ public static class GameConstants
     public const int DefaultMaxAsteroids = 50;
 
     /// <summary>Default asteroid hit points.</summary>
-    public const float DefaultAsteroidHP = 100f;
+    public const float DefaultAsteroidHP = 20;
 
     /// <summary>Minimum downward drift speed (units/sec).</summary>
     public const float DefaultDriftSpeedMin = 1.0f;
@@ -53,7 +53,7 @@ public static class GameConstants
     public const float DefaultDamagePerTick = 10f;
 
     /// <summary>Seconds between damage ticks.</summary>
-    public const float DefaultTickInterval = 0.25f;
+    public const float DefaultTickInterval = 2.0f;
 
     // ── Mineral Defaults ────────────────────────────────────────
 
@@ -103,10 +103,7 @@ public static class GameConstants
     public const float DamagePopupFadeDelay = 0.3f;
 
     /// <summary>Font size for normal damage numbers (world-space units).</summary>
-    public const float DamagePopupFontSizeNormal = 3f;
-
-    /// <summary>Font size for critical hit numbers (world-space units).</summary>
-    public const float DamagePopupFontSizeCrit = 5f;
+    public const float DamagePopupFontSizeNormal = 1f;
 
     /// <summary>Scale multiplier for critical hit popup.</summary>
     public const float DamagePopupCritScale = 1.5f;
