@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using MonoBehaviours.Core;
 using MonoBehaviours.Pool;
 using Unity.Mathematics;
 using UnityEngine;
@@ -23,21 +22,10 @@ namespace MonoBehaviours.Rendering
         private GameObjectPool fallbackPool;
         private GameObject fallbackPrefab;
 
-        // Per-tier explosion pools, lazily created on first use
-        private Dictionary<int, GameObjectPool> tierPools;
-
-        // Track which tiers have no prefab assigned (avoid repeated warning spam)
-        private HashSet<int> missingTiers;
-
         // Mesh explosion tuning
-        private const float MeshScatterDuration = 0.25f;
+        private const float MeshScatterDuration = 0.4f;
         private const float MeshScatterSpeed = 5f;
-        private const float MeshFlySpeed = 8f;
-        private const float MeshFlyAcceleration = 12f;
-        private const float MeshCollectRadius = 1f;
-        private const float MeshFragmentScale = 1.5f;
-
-        private static readonly Vector3 ShipPos = new(GameConstants.ShipPositionX, 0f, GameConstants.ShipPositionZ);
+        private const float MeshFragmentScale = 5f;
 
         // Note: ECS event draining is handled centrally by FeedbackEventBridge.
         // ExplosionManager only exposes the public PlayExplosion() method for dispatching.
@@ -65,9 +53,6 @@ namespace MonoBehaviours.Rendering
 
         private void Start()
         {
-            tierPools = new Dictionary<int, GameObjectPool>();
-            missingTiers = new HashSet<int>();
-
             // Create fallback (programmatic particle) prefab
             fallbackPrefab = CreateFallbackPrefab();
             fallbackPrefab.SetActive(false);
@@ -78,7 +63,7 @@ namespace MonoBehaviours.Rendering
             poolParent.SetParent(transform);
             fallbackPool = new GameObjectPool(fallbackPrefab, poolParent, 10, 25);
 
-            Debug.Log("ExplosionManager: initialized with fallback pool + lazy tier pools.");
+            Debug.Log("ExplosionManager: initialized with fallback pool.");
         }
 
         private GameObject CreateFallbackPrefab()
@@ -139,94 +124,33 @@ namespace MonoBehaviours.Rendering
         }
 
         /// <summary>
-        /// Gets or creates a pool for the given tier's explosion prefab.
-        /// Returns null if no prefab is assigned in AsteroidVisualConfig (caller uses fallback).
+        /// Plays a debris explosion at the given world position using the fallback particle pool.
         /// </summary>
-        private GameObjectPool GetOrCreateTierPool(int tier)
+        public void PlayExplosion(float3 position, float scale, int resourceTier = 0)
         {
-            if (tierPools.TryGetValue(tier, out var pool))
-                return pool;
+            if (fallbackPool == null) return;
 
-            if (missingTiers.Contains(tier))
-                return null;
-
-            var config = AsteroidVisualConfig.Instance;
-            var prefab = config != null ? config.GetDestroyPrefab(tier) : null;
-
-            if (prefab == null)
-            {
-                missingTiers.Add(tier);
-                Debug.LogWarning($"ExplosionManager: No destroy prefab assigned for tier {tier}. Using fallback.");
-                return null;
-            }
-
-            var parent = new GameObject($"ExplosionPool_tier{tier}").transform;
-            parent.SetParent(transform);
-
-            pool = new GameObjectPool(prefab, parent, 3, 10);
-            tierPools[tier] = pool;
-            return pool;
-        }
-
-        /// <summary>
-        /// Plays a debris explosion at the given world position.
-        /// Uses per-tier prefab if available, falls back to programmatic particles.
-        /// Supports both ParticleSystem prefabs and mesh-based destroy prefabs.
-        /// </summary>
-        public void PlayExplosion(float3 position, float scale, int resourceTier)
-        {
-            GameObjectPool pool = GetOrCreateTierPool(resourceTier) ?? fallbackPool;
-            if (pool == null) return;
-
-            var go = pool.Get();
+            var go = fallbackPool.Get();
             go.transform.position = new Vector3(position.x, 0.1f, position.z);
-
-            var ps = go.GetComponentInChildren<ParticleSystem>();
-            if (ps != null)
-            {
-                // Scale particle count by asteroid scale
-                var emission = ps.emission;
-                int particleCount = Mathf.RoundToInt(GameConstants.ExplosionParticleCount * scale);
-                emission.SetBursts(new ParticleSystem.Burst[]
-                {
-                    new ParticleSystem.Burst(0f, particleCount)
-                });
-
-                ps.Play();
-                StartCoroutine(ReturnWhenDone(go, ps, pool));
-            }
-            else
-            {
-                // Mesh-based destroy prefab: scatter outward, then fly fragments to ship
-                go.transform.localScale = Vector3.one * MeshFragmentScale;
-                StartCoroutine(MeshExplosionRoutine(go, pool));
-            }
-        }
-
-        /// <summary>
-        /// Backward-compatible overload (defaults to tier 0).
-        /// </summary>
-        public void PlayExplosion(float3 position, float scale)
-        {
-            PlayExplosion(position, scale, 0);
+            go.transform.localScale = Vector3.one * MeshFragmentScale;
+            StartCoroutine(MeshExplosionRoutine(go, fallbackPool));
         }
 
         private IEnumerator MeshExplosionRoutine(GameObject go, GameObjectPool pool)
         {
-            int childCount = go.transform.childCount;
-            bool hasChildren = childCount > 0;
+            var childCount = go.transform.childCount;
+            var hasChildren = childCount > 0;
 
             // Collect the transforms we'll animate (children if any, otherwise root)
             var fragments = new Transform[hasChildren ? childCount : 1];
             var velocities = new Vector3[fragments.Length];
             var rotAxes = new Vector3[fragments.Length];
-            var collected = new bool[fragments.Length];
             var origLocalPos = new Vector3[fragments.Length];
             var origLocalRot = new Quaternion[fragments.Length];
 
             if (hasChildren)
             {
-                for (int i = 0; i < childCount; i++)
+                for (var i = 0; i < childCount; i++)
                 {
                     fragments[i] = go.transform.GetChild(i);
                     origLocalPos[i] = fragments[i].localPosition;
@@ -242,69 +166,36 @@ namespace MonoBehaviours.Rendering
 
             // Random scatter directions
             var rng = new Unity.Mathematics.Random((uint)Time.frameCount | 7u);
-            for (int i = 0; i < fragments.Length; i++)
+            for (var i = 0; i < fragments.Length; i++)
             {
-                float angle = rng.NextFloat(0f, Mathf.PI * 2f);
+                var angle = rng.NextFloat(0f, Mathf.PI * 2f);
                 velocities[i] = new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * MeshScatterSpeed;
                 rotAxes[i] = Random.onUnitSphere;
             }
 
-            // ── Phase 1: Scatter outward ──
-            float elapsed = 0f;
+            // Scatter outward + shrink to nothing
+            var elapsed = 0f;
             while (elapsed < MeshScatterDuration)
             {
-                float dt = Time.deltaTime;
-                for (int i = 0; i < fragments.Length; i++)
+                var dt = Time.deltaTime;
+                var t = elapsed / MeshScatterDuration;
+                var shrink = 1f - t; // scale from 1 → 0
+
+                for (var i = 0; i < fragments.Length; i++)
                 {
                     fragments[i].position += velocities[i] * dt;
                     fragments[i].Rotate(rotAxes[i], 360f * dt, Space.World);
+                    fragments[i].localScale = Vector3.one * (MeshFragmentScale * shrink);
                 }
                 elapsed += dt;
                 yield return null;
             }
 
-            // ── Phase 2: Fly to ship + collect ──
-            var speeds = new float[fragments.Length];
-            for (int i = 0; i < speeds.Length; i++)
-                speeds[i] = MeshFlySpeed;
-
-            int collectedCount = 0;
-            while (collectedCount < fragments.Length)
-            {
-                float dt = Time.deltaTime;
-                for (int i = 0; i < fragments.Length; i++)
-                {
-                    if (collected[i]) continue;
-
-                    Vector3 toShip = ShipPos - fragments[i].position;
-                    float dist = toShip.magnitude;
-
-                    if (dist < MeshCollectRadius)
-                    {
-                        collected[i] = true;
-                        collectedCount++;
-                        if (hasChildren)
-                            fragments[i].gameObject.SetActive(false);
-                        continue;
-                    }
-
-                    speeds[i] += MeshFlyAcceleration * dt;
-                    Vector3 dir = toShip / dist;
-                    fragments[i].position += dir * speeds[i] * dt;
-                    fragments[i].Rotate(rotAxes[i], 360f * dt, Space.World);
-
-                    // Shrink as it approaches ship
-                    float shrink = Mathf.Clamp01(dist / 5f);
-                    fragments[i].localScale = Vector3.one * (MeshFragmentScale * shrink);
-                }
-                yield return null;
-            }
-
-            // ── Reset and return to pool ──
+            // Reset and return to pool
             go.transform.localScale = Vector3.one;
             if (hasChildren)
             {
-                for (int i = 0; i < childCount; i++)
+                for (var i = 0; i < childCount; i++)
                 {
                     var child = go.transform.GetChild(i);
                     child.gameObject.SetActive(true);

@@ -811,26 +811,32 @@ MonoBehaviour:
     Medium: {fileID: 1409848395081573957, guid: 2a909a401e32fa041ad00c0b37fa6d5a, type: 3}
     Large: {fileID: 8616910802781902138, guid: 465eec4b32d66b344bbb9e7a398616c2, type: 3}
     Destroy: {fileID: 3155150725131091670, guid: d40bc8a6f095ae34d8f7efd223360f76, type: 3}
+    Mineral: {fileID: 3155150725131091670, guid: d40bc8a6f095ae34d8f7efd223360f76, type: 3}
   - Small: {fileID: 0}
     Medium: {fileID: 0}
     Large: {fileID: 0}
     Destroy: {fileID: 0}
+    Mineral: {fileID: 0}
   - Small: {fileID: 0}
     Medium: {fileID: 0}
     Large: {fileID: 0}
     Destroy: {fileID: 0}
+    Mineral: {fileID: 0}
   - Small: {fileID: 0}
     Medium: {fileID: 0}
     Large: {fileID: 0}
     Destroy: {fileID: 0}
+    Mineral: {fileID: 0}
   - Small: {fileID: 0}
     Medium: {fileID: 0}
     Large: {fileID: 0}
     Destroy: {fileID: 0}
+    Mineral: {fileID: 0}
   - Small: {fileID: 0}
     Medium: {fileID: 0}
     Large: {fileID: 0}
     Destroy: {fileID: 0}
+    Mineral: {fileID: 0}
 --- !u!4 &855395541
 Transform:
   m_ObjectHideFlags: 0

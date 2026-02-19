@@ -18,8 +18,8 @@ namespace MonoBehaviours.Core
         [Tooltip("Large asteroid prefab (high HP)")]
         public GameObject Large;
 
-        [Tooltip("Particle effect played on asteroid destruction")]
-        public GameObject Destroy;
+        [Tooltip("Mesh prefab for mineral drops of this tier")]
+        public GameObject Mineral;
 
         /// <summary>
         /// Get the asteroid prefab for the given size class.
@@ -74,13 +74,13 @@ namespace MonoBehaviours.Core
         }
 
         /// <summary>
-        /// Get the destruction VFX prefab for the given tier.
+        /// Get the mineral mesh prefab for the given tier.
         /// Returns null if the tier is out of range or the prefab slot is unassigned.
         /// </summary>
-        public GameObject GetDestroyPrefab(int tierIndex)
+        public GameObject GetMineralPrefab(int tierIndex)
         {
             if (tierIndex < 0 || tierIndex >= Tiers.Length) return null;
-            return Tiers[tierIndex]?.Destroy;
+            return Tiers[tierIndex]?.Mineral;
         }
 
         private void OnDestroy()

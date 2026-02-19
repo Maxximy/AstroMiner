@@ -102,7 +102,7 @@ public static class GameConstants
     public const float MineralCollectionRadius = 0.8f;
 
     /// <summary>Visual scale of mineral GameObjects (uniform XYZ).</summary>
-    public const float MineralScale = 0.3f;
+    public const float MineralScale = 1.0f;
 
     // ── Session Defaults (consumed by Plan 03-02) ───────────────
 
@@ -145,12 +145,6 @@ public static class GameConstants
 
     /// <summary>Gravity applied to debris particles (units/sec^2).</summary>
     public const float ExplosionParticleGravity = 2.5f;
-
-    /// <summary>Trail duration for mineral flight trails (seconds).</summary>
-    public const float MineralTrailDuration = 0.3f;
-
-    /// <summary>Trail start width for mineral flight trails.</summary>
-    public const float MineralTrailStartWidth = 0.15f;
 
     /// <summary>HDR intensity multiplier for mineral glow.</summary>
     public const float MineralEmissiveIntensity = 2f;
