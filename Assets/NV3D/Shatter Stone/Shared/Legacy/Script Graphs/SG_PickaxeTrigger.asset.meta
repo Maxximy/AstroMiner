@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 49239a033b59380458e825ccb0f26ea7
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 299297
+  packageName: 'Shatter Stone: Stylized Metals'
+  packageVersion: 1.1
+  assetPath: Assets/NV3D/Shatter Stone/Shared/Legacy/Script Graphs/SG_PickaxeTrigger.asset
+  uploadId: 765289

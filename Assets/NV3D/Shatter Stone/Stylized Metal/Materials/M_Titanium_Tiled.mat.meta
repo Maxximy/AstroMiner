@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 760c08598d1c77b4c9ceb95f75ec644a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 299297
+  packageName: 'Shatter Stone: Stylized Metals'
+  packageVersion: 1.1
+  assetPath: Assets/NV3D/Shatter Stone/Stylized Metal/Materials/M_Titanium_Tiled.mat
+  uploadId: 765289
