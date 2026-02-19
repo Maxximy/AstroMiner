@@ -1,3 +1,14 @@
+/// <summary>
+/// Asteroid visual size class, determined by MaxHP thresholds.
+/// Maps to per-tier prefab variants (e.g., iron_s, iron_m, iron_l).
+/// </summary>
+public enum AsteroidSize : byte
+{
+    Small = 0,
+    Medium = 1,
+    Large = 2
+}
+
 public enum GamePhase
 {
     Playing,

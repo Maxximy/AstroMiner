@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Data;
 using ECS.Components;
 using MonoBehaviours.Pool;
 using Unity.Entities;
@@ -10,18 +11,18 @@ namespace MonoBehaviours.Core
 {
     /// <summary>
     /// Syncs ECS asteroid entities to pooled GameObjects each frame.
-    /// Handles dynamic entity lifecycle: new entities get a pooled sphere,
-    /// destroyed entities have their sphere returned to the pool.
+    /// Selects per-tier, per-size prefabs from AsteroidVisualConfig (scene object).
+    /// Falls back to primitive spheres when custom prefabs are not assigned.
     /// Also creates the ship placeholder visual.
     /// </summary>
     public class AsteroidRenderer : MonoBehaviour
     {
-        [Header("Asteroid Visuals")]
+        [Header("Fallback Visuals (used when prefab not found)")]
         [SerializeField] private float AsteroidScaleMin = 0.8f;
         [SerializeField] private float AsteroidScaleMax = 1.5f;
 
-        // Asteroid colors: dark gray, brown, rust (warm muted palette)
-        private static readonly Color[] AsteroidColors = new Color[]
+        // Fallback colors for sphere primitives
+        private static readonly Color[] FallbackColors = new Color[]
         {
             new Color(0.333f, 0.333f, 0.333f), // dark gray
             new Color(0.545f, 0.412f, 0.078f), // brown
@@ -32,16 +33,31 @@ namespace MonoBehaviours.Core
         private EntityQuery asteroidQuery;
         private bool initialized;
 
-        // Entity -> GameObject tracking for dynamic lifecycle
+        // Entity -> GameObject tracking
         private Dictionary<Entity, GameObject> entityToGo;
         private List<Entity> entitiesToRemove;
 
-        // Object pool for asteroid spheres
-        private GameObjectPool asteroidPool;
-        private GameObject asteroidPrefab;
+        // Entity -> variant key (to return to correct pool on destroy)
+        private Dictionary<Entity, (int tier, AsteroidSize size)> entityToVariant;
+
+        // Per-variant pools, lazily created on first use
+        private Dictionary<(int tier, AsteroidSize size), GameObjectPool> variantPools;
+
+        // Track which variants have no prefab assigned (avoid repeated warning spam)
+        private HashSet<(int tier, AsteroidSize size)> missingVariants;
+
+        // Pool hierarchy parent
+        private Transform poolsParent;
+
+        // Fallback sphere pool for missing prefabs
+        private GameObjectPool fallbackPool;
+        private GameObject fallbackPrefab;
 
         // Ship placeholder (static, not ECS-driven)
         private GameObject shipGo;
+
+        // Per-entity visual rotation (random axis + speed in degrees/sec)
+        private Dictionary<Entity, (Vector3 axis, float speed)> entityRotation;
 
         // Deterministic RNG for visual randomness
         private Unity.Mathematics.Random rng;
@@ -65,38 +81,80 @@ namespace MonoBehaviours.Core
 
             em = world.EntityManager;
 
-            // Query for asteroid entities with transforms
+            // Query includes AsteroidResourceTier for tier-based prefab selection
             asteroidQuery = em.CreateEntityQuery(
                 typeof(AsteroidTag),
-                typeof(LocalTransform)
+                typeof(LocalTransform),
+                typeof(AsteroidResourceTier)
             );
 
             entityToGo = new Dictionary<Entity, GameObject>();
             entitiesToRemove = new List<Entity>();
+            entityToVariant = new Dictionary<Entity, (int, AsteroidSize)>();
+            entityRotation = new Dictionary<Entity, (Vector3, float)>();
+            variantPools = new Dictionary<(int, AsteroidSize), GameObjectPool>();
+            missingVariants = new HashSet<(int, AsteroidSize)>();
 
-            // Create asteroid prefab (sphere without collider)
-            asteroidPrefab = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            asteroidPrefab.name = "AsteroidPrefab";
-            asteroidPrefab.SetActive(false);
-            asteroidPrefab.transform.SetParent(transform);
-            var collider = asteroidPrefab.GetComponent<Collider>();
+            poolsParent = new GameObject("AsteroidPools").transform;
+            poolsParent.SetParent(transform);
+
+            // Fallback sphere prefab (same as original, for graceful degradation)
+            fallbackPrefab = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            fallbackPrefab.name = "AsteroidFallbackPrefab";
+            fallbackPrefab.SetActive(false);
+            fallbackPrefab.transform.SetParent(transform);
+            var collider = fallbackPrefab.GetComponent<Collider>();
             if (collider != null) Destroy(collider);
 
-            // Create pool with headroom for spawn/destroy overlap
-            int preWarmCount = GameConstants.DefaultMaxAsteroids + 20;
-            int maxSize = GameConstants.DefaultMaxAsteroids + 50;
-            var poolParent = new GameObject("AsteroidPool").transform;
-            poolParent.SetParent(transform);
-            asteroidPool = new GameObjectPool(asteroidPrefab, poolParent, preWarmCount, maxSize);
+            int fallbackPreWarm = GameConstants.DefaultMaxAsteroids + 20;
+            int fallbackMax = GameConstants.DefaultMaxAsteroids + 50;
+            var fallbackPoolParent = new GameObject("FallbackPool").transform;
+            fallbackPoolParent.SetParent(poolsParent);
+            fallbackPool = new GameObjectPool(fallbackPrefab, fallbackPoolParent, fallbackPreWarm, fallbackMax);
 
-            // Seed RNG for visual randomness (scale, color)
             rng = new Unity.Mathematics.Random((uint)System.DateTime.Now.Ticks | 1u);
 
-            // Create ship placeholder on the XZ plane
             CreateShipPlaceholder();
 
             initialized = true;
-            Debug.Log($"AsteroidRenderer: initialized. Pool pre-warmed with {preWarmCount} objects.");
+            Debug.Log("AsteroidRenderer: initialized with per-variant lazy pooling (fallback sphere ready).");
+        }
+
+        /// <summary>
+        /// Gets or creates a pool for the given tier+size variant.
+        /// Returns null if no prefab is assigned in AsteroidVisualConfig (caller uses fallback).
+        /// </summary>
+        private GameObjectPool GetOrCreateVariantPool(int tier, AsteroidSize size)
+        {
+            var key = (tier, size);
+
+            if (variantPools.TryGetValue(key, out var pool))
+                return pool;
+
+            if (missingVariants.Contains(key))
+                return null;
+
+            var config = AsteroidVisualConfig.Instance;
+            var prefab = config != null ? config.GetAsteroidPrefab(tier, size) : null;
+
+            if (prefab == null)
+            {
+                missingVariants.Add(key);
+                Debug.LogWarning($"AsteroidRenderer: No prefab assigned for tier {tier} size {size}. Using fallback sphere.");
+                return null;
+            }
+
+            var parent = new GameObject($"Pool_tier{tier}_{size}").transform;
+            parent.SetParent(poolsParent);
+
+            pool = new GameObjectPool(
+                prefab, parent,
+                GameConstants.AsteroidPoolPreWarmPerVariant,
+                GameConstants.AsteroidPoolMaxPerVariant
+            );
+
+            variantPools[key] = pool;
+            return pool;
         }
 
         private void CreateShipPlaceholder()
@@ -125,26 +183,23 @@ namespace MonoBehaviours.Core
             }
         }
 
-        private void ConfigureAsteroidVisual(GameObject go, float maxHP)
+        private void ConfigureFallbackVisual(GameObject go, float maxHP)
         {
-            // Base random scale plus HP-based size scaling
-            // Higher HP asteroids are larger: linear scaling, 30% of HP increase maps to size
+            // Original sphere behavior: random scale + random color
             float baseScale = rng.NextFloat(AsteroidScaleMin, AsteroidScaleMax);
             float hpRatio = maxHP / GameConstants.DefaultAsteroidHP;
             float hpScaleBonus = (hpRatio - 1f) * 0.3f;
             float scale = baseScale * (1f + hpScaleBonus);
             go.transform.localScale = Vector3.one * scale;
 
-            // Random color from palette via MaterialPropertyBlock
             var renderer = go.GetComponent<Renderer>();
             if (renderer != null)
             {
                 var block = new MaterialPropertyBlock();
                 renderer.GetPropertyBlock(block);
-                block.SetColor("_BaseColor", AsteroidColors[rng.NextInt(AsteroidColors.Length)]);
+                block.SetColor("_BaseColor", FallbackColors[rng.NextInt(FallbackColors.Length)]);
 
-                // Add subtle emissive tint for visual richness (VISL-03)
-                Color emissive = AsteroidColors[rng.NextInt(AsteroidColors.Length)] * 0.3f;
+                Color emissive = FallbackColors[rng.NextInt(FallbackColors.Length)] * 0.3f;
                 block.SetColor("_EmissionColor", emissive);
                 renderer.material.EnableKeyword("_EMISSION");
 
@@ -152,15 +207,26 @@ namespace MonoBehaviours.Core
             }
         }
 
+        private void ConfigurePrefabVisual(GameObject go)
+        {
+            // Custom mesh prefab: scale jitter + random Y rotation for variety
+            float jitter = rng.NextFloat(
+                GameConstants.AsteroidMeshScaleJitterMin,
+                GameConstants.AsteroidMeshScaleJitterMax
+            );
+            go.transform.localScale *= jitter;
+
+            float randomYaw = rng.NextFloat(0f, 360f);
+            go.transform.rotation = Quaternion.Euler(0f, randomYaw, 0f);
+        }
+
         void LateUpdate()
         {
             if (!initialized) return;
 
-            // Get all current asteroid entities
             var entities = asteroidQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
             var activeEntities = new HashSet<Entity>(entities.Length);
 
-            // Sync positions -- assign new GameObjects to new entities
             for (int i = 0; i < entities.Length; i++)
             {
                 var entity = entities[i];
@@ -168,32 +234,76 @@ namespace MonoBehaviours.Core
 
                 if (!entityToGo.TryGetValue(entity, out var go))
                 {
-                    // New entity discovered -- assign a pooled GameObject
-                    // Read HealthData for HP-based size scaling
+                    // Read tier and HP for variant selection
+                    int tier = em.GetComponentData<AsteroidResourceTier>(entity).Tier;
+
                     float maxHP = GameConstants.DefaultAsteroidHP;
                     if (em.HasComponent<HealthData>(entity))
-                    {
                         maxHP = em.GetComponentData<HealthData>(entity).MaxHP;
+
+                    AsteroidSize size = AsteroidVisualDefinitions.ClassifySize(maxHP);
+
+                    // Try custom prefab pool, fall back to sphere pool
+                    var pool = GetOrCreateVariantPool(tier, size);
+                    if (pool != null)
+                    {
+                        go = pool.Get();
+                        ConfigurePrefabVisual(go);
+                        entityToVariant[entity] = (tier, size);
+                    }
+                    else
+                    {
+                        go = fallbackPool.Get();
+                        ConfigureFallbackVisual(go, maxHP);
+                        // Sentinel: tier -1 means fallback pool
+                        entityToVariant[entity] = (-1, AsteroidSize.Small);
                     }
 
-                    go = asteroidPool.Get();
-                    ConfigureAsteroidVisual(go, maxHP);
                     entityToGo[entity] = go;
+
+                    // Assign random rotation axis and speed
+                    var axis = rng.NextFloat3Direction();
+                    float speed = rng.NextFloat(
+                        GameConstants.AsteroidRotationSpeedMin,
+                        GameConstants.AsteroidRotationSpeedMax
+                    );
+                    entityRotation[entity] = (new Vector3(axis.x, axis.y, axis.z), speed);
                 }
 
-                // Sync transform from ECS to GameObject
+                // Sync position from ECS
                 var lt = em.GetComponentData<LocalTransform>(entity);
                 go.transform.position = new Vector3(lt.Position.x, lt.Position.y, lt.Position.z);
-                go.transform.rotation = lt.Rotation;
+
+                // Apply continuous visual rotation
+                if (entityRotation.TryGetValue(entity, out var rot))
+                    go.transform.Rotate(rot.axis, rot.speed * Time.deltaTime, Space.World);
             }
 
-            // Cleanup pass -- release GameObjects for destroyed entities
+            // Cleanup pass -- release GameObjects to their correct pools
             entitiesToRemove.Clear();
             foreach (var kvp in entityToGo)
             {
                 if (!activeEntities.Contains(kvp.Key))
                 {
-                    asteroidPool.Release(kvp.Value);
+                    if (entityToVariant.TryGetValue(kvp.Key, out var variant))
+                    {
+                        if (variant.tier >= 0 && variantPools.TryGetValue(variant, out var pool))
+                        {
+                            // Reset scale before returning (undo jitter)
+                            kvp.Value.transform.localScale = Vector3.one;
+                            pool.Release(kvp.Value);
+                        }
+                        else
+                        {
+                            fallbackPool.Release(kvp.Value);
+                        }
+                        entityToVariant.Remove(kvp.Key);
+                    }
+                    else
+                    {
+                        fallbackPool.Release(kvp.Value);
+                    }
+                    entityRotation.Remove(kvp.Key);
                     entitiesToRemove.Add(kvp.Key);
                 }
             }
@@ -207,7 +317,7 @@ namespace MonoBehaviours.Core
 
         void OnDestroy()
         {
-            if (asteroidPrefab != null) Destroy(asteroidPrefab);
+            if (fallbackPrefab != null) Destroy(fallbackPrefab);
         }
     }
 }

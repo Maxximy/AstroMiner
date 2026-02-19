@@ -105,7 +105,7 @@ namespace MonoBehaviours.Bridge
                 var pos = new Vector3(evt.Position.x, evt.Position.y, evt.Position.z);
 
                 // Visual: explosion particles
-                ExplosionManager.Instance?.PlayExplosion(evt.Position, evt.Scale);
+                ExplosionManager.Instance?.PlayExplosion(evt.Position, evt.Scale, evt.ResourceTier);
 
                 // Audio: destruction SFX
                 AudioManager.Instance?.PlayDestruction(pos);

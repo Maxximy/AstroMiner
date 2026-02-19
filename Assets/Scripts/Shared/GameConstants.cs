@@ -44,6 +44,32 @@ public static class GameConstants
     /// <summary>Maximum spin speed (radians/sec).</summary>
     public const float DefaultSpinMax = 3.0f;
 
+    // ── Asteroid Size Classification ────────────────────────────────
+
+    /// <summary>HP below this value is Small; at or above is Medium.</summary>
+    public const float AsteroidSizeSmallMaxHP = 30f;
+
+    /// <summary>HP at or above this value is Large; below is Medium.</summary>
+    public const float AsteroidSizeLargeMinHP = 50f;
+
+    /// <summary>Scale jitter min multiplier for custom mesh asteroids.</summary>
+    public const float AsteroidMeshScaleJitterMin = 4.5f;
+
+    /// <summary>Scale jitter max multiplier for custom mesh asteroids.</summary>
+    public const float AsteroidMeshScaleJitterMax = 5.5f;
+
+    /// <summary>Minimum visual rotation speed for asteroids (degrees/sec).</summary>
+    public const float AsteroidRotationSpeedMin = 15f;
+
+    /// <summary>Maximum visual rotation speed for asteroids (degrees/sec).</summary>
+    public const float AsteroidRotationSpeedMax = 90f;
+
+    /// <summary>GameObjects to pre-warm per asteroid variant pool on first use.</summary>
+    public const int AsteroidPoolPreWarmPerVariant = 5;
+
+    /// <summary>Maximum pool size per asteroid variant.</summary>
+    public const int AsteroidPoolMaxPerVariant = 20;
+
     // ── Mining Defaults (consumed by Plan 02-02) ──────────────────
 
     /// <summary>Mining circle radius in world units.</summary>
