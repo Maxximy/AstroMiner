@@ -139,7 +139,8 @@ namespace MonoBehaviours.Core
                 ComboMasteryMultiplier = GameConstants.DefaultComboMasteryMultiplier,
                 ComboMasteryWindow = GameConstants.DefaultComboMasteryWindow,
                 LastSkillUseTime = 0f,
-                SkillsUsedInWindow = 0
+                SkillsUsedInWindow = 0,
+                MineralDropCount = GameConstants.DefaultMineralDropCount
             });
 
             // Phase 6: Run configuration singleton

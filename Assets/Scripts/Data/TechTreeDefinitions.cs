@@ -383,6 +383,68 @@ namespace Data
                     SkillIndex = 0
                 },
 
+                // -- Mineral Yield sub-branch (5 nodes, chained from start) --
+                new NodeDescriptor
+                {
+                    NodeId = "econ_yield_1",
+                    DisplayName = "Mineral Yield I",
+                    Description = "+1 mineral drop per asteroid.",
+                    Branch = UpgradeBranch.Economy,
+                    BaseCost = 400, TierLevel = 1,
+                    PrerequisiteIds = new[] { "start" },
+                    Effects = new[] { new StatEffect { Target = StatTarget.MineralDropCount, Value = 1f } },
+                    GraphPosition = econDir * 1f + EconPerp(1.2f),
+                    SkillIndex = 0
+                },
+                new NodeDescriptor
+                {
+                    NodeId = "econ_yield_2",
+                    DisplayName = "Mineral Yield II",
+                    Description = "+1 mineral drop per asteroid.",
+                    Branch = UpgradeBranch.Economy,
+                    BaseCost = 600, TierLevel = 1,
+                    PrerequisiteIds = new[] { "econ_yield_1" },
+                    Effects = new[] { new StatEffect { Target = StatTarget.MineralDropCount, Value = 1f } },
+                    GraphPosition = econDir * 2f + EconPerp(1.2f),
+                    SkillIndex = 0
+                },
+                new NodeDescriptor
+                {
+                    NodeId = "econ_yield_3",
+                    DisplayName = "Mineral Yield III",
+                    Description = "+1 mineral drop per asteroid.",
+                    Branch = UpgradeBranch.Economy,
+                    BaseCost = 350, TierLevel = 2,
+                    PrerequisiteIds = new[] { "econ_yield_2" },
+                    Effects = new[] { new StatEffect { Target = StatTarget.MineralDropCount, Value = 1f } },
+                    GraphPosition = econDir * 3f + EconPerp(1.2f),
+                    SkillIndex = 0
+                },
+                new NodeDescriptor
+                {
+                    NodeId = "econ_yield_4",
+                    DisplayName = "Mineral Yield IV",
+                    Description = "+1 mineral drop per asteroid.",
+                    Branch = UpgradeBranch.Economy,
+                    BaseCost = 500, TierLevel = 2,
+                    PrerequisiteIds = new[] { "econ_yield_3" },
+                    Effects = new[] { new StatEffect { Target = StatTarget.MineralDropCount, Value = 1f } },
+                    GraphPosition = econDir * 4f + EconPerp(1.2f),
+                    SkillIndex = 0
+                },
+                new NodeDescriptor
+                {
+                    NodeId = "econ_yield_5",
+                    DisplayName = "Mineral Yield V",
+                    Description = "+1 mineral drop per asteroid.",
+                    Branch = UpgradeBranch.Economy,
+                    BaseCost = 300, TierLevel = 3,
+                    PrerequisiteIds = new[] { "econ_yield_4" },
+                    Effects = new[] { new StatEffect { Target = StatTarget.MineralDropCount, Value = 1f } },
+                    GraphPosition = econDir * 5f + EconPerp(1.2f),
+                    SkillIndex = 0
+                },
+
                 // ============================================================
                 // SHIP BRANCH (13 nodes) -- left
                 // ============================================================

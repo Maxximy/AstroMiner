@@ -161,6 +161,7 @@ namespace MonoBehaviours.Save
                 if (data.Stats.EmpDotTickInterval < 0.01f) data.Stats.EmpDotTickInterval = GameConstants.EmpDotTickInterval;
                 if (data.Stats.EmpDotDuration < 0.1f) data.Stats.EmpDotDuration = GameConstants.EmpDotDuration;
                 if (data.Stats.ComboMasteryMultiplier < 0.1f) data.Stats.ComboMasteryMultiplier = 1f;
+                if (data.Stats.MineralDropCount < 1) data.Stats.MineralDropCount = 1;
 
                 // Initialize SkillUnlocks array
                 if (data.SkillUnlocks == null || data.SkillUnlocks.Length < 4)
@@ -277,6 +278,7 @@ namespace MonoBehaviours.Save
                 _currentSave.Stats.ResourceMultiplier = bonus.ResourceMultiplier;
                 _currentSave.Stats.LuckyStrikeChance = bonus.LuckyStrikeChance;
                 _currentSave.Stats.ComboMasteryMultiplier = bonus.ComboMasteryMultiplier;
+                _currentSave.Stats.MineralDropCount = bonus.MineralDropCount;
             }
 
             // Save run config
@@ -393,6 +395,7 @@ namespace MonoBehaviours.Save
                 bonus.ResourceMultiplier = _currentSave.Stats.ResourceMultiplier;
                 bonus.LuckyStrikeChance = _currentSave.Stats.LuckyStrikeChance;
                 bonus.ComboMasteryMultiplier = _currentSave.Stats.ComboMasteryMultiplier;
+                bonus.MineralDropCount = _currentSave.Stats.MineralDropCount;
                 bonus.ComboMasteryWindow = GameConstants.DefaultComboMasteryWindow;
                 bonus.LastSkillUseTime = 0f;
                 bonus.SkillsUsedInWindow = 0;

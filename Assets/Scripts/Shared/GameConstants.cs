@@ -255,6 +255,9 @@ public static class GameConstants
 
     // -- Economy Defaults (Phase 6) ------------------------------------------
 
+    /// <summary>Default mineral drop count per asteroid (before upgrades).</summary>
+    public const int DefaultMineralDropCount = 1;
+
     /// <summary>Default resource credit multiplier (1.0 = no bonus).</summary>
     public const float DefaultResourceMultiplier = 1f;
 

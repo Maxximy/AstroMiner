@@ -474,7 +474,7 @@ Light:
   serializedVersion: 12
   m_Type: 1
   m_Color: {r: 1, g: 0.95, b: 0.85, a: 1}
-  m_Intensity: 0.5
+  m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -810,32 +810,26 @@ MonoBehaviour:
   - Small: {fileID: 5291607769635429630, guid: 2eb1be60d9ed4124a8666703d71f7b88, type: 3}
     Medium: {fileID: 1409848395081573957, guid: 2a909a401e32fa041ad00c0b37fa6d5a, type: 3}
     Large: {fileID: 8616910802781902138, guid: 465eec4b32d66b344bbb9e7a398616c2, type: 3}
-    Destroy: {fileID: 3155150725131091670, guid: d40bc8a6f095ae34d8f7efd223360f76, type: 3}
     Mineral: {fileID: 3155150725131091670, guid: d40bc8a6f095ae34d8f7efd223360f76, type: 3}
   - Small: {fileID: 0}
     Medium: {fileID: 0}
     Large: {fileID: 0}
-    Destroy: {fileID: 0}
     Mineral: {fileID: 0}
   - Small: {fileID: 0}
     Medium: {fileID: 0}
     Large: {fileID: 0}
-    Destroy: {fileID: 0}
     Mineral: {fileID: 0}
   - Small: {fileID: 0}
     Medium: {fileID: 0}
     Large: {fileID: 0}
-    Destroy: {fileID: 0}
     Mineral: {fileID: 0}
   - Small: {fileID: 0}
     Medium: {fileID: 0}
     Large: {fileID: 0}
-    Destroy: {fileID: 0}
     Mineral: {fileID: 0}
   - Small: {fileID: 0}
     Medium: {fileID: 0}
     Large: {fileID: 0}
-    Destroy: {fileID: 0}
     Mineral: {fileID: 0}
 --- !u!4 &855395541
 Transform:

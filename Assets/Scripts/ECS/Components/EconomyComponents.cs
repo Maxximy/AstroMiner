@@ -26,6 +26,9 @@ namespace ECS.Components
 
         /// <summary>Number of skills used within the current combo window.</summary>
         public int SkillsUsedInWindow;
+
+        /// <summary>Flat mineral drop count per asteroid. Starts at 1, +1 per upgrade.</summary>
+        public int MineralDropCount;
     }
 
     /// <summary>

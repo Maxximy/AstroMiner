@@ -64,6 +64,7 @@ namespace MonoBehaviours.Save
         // -- Economy --
         public float ResourceMultiplier = 1f;
         public float LuckyStrikeChance = 0f;
+        public int MineralDropCount = 1;
 
         // -- Run --
         public float RunDuration = 20f;

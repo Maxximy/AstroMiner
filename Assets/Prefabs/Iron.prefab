@@ -63,7 +63,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: dc131f24fa92db44c93352f3696d800a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 2340372fac4394644b4457eac5261f18, type: 2}
+      objectReference: {fileID: 2100000, guid: 6334e0ecdea812a4698372143c3c162f, type: 2}
     - target: {fileID: 919132149155446097, guid: dc131f24fa92db44c93352f3696d800a, type: 3}
       propertyPath: m_Name
       value: Iron

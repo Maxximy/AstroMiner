@@ -22,6 +22,7 @@ namespace ECS.Systems
         {
             rng = new Random((uint)System.Environment.TickCount | 1u);
             state.RequireForUpdate<GameStateData>();
+            state.RequireForUpdate<PlayerBonusData>();
             state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         }
 
@@ -37,6 +38,9 @@ namespace ECS.Systems
 
             // Get DestructionEvent buffer for visual/audio feedback (Phase 4)
             var destructionBuffer = SystemAPI.GetSingletonBuffer<DestructionEvent>();
+
+            // Flat mineral drop count from PlayerBonusData (upgraded via tech tree)
+            int mineralDropCount = SystemAPI.GetSingleton<PlayerBonusData>().MineralDropCount;
 
             foreach (var (health, transform, asteroidTier, entity) in
                      SystemAPI.Query<RefRO<HealthData>, RefRO<LocalTransform>, RefRO<AsteroidResourceTier>>()
@@ -62,13 +66,9 @@ namespace ECS.Systems
                         ResourceTier = tier
                     });
 
-                    // Determine mineral count based on resource tier
-                    int mineralMin, mineralMax;
-                    GetMineralCountRange(tier, out mineralMin, out mineralMax);
-                    int mineralCount = rng.NextInt(mineralMin, mineralMax + 1);
-
                     // Get credit value per mineral based on tier
                     int creditValue = GetCreditValueForTier(tier);
+                    int mineralCount = mineralDropCount;
 
                     for (int i = 0; i < mineralCount; i++)
                     {
@@ -114,20 +114,5 @@ namespace ECS.Systems
             return GameConstants.IronCreditValue; // fallback
         }
 
-        /// <summary>
-        /// Burst-compatible mineral count range lookup by tier index.
-        /// Rarer tiers drop fewer minerals but each worth more credits.
-        /// </summary>
-        [BurstCompile]
-        private static void GetMineralCountRange(int tier, out int min, out int max)
-        {
-            if (tier == 0) { min = 3; max = 8; } // Iron
-            else if (tier == 1) { min = 3; max = 7; } // Copper
-            else if (tier == 2) { min = 2; max = 6; } // Silver
-            else if (tier == 3) { min = 2; max = 5; } // Cobalt
-            else if (tier == 4) { min = 1; max = 4; } // Gold
-            else if (tier == 5) { min = 1; max = 3; } // Titanium
-            else { min = 3; max = 8; } // fallback
-        }
     }
 }

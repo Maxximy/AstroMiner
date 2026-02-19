@@ -50,6 +50,7 @@ public enum StatTarget
     LuckyStrikeChance,
     SpawnRateReduction,
     MaxAsteroidsBonus,
+    MineralDropCount,
 
     // Ship branch
     SkillUnlock,

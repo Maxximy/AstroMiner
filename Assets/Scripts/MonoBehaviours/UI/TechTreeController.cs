@@ -518,6 +518,13 @@ namespace MonoBehaviours.UI
                     em.SetComponentData(skillStatsEntity, data);
                     break;
                 }
+                case StatTarget.MineralDropCount:
+                {
+                    var data = em.GetComponentData<PlayerBonusData>(playerBonusEntity);
+                    data.MineralDropCount += (int)effect.Value;
+                    em.SetComponentData(playerBonusEntity, data);
+                    break;
+                }
                 case StatTarget.ComboMastery:
                 {
                     var data = em.GetComponentData<PlayerBonusData>(playerBonusEntity);
@@ -583,6 +590,7 @@ namespace MonoBehaviours.UI
             save.Stats.ResourceMultiplier = bonus.ResourceMultiplier;
             save.Stats.LuckyStrikeChance = bonus.LuckyStrikeChance;
             save.Stats.ComboMasteryMultiplier = bonus.ComboMasteryMultiplier;
+            save.Stats.MineralDropCount = bonus.MineralDropCount;
 
             var runConfig = em.GetComponentData<RunConfigData>(runConfigEntity);
             save.Stats.RunDuration = runConfig.RunDuration;
@@ -789,6 +797,8 @@ namespace MonoBehaviours.UI
                     return em.GetComponentData<SkillStatsData>(skillStatsEntity).OverchargeDuration;
                 case StatTarget.OverchargeDamageMultiplier:
                     return em.GetComponentData<SkillStatsData>(skillStatsEntity).OverchargeDamageMultiplier;
+                case StatTarget.MineralDropCount:
+                    return em.GetComponentData<PlayerBonusData>(playerBonusEntity).MineralDropCount;
                 case StatTarget.ComboMastery:
                     return em.GetComponentData<PlayerBonusData>(playerBonusEntity).ComboMasteryMultiplier;
                 case StatTarget.DotDamage:
